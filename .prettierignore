@@ -1,0 +1,12 @@
+# Ignore artifacts:
+build
+coverage
+
+.next
+node_modules
+.yarn
+.out
+.turbo
+.temp
+
+public

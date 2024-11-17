@@ -1,0 +1,42 @@
+<%
+const link = typeof locals.link !== 'undefined' ? locals.link : '';
+const borderEnabled = typeof locals.borderEnabled !== 'undefined' ? locals.borderEnabled : false;
+%>
+
+<pre class="link-copy w-full bg-gray-100 dark:bg-gray-900 p-4 rounded-md flex flex-row items-center overflow-auto <%- borderEnabled ? 'border border-gray-200 dark:border-gray-700' : '' %>">
+  <code class="link-copy-code w-full text-green-500 dark:text-green-400 overflow-x-auto whitespace-nowrap text-wrap overflow-wrap-anywhere text-sm md:text-base" style="overflow-wrap: anywhere;"><%- link || '' %></code>
+  <button class="link-copy-button flex flex-shrink-0 ml-2 p-1 dark:text-white bg-gray-200 dark:bg-gray-700 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+    </svg>
+  </button>
+</pre>
+
+<script>
+  document.querySelectorAll('.link-copy-button').forEach(button => {
+    // remove previous listeners
+    button.removeEventListener('click', function() {});
+    button.addEventListener('click', function() {
+      const linkText = this.parentElement.querySelector('.link-copy-code').textContent;
+      navigator.clipboard.writeText(linkText).then(() => {
+        // Change the icon to a check mark
+        this.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+        `;
+
+        // Revert back to copy icon after 2 seconds
+        setTimeout(() => {
+          this.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+            </svg>
+          `;
+        }, 2000);
+      }).catch(err => {
+        console.error('Failed to copy text: ', err);
+      });
+    });
+  });
+</script>

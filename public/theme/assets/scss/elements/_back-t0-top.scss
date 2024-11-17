@@ -1,0 +1,103 @@
+// back to top style scss
+.progress-wrap {
+	position: fixed;
+	right: 30px;
+	bottom: 30px;
+	height: 46px;
+	width: 46px;
+	cursor: pointer;
+	display: block;
+	border-radius: 50px;
+	z-index: 10000;
+	opacity: 1;
+	visibility: hidden;
+	transform: translateY(15px);
+	-webkit-transition: all 200ms linear;
+    transition: all 200ms linear;
+
+}
+.progress-wrap.active-progress {
+	opacity: 1;
+	visibility: visible;
+	transform: translateY(0);
+}
+.progress-wrap::after {
+	position: absolute;
+	font-family: 'unicons';
+	content: '\e84b';
+	text-align: center;
+	line-height: 46px;
+	font-size: 24px;
+	color: var(--color-primary);
+	left: 0;
+	top: 0;
+	height: 46px;
+	width: 46px;
+	cursor: pointer;
+	display: block;
+	z-index: 1;
+	-webkit-transition: all 200ms linear;
+    transition: all 200ms linear;
+    border: 2px solid var(--color-primary);
+    box-shadow: none;
+	border-radius: 50% !important;
+	border-radius: 5px;
+}
+.progress-wrap:hover::after {
+	opacity: 1;
+    content: '\e84b';
+    border: 2px solid var(--color-primary);
+}
+.progress-wrap::before {
+	position: absolute;
+	font-family: 'unicons';
+	content: '\e84b';
+	text-align: center;
+	line-height: 46px;
+	font-size: 24px;
+	opacity: 0;
+	background: var(--color-primary);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	left: 0;
+	top: 0;
+	height: 46px;
+	width: 46px;
+	cursor: pointer;
+	display: block;
+	z-index: 2;
+	-webkit-transition: all 200ms linear;
+    transition: all 200ms linear;
+}
+.progress-wrap:hover::before {
+	opacity: 0;
+}
+.progress-wrap svg path { 
+	fill: none; 
+}
+.progress-wrap svg { 
+    color: var(--color-primary);
+	border-radius: 50%;
+	background: #fff;
+}
+.progress-wrap svg.progress-circle path {
+    stroke: var(--color-primary);
+    stroke-width: 34px;
+	box-sizing:border-box;
+	-webkit-transition: all 200ms linear;
+    transition: all 200ms linear;
+}
+
+
+
+.home-blue{
+	.progress-wrap svg.progress-circle path{
+		stroke: var(--color-primary-2);
+	}
+	.progress-wrap::after{
+		border-color: var(--color-primary-2);
+		box-shadow: 0px 3px 20px 6px #0742e952;
+		color: var(--color-primary-2);
+	}
+}
+

@@ -1,0 +1,122 @@
+<html lang="en">
+<!-- HEAD -->
+
+<head>
+  <%- include('common/head', locals) %>
+  <script>
+    // Immediately invoked function to set the theme on page load
+    (function() {
+      function getInitialTheme() {
+        const savedTheme = localStorage.getItem('theme');
+        const systemDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        return savedTheme === 'dark' || (!savedTheme && systemDarkMode) ? 'dark' : 'light';
+      }
+
+      const theme = getInitialTheme();
+      document.documentElement.setAttribute('data-mode', theme);
+    })();
+  </script>
+</head>
+
+<!-- BODY -->
+
+<body class="w-full ">
+  <!-- HEADER -->
+  <% if (typeof locals.headerEnabled === 'undefined' || locals.headerEnabled) { %>
+  <%- include('common/header-dashboard', locals) %>
+  <% } %>
+
+  <!-- PAGE -->
+  <% if (typeof page !== 'undefined') { %>
+  <%- include(page, locals); %>
+  <% } %>
+
+  <!-- FOOTER -->
+  <% if (typeof locals.footerEnabled === 'undefined' || locals.footerEnabled) { %>
+  <%- include('common/footer', locals) %>
+  <% } %>
+
+  <div id="anywhere-home" class="">
+  </div>
+
+  <!-- pre loader start -->
+  <div class="loader-wrapper">
+    <div class="loader">
+    </div>
+    <div class="loader-section section-left"></div>
+    <div class="loader-section section-right"></div>
+  </div>
+  <!-- pre loader end -->
+
+  <!-- THEME MODE SWITCHER -->
+  <div class="rts-switcher rts-theme-mode">
+    <div class="rts-darkmode">
+      <a id="rts-data-toggle" class="rts-dark-light">
+        <i class="rts-go-dark fal fa-moon"></i>
+        <i class="rts-go-light fa-light fa-sun-bright"></i>
+      </a>
+    </div>
+  </div>
+  <!-- THEME MODE SWITCHER END -->
+
+  <!-- progress area start -->
+  <div class="progress-wrap">
+    <svg class="progress-circle svg-content" width="100%" height="100%" viewBox="-1 -1 102 102">
+      <path d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98" style="transition: stroke-dashoffset 10ms linear 0s; stroke-dasharray: 307.919, 307.919; stroke-dashoffset: 307.919;"></path>
+    </svg>
+  </div>
+  <!-- progress area end -->
+
+  <!-- Scripts -->
+
+  <!-- Day.js -->
+  <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+  <!-- marked.js -->
+  <script src="/js/marked.min.js"></script>
+  <!-- highlight.js -->
+  <script src="/vendor/highlight/highlight.min.js"></script>
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+  <!-- Slick -->
+  <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" />
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.css" />
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+  <!-- Tippy.js -->
+  <script src="https://unpkg.com/@popperjs/core@2"></script>
+  <script src="https://unpkg.com/tippy.js@6"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Main JS -->
+  <script defer src="/assets/js/plugins/bootstrap.min.js"></script>
+  <script defer src="/assets/js/plugins/metismenu.js"></script>
+  <script defer src="/assets/js/vendor/jqueryui.js"></script>
+  <script defer src="/assets/js/vendor/waypoint.js"></script>
+  <script defer src="/assets/js/plugins/swiper.js"></script>
+  <script defer src="/assets/js/plugins/theia-sticky-sidebar.min.js"></script>
+  <script defer src="/assets/js/plugins/gsap.min.js"></script>
+  <script defer src="/assets/js/plugins/scrolltigger.js"></script>
+  <script defer src="/assets/js/vendor/split-text.js"></script>
+  <script defer src="/assets/js/vendor/split-type.js"></script>
+  <script defer src="/assets/js/vendor/waw.js"></script>
+  <script defer src="/assets/js/plugins/counter-up.js"></script>
+  <script defer src="/assets/js/plugins/magnific-popup.js"></script>
+  <!-- contact form js -->
+  <script defer src="/assets/js/plugins/contact-form.js"></script>
+  <script defer src="/assets/js/plugins/drawers.js"></script>
+  <script defer src="/assets/js/plugins/modals.js"></script>
+  <script defer src="/assets/js/main.js"></script>
+  <script defer src="/assets/js/auth.js"></script>
+  <script defer src="/assets/js/group-ads.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      tippy('.tippy', {
+        animation: 'fade',
+        duration: 300,
+        interactive: true,
+      });
+    });
+  </script>
+</body>
+
+</html>

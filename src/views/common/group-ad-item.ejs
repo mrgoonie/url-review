@@ -1,0 +1,96 @@
+<% 
+const className = locals.className || '';
+
+const groupAd = locals.groupAd || {
+  id: "123",
+  title: 'Group Ad Title Goes Here',
+  image_url: '/images/screenshot-sample-02.png',
+  individual_budget: 20,
+  total_budget: 100,
+  estimated_reached: "3.3K",
+  available_slots: "2/5",
+  userId: "123",
+};
+
+const showItemStatus = locals.showItemStatus ?? true;
+const enableActions = locals.enableActions ?? true;
+const enableJoinButton = locals.enableJoinButton ?? (user?.id !== groupAd.userId) ?? false;
+const enablePaymentButton = locals.enablePaymentButton ?? (user?.id === groupAd.userId && groupAd.status === "PENDING");
+%>
+<div class="group-ad-item bg-secondary-3 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-[26px] p-4 <%= className %>">
+  <div class="flex flex-col items-stretch gap-3">
+    <!-- Row 1: Product Icon and Name -->
+    <div class="flex flex-row items-center gap-3">
+      <!-- Product Icon -->
+      <div class="size-[60px] rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-700">
+        <img src="<%= groupAd.image_url %>" alt="Product icon" class="w-full h-full object-cover">
+      </div>
+      <!-- Product Name -->
+      <div class="flex-grow">
+        <h3 class="text-3xl font-bold text-gray-900 dark:text-white flex flex-row items-start gap-2 justify-start">
+          <%= groupAd.title %>
+          <% if (showItemStatus) { %>
+          <!-- status tag -->
+          <span class="text-xl bg-brand-secondary-2 text-white px-2 py-1 rounded-md" data-status="<%= groupAd.status %>">
+            <%= groupAd.paymentStatus === "PENDING" ? "Pending (Unpaid)" : groupAd.status === "ACTIVE" ? "Active (Waiting for others)" : groupAd.status === "EXPIRED" ? "Expired" : groupAd.status === "CANCELLED" ? "Cancelled" : groupAd.status === "COMPLETED" ? "Completed" : groupAd.status === "REJECTED" ? "Rejected" : "Unknown" %>
+          </span>
+          <% } %>
+        </h3>
+
+        <!-- <p class="text-xl mt-2 text-gray-500 dark:text-gray-400">Expires in 3 hours</p> -->
+      </div>
+      <!-- Action Buttons -->
+      <div class="flex items-center">
+        <div class="avatar size-[40px] rounded-full overflow-hidden bg-gray-100 dark:bg-gray-700">
+          <img src="<%= groupAd?.user?.image ?? "/images/avatar.jpg" %>" alt="Avatar" class="w-full h-full object-cover">
+        </div>
+        <% if (enableActions) { %>
+        <!-- Like Button -->
+        <button class="size-[40px] ml-[-8px] rounded-full bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+          <i class="ri-heart-line text-gray-500 dark:text-gray-400"></i>
+        </button>
+        <% if (enableJoinButton) { %>
+        <!-- Join Button -->
+        <button class="border-none size-[50px] ml-[-8px] rounded-full bg-brand-primary hover:bg-brand-primary-2 transition-colors">
+          <i class="ri-arrow-right-line text-white text-3xl"></i>
+        </button>
+        <% } %>
+        <% } %>
+        <!-- Payment Button -->
+        <% if (enablePaymentButton) { %>
+        <button class="btn-activate-group-ad tippy border-none size-[50px] ml-[-8px] rounded-full bg-brand-primary hover:bg-brand-primary-2 transition-colors" data-id="<%= groupAd.id %>" data-group-ad-payment="<%= groupAd.paymentAmount %>" data-user-balance="<%= user.balance %>" data-tippy-content="Activate this group ad" data-tippy-placement="top">
+          <i class="ri-money-dollar-circle-line text-white text-3xl"></i>
+        </button>
+        <% } %>
+      </div>
+    </div>
+    <!-- end Row 1 -->
+
+    <!-- Row 2: Stats -->
+    <div class="grid grid-cols-4 gap-3 mt-1">
+      <!-- Individual Budget -->
+      <div class="flex flex-col justify-center gap-2">
+        <span class="text-xl leading-6 text-gray-500 dark:text-gray-400 text-center">Individual<br />budget</span>
+        <span class="rounded-xl bg-brand-primary-2 font-bold text-white text-center py-2">$<%= groupAd.individual_budget %></span>
+      </div>
+
+      <!-- Total Budget -->
+      <div class="flex flex-col justify-center gap-2">
+        <span class="text-xl leading-6 text-gray-500 dark:text-gray-400 text-center">Total<br />budget</span>
+        <span class="rounded-xl bg-brand-primary-2 font-bold text-white text-center py-2">$<%= groupAd.total_budget %></span>
+      </div>
+
+      <!-- Estimated Reached -->
+      <div class="flex flex-col justify-center gap-2">
+        <span class="text-xl leading-6 text-gray-500 dark:text-gray-400 text-center">Estimated<br />reached</span>
+        <span class="rounded-xl bg-brand-primary-2 font-bold text-white text-center py-2"><%= groupAd.estimated_reached %></span>
+      </div>
+
+      <!-- Available Slots -->
+      <div class="flex flex-col justify-center gap-2">
+        <span class="text-xl leading-6 text-gray-500 dark:text-gray-400 text-center">Available<br />slots</span>
+        <span class="rounded-xl bg-brand-primary-2 font-bold text-white text-center py-2"><%= groupAd.available_slots %></span>
+      </div>
+    </div>
+  </div>
+</div>

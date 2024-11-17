@@ -1,0 +1,24 @@
+<div class="pt-80 pb-60 px-10 md:px-0 w-full flex justify-center items-center">
+  <div class="w-full h-auto text-center max-w-screen-sm">
+    <h2 class="text-4xl">Your payment is successful!</h2>
+    <h1 class="font-bold py-4 text-6xl">Congratulations!</h1>
+
+    <div class="w-full border border-gray-100 dark:border-gray-700 rounded-2xl p-4 relative mb-10 shadow-xl dark:bg-gray-800">
+      Check your balance in <a href="/profile" class="text-blue-400 hover:text-blue-500">Profile</a> page.
+      <br />
+      You can also re-activate your group ad in <a href="/dashboard/group-ads" class="text-blue-400 hover:text-blue-500">Group Ads</a> page.
+    </div>
+
+    <div class="flex gap-2 justify-center">
+      <%- include("../common/button", {
+      content: " <i class='ri-user-line mr-2'></i> Profile",
+      href: "/profile",
+      className: "bg-red-400 hover:bg-red-500"
+    }) %>
+      <%- include("../common/button", {
+      content: " <i class='ri-home-line mr-2'></i> Home",
+      href: "/",
+    }) %>
+    </div>
+  </div>
+</div>

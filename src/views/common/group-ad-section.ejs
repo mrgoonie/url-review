@@ -1,0 +1,349 @@
+<% 
+const mode = locals.mode ?? "ssr";
+const title = locals.title ?? "";
+const subtitle = locals.subtitle ?? "";
+const description = locals.description ?? "";
+const categories = locals.categories || [];
+const groupAds = locals.groupAds || [];
+const pagination = locals.pagination || {};
+const animationEnabled = locals.animationEnabled ?? false;
+const maxColumns = locals.maxColumns || 3;
+const showViewAll = locals.showViewAll ?? false;
+const showPagination = locals.showPagination ?? true;
+const showItemStatus = locals.showItemStatus ?? true;
+const activeCategoryId = locals.activeCategoryId || "all";
+const enableActions = locals.enableActions ?? true;
+%>
+<div class="group-ad-section">
+  <% if (mode === "ssr") { %>
+  <!-- handle category click in SSR mode -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const categoryElements = document.querySelectorAll(".group-ad-category");
+      categoryElements.forEach(category => {
+        if (category.dataset.id === "<%= activeCategoryId %>") {
+          category.classList.add('active');
+        } else {
+          category.classList.remove('active');
+        }
+
+        category.addEventListener("click", function() {
+          window.location.href = category.dataset.id === "all" ? "/group-ads" : `/group-ads/${category.dataset.slug}`;
+        });
+      });
+    });
+  </script>
+  <% } else { %>
+  <!-- handle category click in client mode -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      // get user
+      const user = <%- user ? JSON.stringify(user) : 'null' %>;
+
+      // get url params
+      const urlParams = new URLSearchParams(window.location.search);
+
+      // join group ad
+      function joinGroupAd(groupAdId) {
+        console.log('joinGroupAd() > groupAdId :>>', groupAdId);
+        if (user) {
+          window.joinGroupAd(groupAdId);
+        } else {
+          // redirect to login
+          window.location.href = "/login";
+        }
+      }
+
+      // payment group ad
+      function paymentGroupAd(groupAdId) {
+        console.log('paymentGroupAd() > groupAdId :>>', groupAdId);
+      }
+
+      // load group ads by category
+      function loadGroupAdsByCategory(categoryId, options = {}) {
+        // activate the clicked category
+        document.querySelectorAll('.group-ad-category').forEach(category => {
+          category.classList.remove('active');
+        });
+        document.querySelector(`.group-ad-category[data-id="${categoryId}"]`)?.classList.add('active');
+
+        // Use fetch to load group ads by category
+        const params = new URLSearchParams();
+        params.append('status', 'ACTIVE');
+
+        if (categoryId !== "all") params.append('categoryId', categoryId);
+        params.append('page', options.page ? options.page.toString() : "1");
+        params.append('limit', options.limit ? options.limit.toString() : "10");
+
+        const url = `/api/v1/group-ads?${params.toString()}`;
+        fetch(url, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              ...options.headers,
+            }
+          })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            return response.json();
+          })
+          .then(data => {
+            // Update the group ad list with the fetched group ads
+            const groupAdList = document.querySelector('.group-ad-list');
+
+            // Safety check to prevent null error
+            if (!groupAdList) {
+              console.error('Group ad list element not found');
+              return;
+            }
+
+            // Clear existing group ads
+            groupAdList.innerHTML = '';
+
+            // If no group ads, show empty state
+            if (!data.data.list || data.data.list.length === 0) {
+              groupAdList.innerHTML = `
+              <div class="text-center py-8 text-gray-500 dark:text-gray-400 col-span-full">
+                <i class="ri-inbox-2-fill text-6xl mb-4 block"></i>
+                <p class="text-3xl">No group ads available in this category</p>
+                <p class="text-xl">Try a different category or create a new group ad</p>
+              </div>
+            `;
+              return;
+            }
+
+            // Item's status
+            const showItemStatus = <%= showItemStatus %>;
+            const enableActions = <%= enableActions %>;
+            const userId = '<%= user?.id %>';
+
+            // Render new group ads
+            data.data.list.forEach(groupAd => {
+              const reach = (groupAd.budget * (90 + 10 * Math.random()) / 1000).toFixed(2);
+              const estimatedReached = `${reach}K`;
+              const enableJoinButton = userId ? groupAd.userId !== userId : true;
+              const enablePaymentButton = userId ? groupAd.userId !== userId && groupAd.paymentStatus === "PENDING" : false;
+
+              // Create a temporary div to render the group ad item
+              const groupAdItem = document.createElement('div');
+              groupAdItem.innerHTML = `<div class="group-ad-item bg-secondary-3 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-[26px] p-4">
+  <div class="flex flex-col items-stretch gap-3">
+    <!-- Row 1: Product Icon and Name -->
+    <div class="flex flex-row items-center gap-3">
+      <!-- Product Icon -->
+      <div class="size-[60px] rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-700">
+        <img src="${groupAd.product.logoUrl}" alt="Product icon" class="w-full h-full object-cover">
+      </div>
+      <!-- Product Name -->
+      <div class="flex-grow">
+        <h3 class="text-3xl font-bold text-gray-900 dark:text-white flex flex-row items-start gap-2 justify-start">
+          ${groupAd.product.name}
+          ${showItemStatus ? `
+          <!-- status tag -->
+          <span class="text-xl bg-brand-secondary-2 text-white px-2 py-1 rounded-md">
+              ${groupAd.status === "PENDING" ? "Pending (Unpaid)" : 
+                groupAd.status === "ACTIVE" ? "Active (Waiting for others)" : 
+                groupAd.status === "EXPIRED" ? "Expired" : 
+                groupAd.status === "CANCELLED" ? "Cancelled" : 
+                groupAd.status === "COMPLETED" ? "Completed" : 
+                groupAd.status === "REJECTED" ? "Rejected" : "Unknown"}
+            </span>
+          ` : ''
+          }
+        </h3>
+
+        <!-- <p class="text-xl mt-2 text-gray-500 dark:text-gray-400">Expires in 3 hours</p> -->
+      </div>
+      <!-- Action Buttons -->
+      <div class="flex items-center">
+        <div class="avatar size-[40px] rounded-full overflow-hidden bg-gray-100 dark:bg-gray-700">
+          <img src="${groupAd.user.image ?? "/images/avatar.jpg"}" alt="Avatar" class="w-full h-full object-cover">
+        </div>
+        ${enableActions ? `
+        <button class="size-[40px] ml-[-8px] rounded-full bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+          <i class="ri-heart-line text-gray-500 dark:text-gray-400"></i>
+        </button>
+        ${enableJoinButton ? `
+        <!-- join button -->
+        <button class="btn-join-group-ad tippy border-none size-[50px] ml-[-8px] rounded-full bg-brand-primary hover:bg-brand-primary-2 transition-colors" data-id="${groupAd.id}" data-tippy-content="Join this group ad" data-tippy-placement="top">
+          <i class="ri-add-line text-white text-3xl"></i>
+        </button>
+        ` : ''
+        }
+        ${enablePaymentButton ? `
+        <!-- payment button -->
+        <button class="btn-activate-group-ad tippy border-none size-[50px] ml-[-8px] rounded-full bg-brand-primary hover:bg-brand-primary-2 transition-colors" data-id="${groupAd.id}" data-tippy-content="Pay now to activate group ad & let others join" data-tippy-placement="top">
+          <i class="ri-money-dollar-circle-line text-white text-3xl"></i>
+        </button>
+        ` : ''
+        }
+        ` : ''
+        }
+      </div>
+    </div>
+    <!-- end Row 1 -->
+
+    <!-- Row 2: Stats -->
+    <div class="grid grid-cols-4 gap-3 mt-1">
+      <!-- Individual Budget -->
+      <div class="flex flex-col justify-center gap-2">
+        <span class="text-xl leading-6 text-gray-500 dark:text-gray-400 text-center">Individual<br />budget</span>
+        <span class="rounded-xl bg-brand-primary-2 font-bold text-white text-center py-2">$${groupAd.budget}</span>
+      </div>
+
+      <!-- Total Budget -->
+      <div class="flex flex-col justify-center gap-2">
+        <span class="text-xl leading-6 text-gray-500 dark:text-gray-400 text-center">Total<br />budget</span>
+        <span class="rounded-xl bg-brand-primary-2 font-bold text-white text-center py-2">$${groupAd.budget * groupAd.totalSlots}</span>
+      </div>
+
+      <!-- Estimated Reached -->
+      <div class="flex flex-col justify-center gap-2">
+        <span class="text-xl leading-6 text-gray-500 dark:text-gray-400 text-center">Estimated<br />reached</span>
+        <span class="rounded-xl bg-brand-primary-2 font-bold text-white text-center py-2">${estimatedReached}</span>
+      </div>
+
+      <!-- Available Slots -->
+      <div class="flex flex-col justify-center gap-2">
+        <span class="text-xl leading-6 text-gray-500 dark:text-gray-400 text-center">Available<br />slots</span>
+        <span class="rounded-xl bg-brand-primary-2 font-bold text-white text-center py-2">${groupAd.groupParticipants.length}/${groupAd.totalSlots}</span>
+      </div>
+    </div>
+  </div>
+</div>`;
+
+              groupAdList.appendChild(groupAdItem.firstElementChild);
+
+              // add event listeners to join and payment buttons
+              document.querySelectorAll('.group-ad-item .btn-join-group-ad').forEach(button => {
+                button.addEventListener('click', function() {
+                  const groupAdId = button.dataset.id;
+                  if (groupAdId) {
+                    joinGroupAd(groupAdId);
+                  }
+                });
+              });
+              document.querySelectorAll('.group-ad-item .btn-activate-group-ad').forEach(button => {
+                button.addEventListener('click', function() {
+                  const groupAdId = button.dataset.id;
+                  if (groupAdId) {
+                    paymentGroupAd(groupAdId);
+                  }
+                });
+              });
+            });
+          })
+          .catch(error => {
+            console.error('group-ad-section.ejs > loadGroupAdsByCategory() > error :>>', error);
+
+            // Safety check for group ad list
+            const groupAdList = document.querySelector('.group-ad-list');
+            if (!groupAdList) {
+              console.error('Group ad list element not found for error state');
+              return;
+            }
+
+            // Show error message to user
+            groupAdList.innerHTML = `
+            <div class="text-center py-8 text-red-500 col-span-full">
+              <i class="ri-error-warning-fill text-6xl mb-4 block"></i>
+              <p class="text-3xl">Failed to load group ads</p>
+              <p class="text-xl">Please try again later</p>
+            </div>
+          `;
+          });
+      }
+
+      // handle category click
+      const categoryElements = document.querySelectorAll(".group-ad-category");
+      categoryElements.forEach(category => {
+        category.addEventListener("click", function() {
+          loadGroupAdsByCategory(category.dataset.id);
+        });
+      });
+
+      // load group ads by category on page load
+      loadGroupAdsByCategory(urlParams.get('categoryId') || "all");
+    });
+  </script>
+  <% } %>
+
+  <div class="container">
+    <!-- title -->
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="title-style-one-center">
+          <span class="pre"><%= subtitle %></span>
+          <h2 class="title <%= animationEnabled ? 'skew-up' : '' %>"><%= title %></h2>
+          <p class="description"><%= description %></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- categories (tags) -->
+    <div class="group-ad-categories flex flex-wrap gap-2 justify-center my-4">
+      <% categories.forEach(category => { %>
+      <div class="group-ad-category" data-id="<%= category.id %>" data-slug="<%= category.slug %>">
+        <%= category.name %>
+      </div>
+      <% }) %>
+    </div>
+    <!-- end categories (tags) -->
+
+    <% if (mode === "client") { %>
+    <!-- CLIENT MODE -->
+    <div class="group-ad-list grid grid-cols-1 md:grid-cols-2 lg:grid-cols-<%= maxColumns %> gap-8"></div>
+    <% } %>
+
+    <% if (groupAds.length === 0 && mode === "ssr") { %>
+    <div class="text-center py-8 text-gray-500 dark:text-gray-400">
+      <i class="ri-inbox-2-fill text-6xl mb-4 block"></i>
+      <p class="text-3xl">No group ads available at the moment</p>
+      <p class="text-xl">Check back later or create your first group ad</p>
+    </div>
+    <% } %>
+
+    <% if (groupAds.length > 0 && mode === "ssr") { %>
+    <!-- SSR MODE -->
+    <!-- list of group ads: layout grid with max 3 columns -->
+    <div class="group-ad-list grid grid-cols-1 md:grid-cols-2 lg:grid-cols-<%= maxColumns %> gap-8">
+      <% groupAds.forEach(groupAd => { %>
+      <%- 
+        include('./group-ad-item', { 
+          groupAd,
+          enableActions: groupAd.userId !== user?.id,
+          showItemStatus: false,
+        }) 
+      %>
+      <% }) %>
+    </div>
+    <% } %>
+    <!-- end list of group ads -->
+
+    <!-- Pagination -->
+    <% if (showPagination && pagination && pagination.totalPages > 1) { %>
+    <div class="flex justify-center items-center space-x-4 mt-8">
+      <% if (pagination.page > 1) { %>
+      <a href="?page=<%= pagination.page - 1 %>" class="rts-btn btn-outline">Previous</a>
+      <% } %>
+
+      <div class="text-gray-600 dark:text-gray-300">
+        Page <%= pagination.page %> of <%= pagination.totalPages %>
+      </div>
+
+      <% if (pagination.page < pagination.totalPages) { %>
+      <a href="?page=<%= pagination.page + 1 %>" class="rts-btn btn-primary">Next</a>
+      <% } %>
+    </div>
+    <% } %>
+    <!-- End Pagination -->
+
+    <% if (showViewAll) { %>
+    <div class="flex justify-center my-4">
+      <a href="/group-ads" class="rts-btn btn-primary text-center">View All</a>
+    </div>
+    <% } %>
+  </div>
+</div>

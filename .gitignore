@@ -1,0 +1,69 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# typpescript
+tsconfig.tsbuildinfo
+
+# dependencies
+node_modules
+node_modules/
+optimizer/node_modules/
+optimizer/yarn.lock
+/.pnp
+.pnp.js
+/mocks
+
+# testing
+/coverage
+
+# next.js
+/out/
+out/
+.next
+.next/
+
+# production
+build
+/build
+
+# misc
+.DS_Store
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+yarn.lock
+.yarn
+.pnp.cjs
+.pnp.loader.mjs
+pnpm-lock.yaml
+
+# local env files
+.env
+.env.dev
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Storage
+storage/
+!storage/exchange-rate.json
+public/uploads
+public/screenshots

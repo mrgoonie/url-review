@@ -1,0 +1,17 @@
+<html lang="en" class="h-full">
+<!-- HEAD -->
+
+<head>
+  <%- include('common/head', locals) %>
+</head>
+
+<!-- BODY -->
+
+<body class="h-full w-full">
+  <!-- CONTENT -->
+  <% if (typeof template !== 'undefined') { %>
+  <%- include(template); %>
+  <% } %>
+</body>
+
+</html>

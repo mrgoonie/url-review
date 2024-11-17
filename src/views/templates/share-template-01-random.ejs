@@ -1,0 +1,12 @@
+<% const backgroundImageUrl = `/templates/share-bg-${String(Math.floor(Math.random() * 10) + 1).padStart(2, '0')}.png`; %>
+<% const imageUrl = locals.image_url || "/images/screenshot-sample-02.png"; %>
+
+<div id="viewport" class="w-[1200px] h-[630px] relative bg-white overflow-hidden">
+  <!-- Background -->
+  <div class="w-[1200px] h-[630px] left-0 top-0 absolute justify-center items-center inline-flex">
+    <img class="w-[1200px] h-[630px]" src="<%= backgroundImageUrl %>" />
+  </div>
+  <!-- Image -->
+  <div class="w-[1030px] h-[570px] left-1/2 -translate-x-1/2 bottom-[-2px] absolute rounded-tl-[30px] rounded-tr-[30px] shadow-2xl justify-center items-center inline-flex overflow-hidden z-50" style="background-image: url('<%= imageUrl %>'); background-size: cover; background-position: top center;">
+  </div>
+</div>

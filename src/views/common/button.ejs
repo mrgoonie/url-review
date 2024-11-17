@@ -1,0 +1,11 @@
+<% 
+const buttonHref = typeof href !== 'undefined' ? href : '#'; 
+const buttonTarget = typeof target !== 'undefined' ? target : '_self';
+const buttonColor = typeof color !== 'undefined' ? color : 'bg-blue-500 hover:bg-blue-600';
+const buttonDataId = typeof dataId !== 'undefined' ? dataId : '';
+const buttonClassName = typeof className !== 'undefined' ? className : '';
+%>
+
+<a href="<%= buttonHref %>" target="<%= buttonTarget %>" class="transition-colors no-underline !px-6 !py-3 rounded-xl text-white <%= buttonColor %> <%= buttonClassName %>" <% if (buttonDataId !== '') { %>data-id="<%= buttonDataId %>" <% } %>>
+  <%- content %>
+</a>

@@ -1,0 +1,86 @@
+<div id="group-ads-preview-container" class="flex flex-col gap-10" data-group-ad-id="" data-product-id="">
+  <div id="group-ads-preview-information-section">
+    <h3 class="text-4xl font-bold mb-6">1. Group Campaign Information</h3>
+    <div id="group-ads-information">
+      <p class="my-0 mb-1">Created by <strong id="group-ads-created-by"></strong></p>
+      <p class="my-0 mb-1">Created at <strong id="group-ads-created-at"></strong></p>
+      <p class="my-0 mb-1">Category <strong id="group-ads-category"></strong></p>
+      <p class="my-0 mb-1">Individual budget <strong id="group-ads-individual-budget"></strong></p>
+      <p class="my-0 mb-1">Duration <strong id="group-ads-duration"></strong></p>
+      <p class="my-0 mb-1">Countries <strong id="group-ads-countries"></strong></p>
+      <p class="my-0 mb-1">Advertising Platforms <strong id="group-ads-advertising-platforms"></strong></p>
+    </div>
+  </div>
+
+  <div id="group-ads-preview-products-section">
+    <h3 class="text-4xl font-bold mb-6">2. Products</h3>
+    <!-- products grid -->
+    <div class="products-grid grid grid-cols-2 gap-4">
+      <!-- participant's product slot template -->
+      <div class="bg-gray-100 p-4 rounded-md flex gap-4">
+        <!-- image -->
+        <div class="size-[60px]">
+          <img src="" alt="" class="w-full h-full object-cover">
+        </div>
+        <!-- info -->
+        <div class="flex flex-col gap-1 justify-center">
+          <!-- name -->
+          <p id="product-name"></p>
+          <!-- author -->
+          <p id="product-author"></p>
+        </div>
+      </div>
+      <!-- empty product slot template: select current user's product to join into this slot -->
+      <div class="bg-gray-100 p-4 rounded-md flex gap-4">
+        <select name="" id="" class="w-full">
+          <option value="">Select Product</option>
+        </select>
+      </div>
+    </div>
+    <!-- create product button -->
+    <button class="rts-btn btn-primary mt-4" onclick="event.preventDefault(); openDrawer('create-product')">Create Product</button>
+  </div>
+
+  <div id="group-ads-preview-summary-section">
+    <h3 class="text-4xl font-bold mb-6">3. Group Ad Campaign Summary</h3>
+    <table class="w-full text-left ">
+      <tbody class="">
+        <tr class="bg-zinc-100 dark:bg-zinc-700">
+          <td class="font-semibold">Duration</td>
+          <td class="text-right" id="summary-duration">0 day</td>
+        </tr>
+        <tr class="bg-zinc-100 dark:bg-zinc-700">
+          <td class="font-semibold">Daily budget</td>
+          <td class="text-right" id="summary-daily-budget">$0</td>
+        </tr>
+        <tr class="bg-zinc-100 dark:bg-zinc-700">
+          <td class="font-semibold">Total slots</td>
+          <td class="text-right" id="summary-total-slots">0</td>
+        </tr>
+        <tr>
+          <td class="font-semibold">Total budget</td>
+          <td class="text-right" id="summary-total-budget">$0</td>
+        </tr>
+        <tr class="border-t border-gray-300 dark:border-gray-600">
+          <td class="pt-2 font-semibold">Your budget</td>
+          <td class="pt-2 text-right" id="summary-your-budget">$0</td>
+        </tr>
+        <tr>
+          <td class="font-semibold">Service fee (15%)</td>
+          <td class="text-right" id="summary-service-fee">$0</td>
+        </tr>
+        <tr>
+          <td class="font-semibold">VAT (5%)</td>
+          <td class="text-right" id="summary-vat">$0</td>
+        </tr>
+        <tr class="border-t-2 bg-zinc-100 dark:bg-zinc-700 border-primary-500 dark:border-primary-400">
+          <td class="pt-2 text-3xl font-bold">Total</td>
+          <td class="pt-2 text-right text-3xl font-bold text-primary-500 dark:text-primary-400" id="summary-total">$0</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <button class="rts-btn btn-primary">Join Now!</button>
+
+</div>

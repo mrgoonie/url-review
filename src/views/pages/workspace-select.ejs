@@ -1,0 +1,57 @@
+<div class="w-full flex justify-center items-center">
+  <div class="h-auto text-center flex flex-col items-center">
+    <%- include('../common/logo-verticle') %>
+
+    <div class="flex flex-col items-center p-8 bg-white dark:bg-gray-800 rounded-lg shadow-lg gap-4 my-4">
+      <h2 class="text-gray-800 dark:text-gray-200">Select Workspace</h2>
+      <select id="workspaceSelect" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200">
+        <option value="">Choose a workspace</option>
+        <% for (const workspace of workspaces) { %>
+        <option value="<%- workspace.id %>"><%- workspace.name %></option>
+        <% } %>
+      </select>
+      <div id="errorMessage" class="text-red-500 hidden"></div>
+      <a href="/logout" class="inline-block py-2 px-6 no-underline bg-blue-400 hover:bg-blue-500 transition-all rounded-md text-white">
+        Sign out
+      </a>
+      <%- include('../common/button', { href: '/', content: 'Home' }) %>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  document.getElementById('workspaceSelect').addEventListener('change', async function(e) {
+    const workspaceId = e.target.value;
+    if (!workspaceId) return;
+
+    try {
+      const response = await fetch('/api/v1/user/join-workspace', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          workspaceId
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.status === 1) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirectUri = urlParams.get('redirect_uri') || '/profile';
+        window.location.href = redirectUri;
+      } else {
+        const errorMessage = document.getElementById('errorMessage');
+        errorMessage.textContent = data.message || 'Please try again later';
+        errorMessage.classList.remove('hidden');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      const errorMessage = document.getElementById('errorMessage');
+      errorMessage.textContent = 'An unexpected error occurred. Please try again later.';
+      errorMessage.classList.remove('hidden');
+    }
+  });
+</script>

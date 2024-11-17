@@ -1,0 +1,174 @@
+// subs cribe area
+.subscribe-main-wrapper-one{
+    padding: 80px;
+    background: var(--subscribe-form);
+    border-radius: 16px;
+    position: relative;
+    overflow: hidden;
+    p.disc{
+        @media #{$large-mobile} {
+            br{
+                display: none;
+            }
+        }
+    }
+    @media #{$large-mobile} {
+        padding: 25px;
+    }
+    form{
+        position: relative;
+        max-width: 591px;
+        margin: auto;
+        i{
+            position: absolute;
+            left: 15px;
+            top: 22px;
+        }
+        input{
+            padding-left: 35px;
+            border: 1px solid #C9CCE2;
+        }
+    }
+    .title{
+        margin-bottom: 30px;
+        @media #{$sm-layout} {
+            font-size: 34px;
+            br{
+                display: none;
+            }
+        }
+        @media(max-width:450px){
+            font-size: 26px;
+        }
+    }
+    form{
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        justify-content: center;
+        @media #{$large-mobile} {
+            flex-direction: column;
+            justify-content: center;
+        }
+        input{
+            height: 56px;
+            background: #fff;
+            max-width: 394px;
+            border-radius: 12px;
+            @media(max-width:576px){
+                max-width: 100%;
+            }
+        }
+        button{
+            padding: 19px 25px;
+        }
+    }
+    .shape-area{
+        .one{
+            position: absolute;
+            top: -60px;
+            right: 15%;
+            @include res($xs){
+                @include dn;
+            }
+        }
+        .two{
+            position: absolute;
+            bottom: 10%;
+            right: -30px;
+        }
+        .three{
+            position: absolute;
+            bottom: 5%;
+            right: 80%;
+            @include res($xs){
+                @include dn;
+            }
+        }
+        .four{
+            position: absolute;
+            left: -10px;
+            bottom: 48%;
+        }
+    }
+}
+
+.mySwiper-service-2{
+    overflow: hidden;
+    position: relative;
+    .button-pagination-area{
+        display: flex;
+        align-items: center;
+        .swiper-pagination{
+            left: 0;
+            right: auto;
+            text-align: left;
+            display: flex;
+            align-items:center;
+            gap: 5px;
+            bottom: 31px;
+            min-width: max-content;
+            max-width: max-content;
+            .swiper-pagination-bullet{
+                background: var(--color-primary);
+                height: 11px;
+                width: 11px;
+            }
+        }
+        .swiper-button-next,
+        .swiper-button-prev{
+            background-image: none;
+            bottom: 0;
+            top: auto;
+            &::after{
+                position: absolute;
+                content: '\f061';
+                font-family: var(--font-three);
+                font-size: 20px;
+                right: 0;
+                bottom: 10px;
+                color: #000;
+                height: 45px;
+                width: 45px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: #DFDBF9;
+                color: var(--color-primary);
+                transform: rotate(-45deg);
+                transition: .3s;
+            }
+            &:hover{
+                &::after{
+                    background: var(--color-primary);
+                    color: #fff;
+                    transform: scale(1.1) rotate(-45deg);
+                }
+            }
+        }
+        .swiper-button-next{
+            right: 5px;
+            left: auto;
+        }
+        .swiper-button-prev{
+            right: 65px;
+            left: auto;
+            &::after{
+                content: '\f060';
+            }
+        }
+    }
+}
+
+.rts-subscribe-area-one{
+    &.about{
+        .btn-area{
+            gap: 32px;
+            @media(max-width:450px){
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+    }
+}

@@ -1,0 +1,245 @@
+<%
+const className = locals.className || "";
+const label = locals.label || "";
+const id = locals.id || "";
+const name = locals.name || id; // Add a name attribute for form submission
+const placeholder = locals.placeholder || "";
+const data = locals.data || [];
+const allowAddMore = locals.allowAddMore ?? true;
+const onChange = locals.onChange || null; // Change to null instead of empty function
+%>
+
+<!-- Countries Selection -->
+<div class="flex flex-col gap-4 <%= className %>">
+  <label for="<%= id %>" class="text-xl font-semibold"><%= label %></label>
+  <div id="<%= id %>-container" class="relative">
+    <input type="text" id="<%= id %>" placeholder="<%= placeholder %>" class="w-full p-3 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600" />
+
+    <!-- Hidden input to store selected items -->
+    <input type="hidden" name="<%= name %>" id="<%= id %>-hidden-input" value="" />
+
+    <div id="<%= id %>-dropdown" class="absolute z-10 w-full mt-1 bg-white border rounded-lg shadow-lg dark:bg-gray-800 hidden">
+      <!-- Dynamically populated data list -->
+    </div>
+    <div id="<%= id %>-selected-data" class="flex flex-wrap gap-2 mt-2">
+      <!-- Selected items will be added here as tags -->
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const inputElement = document.getElementById('<%= id %>');
+    const dropdownElement = document.getElementById('<%= id %>-dropdown');
+    const selectedContainer = document.getElementById('<%= id %>-selected-data');
+    const hiddenInput = document.getElementById('<%= id %>-hidden-input');
+
+    // Predefined list of items
+    const data = <%- JSON.stringify(data) %>;
+    const allowAddMore = <%= allowAddMore %>;
+    const onChangeFunctionName = '<%= onChange %>';
+
+    // Array to track selected items
+    let selectedItems = [];
+    let currentFocusIndex = -1;
+
+    // Improved onChange handling
+    function triggerOnChange(selectedItems) {
+      // Check if onChange is a string function name
+      if (typeof onChangeFunctionName === 'string') {
+        const globalFunction = window[onChangeFunctionName];
+        if (typeof globalFunction === 'function') {
+          globalFunction(selectedItems);
+        } else {
+          console.warn(`input-tags.ejs > onChange: Global function '${onChangeFunctionName}' not found`);
+        }
+      }
+      // Check if onChange is a function passed directly
+      else if (typeof onChangeFunctionName === 'function') {
+        onChangeFunctionName(selectedItems);
+      }
+    }
+
+    // Update hidden input and selectedItems array
+    // Update hidden input and selectedItems array
+    function updateHiddenInput() {
+      // Store selected item IDs or full objects based on your data structure
+      hiddenInput.value = JSON.stringify(selectedItems);
+
+      // Call onChange if it exists
+      if (onChangeFunctionName) {
+        try {
+          triggerOnChange(selectedItems);
+        } catch (error) {
+          console.error("input-tags.ejs > onChange callback error :>>", error);
+        }
+      }
+    }
+
+    // Filter and show countries as user types
+    inputElement.addEventListener('input', function() {
+      const searchTerm = this.value.toLowerCase();
+      const filteredData = data.filter(item =>
+        item.name.toLowerCase().includes(searchTerm)
+      );
+
+      // Clear previous dropdown
+      dropdownElement.innerHTML = '';
+      dropdownElement.classList.remove('hidden');
+      currentFocusIndex = -1;
+
+      // Populate dropdown
+      filteredData.forEach((item, index) => {
+        const countryElement = document.createElement('div');
+        countryElement.textContent = item.name;
+        countryElement.classList.add(
+          'px-6', 'py-2', 'hover:bg-gray-100', 'dark:hover:bg-gray-700', 'cursor-pointer'
+        );
+        countryElement.dataset.index = index;
+        countryElement.addEventListener('click', () => addTagItem(item));
+        dropdownElement.appendChild(countryElement);
+      });
+
+      // Add option to create new tag if allowed
+      if (allowAddMore && searchTerm && !filteredData.length) {
+        const createNewElement = document.createElement('div');
+        createNewElement.textContent = `Create new: "${searchTerm}"`;
+        createNewElement.classList.add(
+          'px-6', 'py-2', 'hover:bg-gray-100', 'dark:hover:bg-gray-700',
+          'cursor-pointer', 'text-primary', 'font-semibold'
+        );
+        createNewElement.addEventListener('click', () => {
+          const newItem = {
+            name: searchTerm,
+            isNew: true
+          };
+          addTagItem(newItem);
+        });
+        dropdownElement.appendChild(createNewElement);
+      }
+
+      // Hide dropdown if no results and not allowing new items
+      if (filteredData.length === 0 && !allowAddMore) {
+        dropdownElement.classList.add('hidden');
+      }
+    });
+
+    // Keyboard navigation for dropdown
+    inputElement.addEventListener('keydown', function(event) {
+      const dropdownItems = dropdownElement.children;
+
+      if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        currentFocusIndex = Math.min(currentFocusIndex + 1, dropdownItems.length - 1);
+        updateFocus();
+      } else if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        currentFocusIndex = Math.max(currentFocusIndex - 1, 0);
+        updateFocus();
+      } else if (event.key === 'Enter') {
+        event.preventDefault();
+        if (currentFocusIndex >= 0) {
+          const selectedItem = dropdownItems[currentFocusIndex];
+          const itemData = selectedItem.textContent.startsWith('Create new:') ? {
+              name: selectedItem.textContent.replace('Create new: "', '').replace('"', ''),
+              isNew: true
+            } :
+            data.find(item => item.name === selectedItem.textContent);
+          addTagItem(itemData);
+        } else if (allowAddMore && this.value.trim()) {
+          // If no item selected but input has value and adding is allowed
+          const newItem = {
+            name: this.value.trim(),
+            isNew: true
+          };
+          addTagItem(newItem);
+        }
+      }
+    });
+
+    // Update focus styling
+    function updateFocus() {
+      const dropdownItems = dropdownElement.children;
+
+      // Remove previous focus
+      Array.from(dropdownItems).forEach(item => {
+        item.classList.remove('bg-gray-200', 'dark:bg-gray-600');
+      });
+
+      // Add focus to current item
+      if (currentFocusIndex >= 0 && currentFocusIndex < dropdownItems.length) {
+        const focusedItem = dropdownItems[currentFocusIndex];
+        focusedItem.classList.add('bg-gray-200', 'dark:bg-gray-600');
+        focusedItem.scrollIntoView({
+          block: 'nearest'
+        });
+      }
+    }
+
+    // Add tag item
+    function addTagItem(item) {
+      // Prevent duplicate items
+      const existingTags = selectedItems.map(selectedItem =>
+        typeof selectedItem === 'object' ? selectedItem.name : selectedItem
+      );
+
+      if (!existingTags.includes(item.name)) {
+        const tag = document.createElement('div');
+        tag.classList.add(
+          'flex', 'items-center', 'bg-gray-200', 'dark:bg-gray-700',
+          'px-6', 'py-2', 'rounded-full', 'text-2xl'
+        );
+
+        const tagText = document.createElement('span');
+        tagText.textContent = item.name;
+
+        // Add visual indicator for newly created tags
+        if (item.isNew) {
+          tagText.classList.add('italic', 'text-primary');
+        }
+
+        const removeButton = document.createElement('span');
+        removeButton.innerHTML = '<i class="ri-close-line"></i>';
+        removeButton.classList.add(
+          'ml-2', 'cursor-pointer', 'text-red-500', 'font-bold'
+        );
+        removeButton.addEventListener('click', () => {
+          // Remove from selected container
+          selectedContainer.removeChild(tag);
+
+          // Remove from selectedItems array
+          selectedItems = selectedItems.filter(selectedItem =>
+            (typeof selectedItem === 'object' ? selectedItem.name : selectedItem) !== item.name
+          );
+
+          // Update hidden input
+          updateHiddenInput();
+        });
+
+        tag.appendChild(tagText);
+        tag.appendChild(removeButton);
+        selectedContainer.appendChild(tag);
+
+        // Add to selectedItems
+        selectedItems.push(item);
+
+        // Update hidden input
+        updateHiddenInput();
+      }
+
+      // Clear input and dropdown
+      inputElement.value = '';
+      dropdownElement.classList.add('hidden');
+      currentFocusIndex = -1;
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+      if (!inputElement.contains(event.target) &&
+        !dropdownElement.contains(event.target)) {
+        dropdownElement.classList.add('hidden');
+        currentFocusIndex = -1;
+      }
+    });
+  });
+</script>

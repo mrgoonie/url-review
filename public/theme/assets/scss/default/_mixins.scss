@@ -1,0 +1,57 @@
+
+@mixin clearfix() {
+    &::after {
+        content: "";
+        clear: both;
+        display: table;
+    }
+}
+
+@mixin config-bg-colors($prefix, $bg-color-...) {
+    @each $i in $bg-color- {
+        .#{$prefix}#{nth($i, 1)} {
+            background: nth($i, 2);
+        }
+    }
+}
+
+@mixin placeholder {
+    &::-webkit-input-placeholder {
+        @content;
+    }
+
+    &:-moz-placeholder {
+        @content;
+    }
+
+    &::-moz-placeholder {
+        @content;
+    }
+
+    &:-ms-input-placeholder {
+        @content;
+    }
+}
+
+// responsive breakpoint
+$xxl: "screen and (min-width: 1400px) and (max-width: 1600px)";
+$xl: "screen and (max-width: 1400px)";
+$lg: "screen and (max-width: 1200px)";
+$md: "screen and (max-width: 992px)";
+$sm: "screen and (max-width: 768px)";
+$xs: "screen and (max-width: 576px)";
+$xss: "screen and (max-width:480px)";
+
+@mixin res($query) {
+  @media #{$query} {
+    @content;
+  }
+}
+// display none
+@mixin dn{
+    display: none;
+}
+
+// for dark mode
+
+// for light mode

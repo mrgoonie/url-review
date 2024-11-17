@@ -1,0 +1,319 @@
+// case studies
+
+.banner-case-studies {
+    background: var(--gradient-dark, linear-gradient(258deg, #373551 8.48%, #212026 94.83%));
+}
+
+.banner-case-studies-wrapper {
+    padding-top: 180px;
+    text-align: center;
+    padding-bottom: 540px;
+    @include res($sm){
+        padding-bottom: 180px;
+    }
+    .title {
+        color: #F8F9FB;
+        @include res($sm){
+            font-size: 60px;
+            line-height: 65px;
+        }
+        @include res($xs){
+            font-size: 45px;
+            line-height: 50px;
+        }
+        span {
+            color: var(--color-primary);
+        }
+    }
+
+    p.disc {
+        max-width: 57%;
+        margin: auto;
+        color: #E4E5F1;
+        font-size: 20px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 150%;
+        letter-spacing: -0.4px;
+        @include res($sm){
+            max-width: 85%;
+        }
+        @include res($xs){
+            max-width: 100%;
+        }
+    }
+}
+
+.rts-product-area-case-studies {
+    margin-top: -450px;
+    @include res($sm){
+        margin-top: 80px;
+    }
+}
+
+.product-area-start-case-studies {
+    border-radius: 32px;
+    background: var(--case-study-2);
+}
+
+.header-style-one.case-studies {
+    .main-nav-area {
+        li {
+            a {
+                color: #fff;
+            }
+
+            &:hover {
+                a {
+                    color: var(--color-primary);
+                }
+            }
+        }
+    }
+
+    .button-area-start {
+        .demo-req {
+            &:hover {
+                color: var(--color-primary);
+            }
+        }
+
+        a {
+            color: #fff;
+        }
+    }
+}
+
+
+
+.single-case-studies-bread-crumb-area {
+    .breadcrumb-inner {
+        display: flex;
+        justify-content: center;
+        padding: 150px 0 0 0;
+        flex-direction: column;
+        align-items: center;
+
+        .pagimation {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 25px;
+
+            a {
+                color: var(--color-title);
+
+                &.current {
+                    color: #929295;
+                }
+            }
+
+            i {
+                color: #929295;
+            }
+        }
+
+        .title {
+            font-size: 80px;
+            font-style: normal;
+            font-weight: 800;
+            line-height: 100%;
+            letter-spacing: -2.4px;
+
+            @include res($xs) {
+                font-size: 40px;
+            }
+        }
+
+        p.disc {
+            color: #717383;
+        }
+    }
+
+    &.area-2 {
+        .breadcrumb-inner {
+            padding-top: 60px;
+        }
+    }
+}
+
+
+.strategy-right-area {
+    @include res($lg) {
+        padding-left: 0;
+        margin-top: 20px;
+    }
+
+    a {
+        display: block;
+        font-size: 20px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 200%;
+        letter-spacing: -0.4px;
+        color: var(--color-title);
+        transition: .3s;
+
+        &:hover {
+            color: var(--color-primary);
+        }
+
+        &.btn-arrow {
+            margin-top: 40px;
+            color: var(--color-primary);
+        }
+    }
+
+    .btn-arrow {
+        font-size: 16px;
+
+        i {
+            margin-left: 10px;
+        }
+
+        position: relative;
+        max-width: max-content;
+        z-index: 1;
+
+        &::after {
+            position: absolute;
+            content: '';
+            left: 0;
+            bottom: -5px;
+            width: 100%;
+            height: 1px;
+            background: #DCDDEB;
+        }
+
+        &::before {
+            position: absolute;
+            content: '';
+            left: 0;
+            bottom: -5px;
+            width: 0%;
+            height: 1px;
+            background: var(--color-primary);
+            transition: .3s;
+            z-index: 2;
+        }
+
+        &:hover {
+            &::before {
+                width: 100%;
+            }
+        }
+    }
+}
+
+.strategy-left-content {
+    p.disc {
+        max-width: 83%;
+
+        @include res($md) {
+            max-width: 100%;
+        }
+    }
+}
+
+.arrow-rotate {
+    i {
+        transform: rotate(-45deg);
+    }
+}
+
+.short-case-studies-inner {
+    padding: 80px;
+    text-align: center;
+    background: var(--footer-four-bg);
+    border-radius: 32px;
+
+    @include res($xs) {
+        padding: 40px 20px;
+    }
+
+    .title {
+        font-size: 40px;
+        margin-bottom: 25px;
+
+        @include res($xs) {
+            font-size: 18px;
+        }
+    }
+
+    p.disc {
+        max-width: 70%;
+        margin: auto;
+
+        @include res($xs) {
+            max-width: 100%;
+        }
+    }
+}
+
+// rts image section
+
+.thumbnail-image-grid a img {
+    width: 100%;
+    border-radius: 16px;
+}
+
+
+.single-case-studies-bread-crumb-area {
+    position: relative;
+    z-index: 1;
+
+    .shape-area {
+        @include res($xs) {
+            display: none;
+        }
+
+        img {
+            position: absolute;
+            z-index: -1;
+
+            &.one {
+                top: 25%;
+                left: 30%;
+            }
+
+            &.two {
+                top: 75%;
+                right: 0%;
+            }
+
+            &.three {
+                top: 50%;
+                right: 30%;
+
+                @include res($sm) {
+                    top: 35%;
+                    right: 20%;
+                }
+
+                @include res($md) {
+                    top: 40%;
+                    right: 25%;
+                }
+            }
+
+            &.four {
+                top: 90%;
+                left: 25%;
+
+                @include res($sm) {
+                    display: none;
+                }
+            }
+        }
+    }
+}
+
+.large-image-area {
+    position: relative;
+    z-index: 5;
+    .large-thumbnail{
+        border-radius: 16px;
+        overflow: hidden;
+    }
+}

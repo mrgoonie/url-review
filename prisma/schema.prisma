@@ -1,0 +1,426 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider        = "prisma-client-js"
+    binaryTargets   = ["native", "linux-musl-openssl-3.0.x"]
+    previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+    provider = "postgresql"
+    // NOTE: When using mysql or sqlserver, uncomment the @db.Text annotations in model Account below
+    // Further reading:
+    // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
+    // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
+    url      = env("DATABASE_URL")
+    // directUrl = env("DIRECT_URL")
+}
+
+model Key {
+    id             String  @id @unique
+    hashedPassword String?
+    userId         String
+    activeExpires  BigInt
+    idleExpires    BigInt
+    user           User    @relation(references: [id], fields: [userId], onDelete: Cascade)
+
+    @@index([userId])
+}
+
+// Defines a session for user authentication, related to a specific user
+model Session {
+    id        String   @id @default(uuid())
+    userId    String
+    user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
+    createdAt DateTime @default(now())
+    expiresAt DateTime
+}
+
+// Represents an account linked to a user, unique per provider-account ID combination
+model Account {
+    id                String @id @default(uuid())
+    providerAccountId String @unique
+    provider          String
+
+    createdAt DateTime? @default(now())
+    updatedAt DateTime? @updatedAt
+
+    userId String
+    user   User?  @relation(fields: [userId], references: [id])
+
+    @@index([userId])
+}
+
+// User model capturing basic user information and relationships with other entities
+model User {
+    id         String  @id @default(uuid())
+    name       String
+    slug       String  @unique
+    password   String?
+    email      String? @unique
+    image      String?
+    validEmail Boolean @default(false)
+    isPremium  Boolean @default(false)
+    balance    Float   @default(0)
+
+    createdAt DateTime? @default(now())
+    updatedAt DateTime? @updatedAt
+
+    activeWorkspaceId String?
+    activeWorkspace   Workspace? @relation(fields: [activeWorkspaceId], references: [id], name: "activeWorkspace")
+
+    key                   Key[]
+    sessions              Session[]
+    accounts              Account[]
+    userRoles             UserRole[]
+    metaFile              MetaFile[]
+    emailVerificationCode EmailVerificationCode[]
+    workspaces            Workspace[]             @relation("creator")
+    workspace             Workspace[]
+    workspaceUserRole     WorkspaceUserRole[]
+    passwordResetToken    PasswordResetToken[]
+    apiKeys               ApiKey[]
+    userPlans             UserPlan[]
+    workspacePlans        WorkspacePlan[]
+    reviews               Review[]
+    webUrls               WebUrl[]
+}
+
+model PasswordResetToken {
+    id        String @id @default(uuid())
+    userId    String
+    tokenHash String
+
+    createdAt DateTime @default(now())
+    expiresAt DateTime
+
+    user User @relation(fields: [userId], references: [id])
+}
+
+// Manages email verification codes for users
+model EmailVerificationCode {
+    id     String @id @default(uuid())
+    userId String
+    code   String
+
+    createdAt DateTime @default(now())
+    expiresAt DateTime
+
+    user User @relation(fields: [userId], references: [id])
+}
+
+// Manages email verification tokens for users
+model EmailVerificationToken {
+    id        String @id @default(uuid())
+    tokenHash String
+    email     String
+
+    createdAt DateTime @default(now())
+    expiresAt DateTime
+}
+
+// Defines roles within the system
+model Role {
+    id              String           @id @default(uuid())
+    name            String           @unique
+    userRoles       UserRole[]
+    rolePermissions RolePermission[]
+}
+
+// Intermediary table for many-to-many relationship between users and roles
+model UserRole {
+    id     String @id @default(uuid())
+    userId String
+    roleId String
+    user   User   @relation(fields: [userId], references: [id])
+    role   Role   @relation(fields: [roleId], references: [id])
+
+    @@unique([userId, roleId])
+}
+
+// Defines permissions within the system
+model Permission {
+    id              String           @id @default(uuid())
+    name            String           @unique
+    rolePermissions RolePermission[]
+}
+
+// Intermediary table for many-to-many relationship between roles and permissions
+model RolePermission {
+    id           String     @id @default(uuid())
+    roleId       String
+    permissionId String
+    role         Role       @relation(fields: [roleId], references: [id])
+    permission   Permission @relation(fields: [permissionId], references: [id])
+
+    @@unique([roleId, permissionId])
+}
+
+// Manages files or media associated with a user, including metadata
+model MetaFile {
+    id         String  @id @default(uuid())
+    mimetype   String?
+    url        String?
+    blurBase64 String?
+    width      Int?
+    height     Int?
+    approved   Boolean @default(true)
+
+    createdAt DateTime? @default(now())
+
+    userId String
+    user   User   @relation(fields: [userId], references: [id])
+}
+
+// Represents a workspace or project area within the system
+model Workspace {
+    id          String  @id @default(uuid())
+    name        String
+    slug        String  @unique
+    description String?
+    isPublic    Boolean @default(false)
+    creatorId   String
+    creator     User    @relation(fields: [creatorId], references: [id], name: "creator")
+
+    createdAt DateTime  @default(now())
+    updatedAt DateTime? @updatedAt
+
+    workspaceRoles       WorkspaceRole[]
+    workspaceUserRoles   WorkspaceUserRole[]
+    WorkspacePlan        WorkspacePlan[]
+    User                 User[]
+    activeWorkspaceUsers User[]              @relation("activeWorkspace")
+    apiKeys              ApiKey[]
+    reviews              Review[]
+    webUrls              WebUrl[]
+
+    @@unique([id, slug])
+    @@index([creatorId])
+}
+
+// Defines roles specific to a workspace
+model WorkspaceRole {
+    id          String @id @default(uuid())
+    name        String
+    workspaceId String
+
+    workspace               Workspace                 @relation(fields: [workspaceId], references: [id])
+    workspaceUserRoles      WorkspaceUserRole[]
+    workspaceRolePermission WorkspaceRolePermission[]
+}
+
+// Intermediary table for many-to-many relationship between workspace users and roles
+model WorkspaceUserRole {
+    id              String        @id @default(uuid())
+    workspaceId     String
+    workspace       Workspace     @relation(fields: [workspaceId], references: [id])
+    userId          String
+    user            User          @relation(fields: [userId], references: [id])
+    workspaceRoleId String
+    workspaceRole   WorkspaceRole @relation(fields: [workspaceRoleId], references: [id])
+}
+
+// Defines permissions within a workspace context
+model WorkspacePermission {
+    id                      String                    @id @default(uuid())
+    name                    String                    @unique
+    workspaceRolePermission WorkspaceRolePermission[]
+}
+
+// Intermediary table for many-to-many relationship between workspace roles and permissions
+model WorkspaceRolePermission {
+    id String @id @default(uuid())
+
+    workspaceRole         WorkspaceRole       @relation(fields: [workspaceRoleId], references: [id])
+    workspaceRoleId       String
+    workspacePermission   WorkspacePermission @relation(fields: [workspacePermissionId], references: [id])
+    workspacePermissionId String
+}
+
+enum Currency {
+    USD
+    VND
+    // ...
+}
+
+enum PlanInterval {
+    MONTH
+    YEAR
+}
+
+enum PlanType {
+    FREE
+    PAID
+}
+
+enum PlanStatus {
+    ACTIVE
+    CANCELLED
+    EXPIRED
+}
+
+model Plan {
+    id                  String          @id @default(uuid())
+    slug                String          @unique
+    name                String
+    description         String
+    price               Int
+    currency            Currency
+    interval            PlanInterval
+    intervalCount       Int
+    type                PlanType
+    polarId             String?
+    checkoutUrl         String?
+    // plan info
+    maxRequestPerMinute Int
+    maxRequestPerMonth  Int
+    features            Json
+    // datetime
+    createdAt           DateTime        @default(now())
+    updatedAt           DateTime?       @updatedAt
+    // relations
+    UserPlan            UserPlan[]
+    WorkspacePlan       WorkspacePlan[]
+}
+
+model UserPlan {
+    id               String     @id @default(uuid())
+    status           PlanStatus
+    requestPerMinute Int
+    requestPerMonth  Int
+    polarId          String?
+
+    userId String
+    user   User   @relation(fields: [userId], references: [id])
+    planId String
+    plan   Plan   @relation(fields: [planId], references: [id])
+
+    createdAt DateTime  @default(now())
+    updatedAt DateTime? @updatedAt
+    expiresAt DateTime?
+}
+
+model WorkspacePlan {
+    id               String     @id @default(uuid())
+    status           PlanStatus
+    requestPerMinute Int
+    requestPerMonth  Int
+    polarId          String?
+
+    userId      String?
+    user        User?     @relation(fields: [userId], references: [id])
+    planId      String
+    plan        Plan      @relation(fields: [planId], references: [id])
+    workspaceId String
+    workspace   Workspace @relation(fields: [workspaceId], references: [id])
+
+    createdAt DateTime  @default(now())
+    updatedAt DateTime? @updatedAt
+    expiresAt DateTime?
+}
+
+model Proxy {
+    id String @id @default(uuid())
+
+    url  String
+    data Json?
+
+    createdAt DateTime  @default(now())
+    updatedAt DateTime? @updatedAt
+}
+
+model ApiKey {
+    id          String     @id @default(uuid())
+    name        String
+    key         String     @unique
+    userId      String
+    user        User       @relation(fields: [userId], references: [id])
+    workspaceId String?
+    workspace   Workspace? @relation(fields: [workspaceId], references: [id])
+
+    createdAt DateTime  @default(now())
+    updatedAt DateTime? @updatedAt
+    expiresAt DateTime?
+}
+
+// ------------------ APP SPECIFIC SCHEMAS ------------------
+
+// Cached website data
+model WebUrl {
+    id String @id @default(uuid())
+
+    url          String
+    meta         Json?
+    thumbnailUrl String?
+
+    userId      String?
+    user        User?      @relation(fields: [userId], references: [id])
+    workspaceId String?
+    workspace   Workspace? @relation(fields: [workspaceId], references: [id])
+
+    createdAt DateTime  @default(now())
+    updatedAt DateTime? @updatedAt
+}
+
+// Review model to store website review results
+model Review {
+    id           String       @id @default(uuid())
+    url          String
+    model        String
+    instructions String?
+    status       ReviewStatus @default(PENDING)
+
+    // Review results
+    aiAnalysis     Json?
+    seoScore       Float?
+    securityScore  Float?
+    securityRisk   Boolean?
+    mobileFriendly Boolean?
+    adultContent   Boolean?
+    gambling       Boolean?
+
+    // Screenshots
+    screenshots Screenshot[]
+
+    // Relationships
+    userId      String
+    user        User       @relation(fields: [userId], references: [id])
+    workspaceId String?
+    workspace   Workspace? @relation(fields: [workspaceId], references: [id])
+
+    createdAt DateTime  @default(now())
+    updatedAt DateTime? @updatedAt
+}
+
+// Screenshot model to store website screenshots
+model Screenshot {
+    id             String           @id @default(uuid())
+    url            String
+    imageUrl       String
+    fullPage       Boolean          @default(false)
+    deviceType     ScreenshotDevice @default(DESKTOP)
+    viewportWidth  Int
+    viewportHeight Int
+    viewportScale  Float
+
+    // Relationships
+    reviewId String
+    review   Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+}
+
+// Enums for Review and Screenshot models
+enum ReviewStatus {
+    PENDING
+    IN_PROGRESS
+    COMPLETED
+    FAILED
+}
+
+enum ScreenshotDevice {
+    DESKTOP
+    MOBILE
+    TABLET
+}

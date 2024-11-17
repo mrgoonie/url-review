@@ -1,0 +1,94 @@
+<!-- header area start -->
+<header class="header-style-one header--sticky <%= typeof page_slug !== 'undefined' ? page_slug : '' %>">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="header-style-one-wrapper">
+          <div class="logo-area">
+            <a href="/" class="logo">
+              <img class="light" src="/images/brand/boost-together-logo-colorful.svg" alt="logo" width="150">
+              <img class="dark" src="/images/brand/boost-together-logo-colorful.svg" alt="logo" width="150">
+            </a>
+          </div>
+
+          <nav class="main-nav-area m-0 !ml-10">
+            <ul class="list-unstyled fluxi-desktop-menu">
+              <li class="menu-item <%= path_name === "/" ? "active" : "" %>">
+                <a href="/" class="fluxi-dropdown-main-element"><i class="ri-home-2-line"></i> Home</a>
+              </li>
+
+              <li class="menu-item <%= path_name === "/dashboard/group-ads" ? "active" : "" %>">
+                <a href="/dashboard/group-ads" class="fluxi-dropdown-main-element">My Group Ads</a>
+              </li>
+            </ul>
+          </nav>
+
+          <div class="flex-grow"></div>
+
+          <div class="button-area-start gap-4">
+            <!-- <a class="call-us" href="tel:123-456-7890">Call Us : +134 (99) 865</a> -->
+            <% if (user) { %>
+            <a href="/logout" class="tippy" data-tippy-content="Logout" data-tippy-placement="bottom"><i class="ri-logout-box-line"></i></a>
+            <span>Hi, <a href="/profile" class="tippy" data-tippy-content="Profile" data-tippy-placement="bottom"><%= user.name %> <i class="ri-user-line"></i></a></span>
+            <a href="/create-group-ad" class="tippy rts-btn btn-primary" data-tippy-content="Coming Soon" data-tippy-placement="bottom">
+              <i class="ri-rocket-2-line"></i> Create Group Ad
+            </a>
+            <% } else { %>
+            <a href="/login" class="rts-btn btn-primary">Get Started</a>
+            <% } %>
+
+            <div class="menu-btn" id="menu-btn">
+              <svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect y="14" width="20" height="2" fill="#1F1F25"></rect>
+                <rect y="7" width="20" height="2" fill="#1F1F25"></rect>
+                <rect width="20" height="2" fill="#1F1F25"></rect>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<!-- header area end -->
+
+<!-- side bar area  -->
+<div id="side-bar" class="side-bar header-two">
+  <button class="close-icon-menu !m-0 !top-0 !left-0"><i class="fa-sharp fa-thin fa-xmark !m-0"></i></button>
+  <!-- mobile menu area start -->
+  <div class="mobile-menu-main">
+    <nav class="nav-main mainmenu-nav mt--30">
+      <ul class="mainmenu metismenu" id="mobile-menu-active">
+        <li class="<%= path_name === "/" ? "active" : "" %>">
+          <a href="/" class="main"><i class="ri-home-2-line"></i> Home</a>
+        </li>
+
+        <li class="<%= path_name === "/dashboard/group-ads" ? "active" : "" %>">
+          <a href="/dashboard/group-ads" class="main">My Group Ads</a>
+        </li>
+
+        <div class="mt-8 flex flex-col gap-6">
+          <% if (user) { %>
+          <div>
+            <a href="/logout" class="tippy" data-tippy-content="Logout" data-tippy-placement="bottom"><i class="ri-logout-box-line"></i></a>
+            <span>Hi, <a href="/profile" class="tippy" data-tippy-content="Profile" data-tippy-placement="bottom"><%= user.name %> <i class="ri-user-line"></i></a></span>
+          </div>
+          <a href="/create-group-ad" class="tippy rts-btn btn-primary max-w-none" data-tippy-content="Coming Soon" data-tippy-placement="bottom">
+            <i class="ri-rocket-2-line"></i> Create Group Ad
+          </a>
+          <% } else { %>
+          <a href="/login" class="rts-btn btn-primary">Get Started</a>
+          <% } %>
+        </div>
+      </ul>
+    </nav>
+
+    <ul class="social-area-one pl--20 mt--100">
+      <li><a href="https://fb.com/letsboosttogether" target="_blank"><i class="ri-facebook-circle-fill"></i></a></li>
+      <li><a href="https://x.com/boost_together" target="_blank"><i class="ri-twitter-x-line"></i></a></li>
+      <li><a href="https://youtube.com/@BoostTogether" target="_blank"><i class="ri-youtube-line"></i></a></li>
+    </ul>
+  </div>
+  <!-- mobile menu area end -->
+</div>
+<!-- side abr area end -->

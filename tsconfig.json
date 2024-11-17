@@ -1,0 +1,41 @@
+{
+  "compilerOptions": {
+    // Enable latest features
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleDetection": "force",
+    "jsx": "react-jsx",
+    "allowJs": true,
+
+    // Bundler mode
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "noEmit": true,
+
+    // Best practices
+    "strict": true,
+    "skipLibCheck": true,
+    "noFallthroughCasesInSwitch": true,
+
+    // Some stricter flags
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noPropertyAccessFromIndexSignature": true,
+
+    // Path alias
+    "baseUrl": ".",
+    "paths": {
+      "react": ["./node_modules/@types/react"],
+      "@/*": ["./src/*"],
+      "@/public/*": ["./public/*"]
+    }
+  },
+  "exclude": [
+    // ... other exclusions ...
+    "commitlint.config.cjs",
+    "lint-staged.config.cjs",
+    "tailwind.config.cjs"
+  ]
+}

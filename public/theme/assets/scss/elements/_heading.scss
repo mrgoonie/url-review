@@ -1,0 +1,92 @@
+// title area style here
+.title-style-one-center{
+    text-align: center;
+    span{
+        color: var(--color-primary);
+        text-align: center;
+        font-family: Rubik;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 600;
+        line-height: 150%;
+        letter-spacing: -0.28px;
+    }
+    br{
+        @include res($xs){
+            display: none;
+        }
+    }
+    .title{
+        color: var(--color-title);
+        text-align: center;
+        font-family: Manrope;
+        font-size: 48px;
+        font-style: normal;
+        font-weight: 800;
+        line-height: 1.3em;
+        letter-spacing: -1.92px;
+        margin-top: 10px;
+        @media #{$sm-layout} {
+            font-size: 36px;
+        }
+        @media #{$large-mobile} {
+            font-size: 32px;
+            letter-spacing: 0;
+        }
+        br{
+            @include res($xs) {
+                display: none;
+            }
+        }
+    }
+}
+
+.title-style-one-left{
+    text-align: left;
+    span{
+        color: var(--color-primary);
+        text-align: left;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 600;
+        line-height: 150%;
+        letter-spacing: -0.28px;
+    }
+    .title{
+        color: var(--color-title);
+        text-align: left;
+        font-size: 48px;
+        font-style: normal;
+        font-weight: 800;
+        line-height: 1.3em;
+        letter-spacing: -1.92px;
+        margin-top: 10px;
+        @media  screen and (max-width:991px) {
+            font-size: 40px;
+        }
+        @media #{$sm-layout} {
+            font-size: 42px;
+        }
+        @media #{$large-mobile} {
+            font-size: 30px;
+            letter-spacing: 0;
+        }
+        br{
+            @include res($xs) {
+                display: none;
+            }
+        }
+    }
+}
+
+.title-hover {
+    background-size: 200% 1px;
+    background-position: 100% 100%;
+    background-repeat: no-repeat;
+    transition: all 500ms;
+    color: #000;
+    &:hover{
+        background-position: 0% 100%;
+        background-image: linear-gradient(to right,currentColor 50%,transparent 50%);
+    }
+}

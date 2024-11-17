@@ -1,0 +1,52 @@
+<div id="new-product-form" class="flex flex-col gap-10">
+  <!-- Product Name -->
+  <div class="flex flex-col gap-4">
+    <label for="product-name" class="text-xl font-semibold">Product Name</label>
+    <input type="text" id="product-name" name="product_name" placeholder="Enter your product name" class="w-full p-3 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600" />
+  </div>
+
+  <!-- Product Category -->
+  <script>
+    function onDrawerCategoryUpdate(selectedItems) {
+      console.log('onDrawerCategoryUpdate > selectedItems :>>', selectedItems);
+    }
+  </script>
+
+  <% if (locals.categories && locals.categories.length > 0) { %>
+  <%- include('../common/input-tags', {
+      id: 'product-category-drawer',
+      name: 'product_category_drawer',
+      label: 'Product Category',
+      placeholder: 'Type to search categories',
+      allowAddMore: false,
+      data: categories,
+      onChange: "onDrawerCategoryUpdate",
+    }) %>
+  <% } %>
+
+  <!-- Product URL -->
+  <div class="flex flex-col gap-4">
+    <label for="product-url" class="text-xl font-semibold">Product URL</label>
+    <input type="url" id="product-url" name="product_url" placeholder="https://www.yourproduct.com" class="w-full p-3 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600" />
+  </div>
+
+  <!-- Product Logo Upload -->
+  <%- include('../common/input-upload', { 
+    label: 'Upload Logo', 
+    id: 'logo-upload', 
+    accept: 'image/*', 
+    uploadUrl: '/api/v1/upload' 
+  }) %>
+
+  <!-- Product Tagline -->
+  <div class="flex flex-col gap-4">
+    <label for="product-tagline" class="text-xl font-semibold">Product Tagline</label>
+    <input type="text" id="product-tagline" name="product_tagline" placeholder="A short, memorable description" class="w-full p-3 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600" />
+  </div>
+
+  <!-- Product Description -->
+  <div class="flex flex-col gap-4">
+    <label for="product-description" class="text-xl font-semibold">Product Description</label>
+    <textarea id="product-description" name="product_description" rows="4" placeholder="Describe your product in detail" class="w-full p-3 border rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600"></textarea>
+  </div>
+</div>

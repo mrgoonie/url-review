@@ -1,0 +1,191 @@
+<%
+const className = locals.className || "";
+const label = locals.label || "Upload File";
+const id = locals.id || "file-upload";
+const name = locals.name || id;
+const placeholder = locals.placeholder || "Click to upload or drag and drop";
+const accept = locals.accept || "image/*";
+const maxSize = locals.maxSize || "800x400px";
+const uploadUrl = locals.uploadUrl || "/api/v1/upload";
+%>
+
+<div class="flex flex-col gap-4 <%= className %>">
+  <label for="<%= id %>" class="text-xl font-semibold"><%= label %></label>
+  <div id="<%= id %>-container" class="relative w-full">
+    <input type="file" id="<%= id %>" name="<%= name %>" class="hidden" accept="<%= accept %>" />
+    <input type="hidden" id="<%= id %>-url" name="<%= name %>-url" />
+
+    <label for="<%= id %>" class="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800">
+      <div class="flex flex-col items-center justify-center pt-5 pb-6">
+        <i class="ri-upload-cloud-2-line text-4xl text-gray-500 mb-4"></i>
+        <p class="mb-2 text-sm text-gray-500 dark:text-gray-400">
+          <span class="font-semibold">Click to upload</span> or drag and drop
+        </p>
+        <p class="text-xs text-gray-500 dark:text-gray-400">
+          <%= accept.toUpperCase().replace('*', '') %> (MAX. <%= maxSize %>)
+        </p>
+      </div>
+    </label>
+
+    <div id="<%= id %>-preview" class="mt-4 grid grid-cols-3 gap-4">
+      <!-- File preview will be added here dynamically -->
+    </div>
+
+    <div id="<%= id %>-upload-status" class="mt-2 text-sm"></div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.getElementById('<%= id %>');
+    const previewContainer = document.getElementById('<%= id %>-preview');
+    const uploadStatusContainer = document.getElementById('<%= id %>-upload-status');
+    const uploadUrl = '<%= uploadUrl %>';
+
+    function clearStatus() {
+      uploadStatusContainer.innerHTML = '';
+      uploadStatusContainer.classList.remove('text-red-500', 'text-green-500');
+    }
+
+    function showStatus(message, isError = false) {
+      clearStatus();
+      uploadStatusContainer.textContent = message;
+      uploadStatusContainer.classList.add(isError ? 'text-red-500' : 'text-green-500');
+    }
+
+    function uploadFile(file) {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      fetch(uploadUrl, {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 1) {
+            showStatus('Upload successful!');
+            console.log("input-upload.ejs > file upload > success :>>", data.data.publicUrl);
+
+            // Update hidden input
+            document.getElementById('<%= id %>-url').value = data.data.publicUrl;
+
+            // Update the preview image with the uploaded URL
+            const previewImage = previewContainer.querySelector(`[data-filename="${file.name}"] img`);
+            if (previewImage) {
+              previewImage.src = data.data.publicUrl;
+            }
+          } else {
+            throw new Error(data.message || 'Upload failed');
+          }
+        })
+        .catch(error => {
+          console.error("input-upload.ejs > file upload > error :>>", error);
+          showStatus(error.message || 'Upload failed', true);
+        });
+    }
+
+    fileInput.addEventListener('change', function(event) {
+      // Clear previous previews and status
+      previewContainer.innerHTML = '';
+      clearStatus();
+
+      // Handle multiple file uploads
+      Array.from(this.files).forEach(file => {
+        // Validate file type and size
+        const validTypes = ['<%= accept %>'.replace('*', '')];
+        const isValidType = validTypes.some(type => file.type.includes(type));
+        const isValidSize = file.size <= 5 * 1024 * 1024; // 5MB limit
+
+        if (isValidType && isValidSize) {
+          // Create preview
+          const filePreviewWrapper = document.createElement('div');
+          filePreviewWrapper.classList.add(
+            'relative', 'border', 'rounded-lg', 'overflow-hidden'
+          );
+          filePreviewWrapper.dataset.filename = file.name;
+
+          // Create image preview
+          const previewImage = document.createElement('img');
+          previewImage.classList.add('w-full', 'h-48', 'object-cover');
+
+          // Create file info overlay
+          const overlayContainer = document.createElement('div');
+          overlayContainer.classList.add(
+            'absolute', 'bottom-0', 'left-0', 'right-0',
+            'bg-black', 'bg-opacity-50', 'text-white',
+            'p-2', 'flex', 'justify-between', 'items-center'
+          );
+
+          const fileNameSpan = document.createElement('span');
+          fileNameSpan.textContent = file.name;
+          fileNameSpan.classList.add('text-sm', 'truncate', 'mr-2');
+
+          const removeButton = document.createElement('span');
+          removeButton.innerHTML = '<i class="ri-close-line"></i>';
+          removeButton.classList.add(
+            'cursor-pointer', 'text-red-500', 'font-bold'
+          );
+          removeButton.addEventListener('click', () => {
+            // Remove from preview
+            previewContainer.removeChild(filePreviewWrapper);
+
+            // Clear the file input
+            fileInput.value = '';
+          });
+
+          overlayContainer.appendChild(fileNameSpan);
+          overlayContainer.appendChild(removeButton);
+
+          // Read file as data URL for preview
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            previewImage.src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+
+          filePreviewWrapper.appendChild(previewImage);
+          filePreviewWrapper.appendChild(overlayContainer);
+          previewContainer.appendChild(filePreviewWrapper);
+
+          // Upload the file
+          uploadFile(file);
+        } else {
+          if (!isValidType) {
+            console.error("input-upload.ejs > file upload > invalid file type :>>", file.type);
+            showStatus(`Invalid file type. Please upload ${validTypes.join(', ')} files.`, true);
+          }
+          if (!isValidSize) {
+            console.error("input-upload.ejs > file upload > file too large :>>", file.size);
+            showStatus('File size must be less than 5MB', true);
+          }
+          fileInput.value = '';
+        }
+      });
+    });
+
+    // Drag and drop functionality
+    const dropZone = document.querySelector('label[for="<%= id %>"]');
+
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.classList.add('border-primary-500');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.classList.remove('border-primary-500');
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('border-primary-500');
+
+      // Set dropped files to input
+      fileInput.files = e.dataTransfer.files;
+
+      // Trigger change event
+      const event = new Event('change');
+      fileInput.dispatchEvent(event);
+    });
+  });
+</script>

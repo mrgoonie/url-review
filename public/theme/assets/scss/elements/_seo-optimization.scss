@@ -1,0 +1,60 @@
+// seo optimization area
+
+.seo-optimization-area{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 80px;
+    background: var(--seo-bg);
+    border-radius: 32px;
+    @media(max-width:991px){
+        flex-direction: column;
+        padding: 30px;
+        gap: 50px;
+    }
+    @media(max-width:576px){
+        padding: 20px;
+    }
+    .thumbnail{
+        min-width: max-content;
+        display: block;
+        @media(max-width:991px){
+            min-width: 100%;
+        }
+        img{
+            min-width: max-content;
+            display: block;
+            border-radius: 32px;
+            @media(max-width:991px){
+                min-width: 100%;
+            }
+        }
+    }
+}
+
+
+.service-area-8{
+    .icon{
+        margin-bottom: 22px;
+    }
+    .title{
+        font-weight: 800;
+    }
+    .disc{
+        letter-spacing: -0.32px;
+    }
+}
+
+.subscribe-main-wrapper-one.seo-marketing{
+    border-radius: 32px;
+    background: var(--seo-bg);
+    .title-style-one-center{
+        p.disc{
+            @media(max-width:768px){
+                br{
+                    display: none;
+                }
+            }
+        }
+    }
+}

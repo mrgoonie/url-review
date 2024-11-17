@@ -1,0 +1,93 @@
+<div class="pt-80 pb-60 px-10 md:px-0 w-full flex justify-center items-center">
+  <div class="w-full h-auto text-center max-w-screen-sm">
+    <h2 class="text-3xl">Hi, <strong><%- user.name %></strong>!</h2>
+    <h1 class="font-bold py-4 text-6xl">Your Profile</h1>
+
+    <div class="w-full border border-gray-100 dark:border-gray-700 rounded-2xl p-4 relative mb-4 shadow-xl dark:bg-gray-800">
+      <h3 class="font-bold mb-2">Your Balance</h3>
+      <h4 class="h3 font-bold mb-0">$<%- user.balance %></h4>
+      <a class="w-auto mx-auto flex items-center justify-center py-2 px-8 bg-blue-400 hover:bg-blue-500 transition-all rounded-md text-white" href="<%- polarCheckoutUrl %>">
+        <i class="ri-money-dollar-circle-line"></i> Top up
+      </a>
+    </div>
+
+    <div class="w-full border border-gray-100 dark:border-gray-700 rounded-2xl p-4 relative mb-4 shadow-xl dark:bg-gray-800">
+      <h3 class="font-bold mb-2">API keys</h3>
+      <div class="flex gap-2 w-full" id="api-key-container">
+        <script>
+          function createNewApiKey() {
+            const name = document.getElementById("api-key-name").value;
+            fetch("/api/v1/api_key", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  name
+                }),
+              })
+              .then((res) => res.json())
+              .then((data) => {
+                if (data.status === 1) {
+                  alert("Create new API key successfully");
+                  location.reload();
+                  return;
+                }
+                alert(data.message);
+              });
+          }
+
+          function deleteApiKey(id) {
+            fetch(`/api/v1/api_key/${id}`, {
+                method: "DELETE",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              })
+              .then((res) => res.json())
+              .then((data) => {
+                if (data.status === 1) {
+                  alert("Delete API key successfully");
+                  location.reload();
+                  return;
+                }
+                alert(data.message);
+              });
+          }
+        </script>
+        <input class=" border border-gray-300 dark:border-gray-600 rounded-xl py-2 px-8 flex-grow" type="text" id="api-key-name" placeholder="API key name" />
+        <button class="w-auto flex items-center justify-center py-2 px-8 bg-blue-400 hover:bg-blue-500 transition-all rounded-md text-white" onclick="createNewApiKey()">
+          <i class="ri-add-line mr-2"></i> Create
+        </button>
+      </div>
+      <ul>
+        <% locals.apiKeys.forEach((apiKey, index) => { %>
+        <li class="flex justify-between items-start text-left border-b border-gray-300 dark:border-gray-600 py-2 gap-2">
+          <div class="border border-gray-300 dark:border-gray-600 rounded-md pt-1 pb-2 size-8 text-center">
+            <span class="text-gray-500"><%- index + 1 %></span>
+          </div>
+          <div>
+            <p class="text-base font-bold"><%- apiKey.name %> (<%- apiKey.displayCreatedAt %>)</p>
+            <%- include('../common/link-copy', { link: apiKey.key }) %>
+          </div>
+          <button class="text-red-400 hover:text-red-500 transition-all p-2 border border-red-400 hover:border-red-500 rounded-md" onclick="deleteApiKey('<%- apiKey.id %>')">
+            <i class="ri-delete-bin-line"></i>
+          </button>
+        </li>
+        <% }); %>
+      </ul>
+    </div>
+
+    <div class="flex gap-2 justify-center">
+      <%- include("../common/button", {
+      content: " <i class='ri-logout-box-line mr-2'></i> Log out",
+      href: "/logout",
+      className: "bg-red-400 hover:bg-red-500"
+    }) %>
+      <%- include("../common/button", {
+      content: " <i class='ri-home-line mr-2'></i> Home",
+      href: "/",
+    }) %>
+    </div>
+  </div>
+</div>

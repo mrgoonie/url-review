@@ -1,0 +1,17 @@
+.git/
+.gitignore
+.next/
+.dockerignore
+Dockerfile
+docker-compose.yml
+node_modules/
+optimizer/
+local_certificate/
+.env.local
+out/
+gcloud-service-account.json
+# package-lock.json
+# pnpm-lock.yaml
+
+public/screenshots
+.env

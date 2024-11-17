@@ -1,0 +1,89 @@
+<!-- Start of Selection -->
+<div class="w-full flex justify-center items-center py-40">
+  <div class="h-auto text-center px-6">
+    <h1 class="h2 font-bold py-4 text-gray-900 dark:text-white">Privacy Policy</h1>
+
+    <div class="border border-gray-100 dark:border-gray-700 rounded-2xl p-8 relative mb-4 shadow-xl prose !max-w-screen-lg dark:bg-gray-800">
+      <div class="text-left">
+        <p class="mb-4 text-gray-700 dark:text-gray-300">Last updated: <%= new Date().toISOString().split('T')[0] %></p>
+
+        <p class="mb-4 text-gray-700 dark:text-gray-300">At BoostTogether, we are committed to protecting your privacy and ensuring the security of your personal information. This Privacy Policy outlines how we collect, use, disclose, and safeguard your data when you use our group advertising platform, including our website and services.</p>
+
+        <h3 class="h3 font-semibold mb-2 text-gray-900 dark:text-white">1. Information We Collect</h3>
+        <ul class="list-disc list-inside mb-4 text-gray-700 dark:text-gray-300">
+          <li>Personal Information: When you create an account or join a campaign, we collect your name, email address, business details, and contact information.</li>
+          <li>Business Information: Details about your product, business category, advertising preferences, and campaign details.</li>
+          <li>Payment Information: Billing details, transaction history, and payment method information.</li>
+          <li>Usage Data: Information on how you interact with our platform, including campaign creation, participation, and performance tracking.</li>
+          <li>Device and Technical Information: IP address, browser type, device details, and platform usage analytics.</li>
+        </ul>
+
+        <h3 class="h3 font-semibold mb-2 text-gray-900 dark:text-white">2. How We Use Your Information</h3>
+        <ul class="list-disc list-inside mb-4 text-gray-700 dark:text-gray-300">
+          <li>To facilitate group advertising campaigns and match businesses with similar interests</li>
+          <li>To process payments and manage campaign participation</li>
+          <li>To provide performance analytics and campaign reporting</li>
+          <li>To communicate campaign updates, platform notifications, and service-related information</li>
+          <li>To improve and personalize the BoostTogether platform</li>
+          <li>To detect and prevent fraud or misuse of our service</li>
+          <li>To generate aggregated, anonymized statistics about advertising performance</li>
+        </ul>
+
+        <h3 class="h3 font-semibold mb-2 text-gray-900 dark:text-white">3. Data Sharing and Disclosure</h3>
+        <p class="mb-4 text-gray-700 dark:text-gray-300">We do not sell your personal information. We may share your data with:</p>
+        <ul class="list-disc list-inside mb-4 text-gray-700 dark:text-gray-300">
+          <li>Advertising platforms (Facebook, Google) for campaign execution</li>
+          <li>Service providers who assist in operating our platform, including:</li>
+          <ul class="list-disc list-inside ml-4 mb-2 text-gray-700 dark:text-gray-300">
+            <li>Payment processors</li>
+            <li>Cloud hosting providers</li>
+            <li>Analytics services</li>
+            <li>Customer support tools</li>
+          </ul>
+          <li>Law enforcement or regulatory authorities if required by law</li>
+          <li>Other campaign participants within your specific group campaign</li>
+          <li>In the event of a business transfer, merger, or acquisition</li>
+        </ul>
+
+        <h3 class="h3 font-semibold mb-2 text-gray-900 dark:text-white">4. Data Security</h3>
+        <p class="mb-4 text-gray-700 dark:text-gray-300">We implement robust security measures to protect your data, including encryption, secure payment gateways, access controls, and regular security audits. We are committed to maintaining the confidentiality and integrity of your information.</p>
+
+        <h3 class="h3 font-semibold mb-2 text-gray-900 dark:text-white">5. Your Rights</h3>
+        <p class="mb-4 text-gray-700 dark:text-gray-300">You have the right to:</p>
+        <ul class="list-disc list-inside mb-4 text-gray-700 dark:text-gray-300">
+          <li>Access and receive a copy of your personal information</li>
+          <li>Correct or update your account and business details</li>
+          <li>Request deletion of your personal information</li>
+          <li>Object to or restrict the processing of your data</li>
+          <li>Export your data for portability</li>
+          <li>Withdraw consent for marketing communications</li>
+        </ul>
+        <p class="mb-4 text-gray-700 dark:text-gray-300">To exercise these rights, please contact our support team.</p>
+
+        <h3 class="h3 font-semibold mb-2 text-gray-900 dark:text-white">6. Cookies and Tracking</h3>
+        <p class="mb-4 text-gray-700 dark:text-gray-300">We use cookies and similar tracking technologies to enhance user experience, analyze platform usage, and provide personalized services. You can manage cookie preferences through your browser settings.</p>
+
+        <h3 class="h3 font-semibold mb-2 text-gray-900 dark:text-white">7. Children's Privacy</h3>
+        <p class="mb-4 text-gray-700 dark:text-gray-300">Our platform is designed for businesses and individuals over 18. We do not knowingly collect personal information from minors.</p>
+
+        <h3 class="h3 font-semibold mb-2 text-gray-900 dark:text-white">8. International Data Transfers</h3>
+        <p class="mb-4 text-gray-700 dark:text-gray-300">We may transfer and process your data in multiple countries. We ensure appropriate safeguards are in place to protect your data during international transfers.</p>
+
+        <h3 class="h3 font-semibold mb-2 text-gray-900 dark:text-white">9. Changes to This Policy</h3>
+        <p class="mb-4 text-gray-700 dark:text-gray-300">We may update this Privacy Policy periodically. We will notify you of significant changes and encourage you to review the policy regularly.</p>
+
+        <h3 class="h3 font-semibold mb-2 text-gray-900 dark:text-white">10. Contact Us</h3>
+        <p class="mb-4 text-gray-700 dark:text-gray-300">For any privacy-related questions or concerns, please contact us at:</p>
+        <p class="mb-4 text-gray-700 dark:text-gray-300">Email: <a href="mailto:support@boosttogether.com" class="underline">support@boosttogether.com</a></p>
+      </div>
+    </div>
+
+    <%- include("../common/button", {
+      content: " <i class='ri-home-line mr-2'></i> Home",
+      href: "/",
+      className: "rts-btn mt-14 mx-auto"
+    }) %>
+
+  </div>
+</div>
+<!-- End of Selection -->

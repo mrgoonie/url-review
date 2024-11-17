@@ -1,0 +1,16 @@
+<% 
+const backgroundImageUrl = locals.image_url || "/images/screenshot-sample-02.png";  
+const className = locals.className || '';
+%>
+<div class="">
+  <div class="flex flex-col text-left border border-[#cfd9de] rounded-lg shadow-lg overflow-hidden">
+    <div class="w-full h-[160px] flex flex-col justify-center bg-gradient-to-r from-purple-500 to-blue-500 text-white p-6 <%= className %> dark:bg-gradient-to-r dark:from-purple-700 dark:to-blue-700" style="background-image: url('<%= backgroundImageUrl %>'); background-size: cover; background-position: center;">
+    </div>
+    <div class="w-full h-auto bg-gray-100 dark:bg-gray-800 p-2">
+      <p class="text-gray-500 dark:text-gray-300 font-semibold text-[8px] font-[Helvetica]"><%= locals.link?.metadata?.url ? new URL(locals.link?.metadata?.url).host?.toUpperCase() : '' %></p>
+      <p class="text-[10px] font-bold font-[Helvetica]"><%= locals.link?.metadata?.title ? locals.link?.metadata?.title.slice(0, 30) + (locals.link?.metadata?.title.length > 30 ? '...' : '') : '' %></p>
+      <p class="text-gray-400 dark:text-gray-500 text-[8px] font-[Helvetica]"><%= locals.link?.metadata?.raw?.ogDescription && locals.link?.metadata?.raw?.ogDescription?.length > 50 ? locals.link?.metadata?.raw?.ogDescription.slice(0, 50) + '...' : locals.link?.metadata?.raw?.ogDescription %></p>
+    </div>
+  </div>
+  <h5 class="text-gray-800 dark:text-gray-200">Facebook Preview</h5>
+</div>

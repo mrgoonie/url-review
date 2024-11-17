@@ -1,0 +1,246 @@
+
+// faq area style here
+
+.accordion-faq-area-border-bottom-style{
+    & .accordion-item{
+        background: transparent;
+    }
+    padding-left: 200px;
+    padding-right: 200px;
+    @include res($md){
+        padding-left: 110px;
+        padding-right: 110px;
+    }
+    @media screen and (max-width:767px){
+        padding-left: 100px;
+        padding-right: 100px;
+    }
+    @media screen and (max-width:767px){
+        padding-left: 50px;
+        padding-right: 50px;
+    }
+    @media screen and (max-width:575px){
+        padding-left: 0;
+        padding-right: 0;
+    }
+    
+    .accordion{
+        .accordion-item{
+            border: none;
+            border-bottom: 1px solid rgba(204, 204, 204, 0.4);
+            box-shadow: none;
+            padding: 30px 0;
+            .accordion-header{
+                border: none;
+                box-shadow: none;
+                padding: 0;
+                button{
+                    border: none;
+                    box-shadow: none;
+                    background: transparent;
+                    color: var(--color-title);
+                    font-size: 20px;
+                    font-style: normal;
+                    font-weight: 800;
+                    line-height: 120%; /* 24px */
+                    letter-spacing: -0.4px;
+                    padding: 0;
+                    @media(max-width:575px){
+                        font-size: 18px;
+                    }
+                }
+            }
+            .accordion-body{
+                padding: 0;
+                padding-top: 30px;
+            }
+        }
+    }
+    &.style-four{
+        .accordion-item{
+            padding: 25px;
+            border: 1px solid var(--color-border-2);
+            margin-bottom: 20px;
+            border-radius: 16px;
+            background: var(--faq-single);
+        }
+    }
+}
+[data-theme=dark] .style-three .accordion-item .accordion-header button {
+    color: #fff !important;
+}
+
+
+.faq-cta-main-wrapper-bg{
+    background: var(--faq-bg);
+    border-radius: 32px 32px 0px 0px;
+}
+
+
+.faq-cta-main-wrapper-bg{
+    position: relative;
+    .shape-area{
+        @include res($xs){
+            @include dn;
+        }
+        img{
+            position: absolute;
+            &.one{
+                left: 10%;
+                top: 15%;
+                @include res($md){
+                    top: 10%;
+                    left: 5%;
+                }
+            }
+            &.two{
+                right: 10%;
+                top: 25%;
+                @include res($md){
+                    right: 5%;
+                }
+            }
+            &.three{
+                left: -50px;
+                top: 55%;
+            }
+            &.four{
+                right: 8%;
+                top: 70%;
+            }
+            &.five{
+                left: 8%;
+                top: 80%;
+            }
+            &.six{
+                left: 40%;
+                top: 95%;
+            }
+            &.seven{
+                left: 70%;
+                top: 81%;
+                z-index: 2;
+            }
+        }
+    }
+}
+.rts-cta-area-start {
+    padding-top: 3px;
+    position: relative;
+    .shape-area{
+        img{
+            position: absolute;
+            &.one{
+                left: 30%;
+                top: 30%;
+                @include res($xl){
+                    left: 20%;
+                }
+                @include res($md){
+                    left: 15%;
+                }
+                @include res($sm){
+                    left: 5%;
+                }
+            }
+            &.two{
+                right: 20%;
+                top: 40%;
+            }
+            &.three{
+                bottom: -15%;
+                left: 35%;
+                top: unset;
+                @include res($md){
+                    bottom: 0;
+                }
+            }
+            &.four{
+                top: -20%;
+                left: 55%;
+                @include res($sm){
+                    @include dn;
+                }
+            }
+        }
+    }
+}
+
+
+.rts-faq-area-full-container.style-three{
+    position: relative;
+    .shape-area{
+        @include res($sm){
+            @include dn;
+        }
+        img{
+            position: absolute;
+        }
+        .one{
+            right: 5%;
+            top: 40%;
+            @media screen and (max-width:575px) {
+                display: none;
+            }
+        }
+        .two{
+            left: 15%;
+            top: 25%;
+            @media screen and (max-width:991px){
+                display: none;
+            }
+        }
+        .three{
+            left: -40px;
+            top: 50%;
+            transform: translateY(50%);
+            @media screen and (max-width:991px){
+                display: none;
+            }
+        }
+        .four{
+            right: 10%;
+            bottom: 0%;
+            @include res($xs){
+                @include dn;
+            }
+        }
+    }
+}
+
+.rts-error-section{
+    height: 100vh;
+    width: 100%;
+    .section-inner{
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        img{
+            max-width: 100%;
+        }
+    }
+}
+
+// terms and condition page css
+.tos{
+    &__content{
+        p{
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+    }
+}
+
+// privacy policy page css
+.privacy{
+    &__content{
+        p{
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+    }
+}

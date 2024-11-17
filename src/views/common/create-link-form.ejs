@@ -1,0 +1,165 @@
+<form id="createLinkForm" class="space-y-4 w-full">
+  <!-- Destination URL -->
+  <div>
+    <div class="flex items-center justify-between">
+      <label for="destinationUrl" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Destination URL (*)</label>
+    </div>
+    <input type="url" id="destinationUrl" name="destinationUrl" required placeholder="https://www.example.com" class="mt-1 block w-full rounded-md text-center text-base border-b border-gray-300 focus:border-blue-500 focus:border-b dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+  </div>
+
+  <!-- Custom Path -->
+  <div class="relative">
+    <div class="flex items-center gap-2">
+      <label for="customPath" class="block w-full text-sm font-medium text-left text-gray-700 dark:text-gray-300 <%= !locals.user ? 'text-gray-300' : '' %>">Custom Path (Optional, 6-20 characters)</label>
+      <i class="ri-question-line cursor-help" id="customPathTooltip"></i>
+    </div>
+    <input type="text" id="customPath" name="customPath" placeholder="<%= !locals.user ? 'Sign in to create your custom shortlink.' : '' %>" class="mt-1 block w-full rounded-md text-center text-base border-b border-gray-300 focus:border-blue-500 focus:border-b dark:bg-gray-700 dark:border-gray-600 dark:text-white" <%= !locals.user ? 'disabled' : '' %>>
+  </div>
+
+  <!-- Opt Out Tracking -->
+  <div class="flex items-center justify-center gap-2 <%= !locals.user ? 'hidden' : '' %>">
+    <input type="checkbox" id="optOutTracking" name="optOutTracking" class="form-checkbox h-5 w-5 text-indigo-600 transition duration-150 ease-in-out rounded border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:checked:bg-indigo-500 dark:checked:border-indigo-500 dark:focus:ring-offset-gray-800">
+    <label for="optOutTracking" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+      Opt Out Tracking
+    </label>
+    <i class="ri-question-line cursor-help" id="optOutTrackingTooltip"></i>
+  </div>
+
+  <!-- Create Button -->
+  <button type="submit" class="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600">
+    Create
+  </button>
+
+  <!-- Error Message -->
+  <p id="createLinkFormErrorMessage" class="w-full text-center text-red-500 hidden"></p>
+</form>
+
+<pre id="createLinkFormResponse" class="w-full bg-gray-100 dark:bg-gray-800 p-4 rounded-md hidden flex-row items-center">
+  <code id="createLinkFormResponseCode" class="w-full text-green-500"></code>
+  <button id="copyLinkButton" class="flex ml-2 p-1 bg-gray-200 dark:bg-gray-700 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+    </svg>
+  </button>
+</pre>
+
+<script src="https://unpkg.com/@popperjs/core@2"></script>
+<script src="https://unpkg.com/tippy.js@6"></script>
+<script>
+  document.getElementById('createLinkForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const destinationUrl = document.getElementById('destinationUrl').value;
+    const customPath = document.getElementById('customPath').value;
+
+    // Sanitize input
+    const sanitizeInput = (input) => {
+      return input.replace(/[&<>"']/g, function(m) {
+        return {
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#39;'
+        } [m]
+      });
+    };
+
+    const sanitizedDestinationUrl = sanitizeInput(destinationUrl);
+    const sanitizedCustomPath = sanitizeInput(customPath);
+
+    try {
+      // show loader
+      $("#loader").removeClass("invisible opacity-0").addClass("visible opacity-100");
+
+      // make an api request to create link
+      const response = await fetch('/api/v1/link', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': '<%= csrfToken %>' // Assuming you're using CSRF protection
+        },
+        body: JSON.stringify({
+          destinationUrl: sanitizedDestinationUrl,
+          path: sanitizedCustomPath,
+          optOutTracking: document.getElementById('optOutTracking').checked,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error);
+      }
+
+      console.log('Link created:', result);
+
+      // You can add further actions here, such as showing a success message or redirecting
+
+      window.location.href = `/result/${result.data.id}`;
+
+      // document.getElementById('createLinkFormResponseCode').textContent = result.data.url;
+      // document.getElementById('createLinkFormResponse').classList.remove('hidden');
+      // document.getElementById('createLinkFormResponse').classList.add('flex');
+    } catch (error) {
+      // hide loader
+      $("#loader").addClass("invisible opacity-0").removeClass("visible opacity-100");
+
+      console.error('Error creating link:', error);
+      // You can add error handling here, such as showing an error message to the user
+      document.getElementById('createLinkFormErrorMessage').textContent = error.message;
+      document.getElementById('createLinkFormErrorMessage').classList.remove('hidden');
+      // document.getElementById('createLinkFormErrorMessage').classList.add('block');
+    }
+  });
+
+  document.getElementById('copyLinkButton').addEventListener('click', function() {
+    const linkText = document.getElementById('createLinkFormResponseCode').textContent;
+    navigator.clipboard.writeText(linkText).then(() => {
+      // Change the icon to a check mark
+      this.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+        </svg>
+      `;
+
+      // Revert back to copy icon after 2 seconds
+      setTimeout(() => {
+        this.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+          </svg>
+        `;
+      }, 2000);
+    }).catch(err => {
+      console.error('Failed to copy text: ', err);
+    });
+  });
+
+  // Initialize tippy.js tooltip
+  tippy('#optOutTrackingTooltip', {
+    content: "We will redirect to your URL directly, if you opt out, we will be unable to track clicks or QR code scans.",
+    placement: 'auto',
+    arrow: true,
+    animation: 'fade',
+  });
+  tippy('#customPathTooltip', {
+    content: "<code>https://zii.one/<span class='text-yellow-500'>your-custom-path</span></code>",
+    allowHTML: true,
+    placement: 'auto',
+    arrow: true,
+    animation: 'fade',
+  });
+  tippy('#premiumPathTooltip', {
+    content: `<div class='flex flex-col gap-2 text-center p-2'>
+      <h4 class='font-bold'>Want even shorter links?</h4>
+      <p>Sign up for a premium account.</p>
+      <button class='bg-blue-500 text-white px-2 py-1 rounded-md' onclick="window.location.href='/premium'">Upgrade now</button>
+    </div>`,
+    interactive: true,
+    allowHTML: true,
+    placement: 'auto',
+    arrow: true,
+    animation: 'fade',
+  });
+</script>

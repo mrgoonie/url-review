@@ -1,0 +1,227 @@
+
+.header-style-one-wrapper{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .button-area-start{
+        display: flex;
+        align-items: center;
+        gap: 23px;
+        .call-us{
+            @media #{$sm-layout} {
+                display: none;
+            }
+        }
+        a{
+            font-weight: 800;
+            font-family: var(--font-primary);
+            transition: .3s;
+        }
+        .rts-btn{
+            @media(max-width:576px){
+                display: none;
+            }
+        }
+    }
+    .logo-area{
+
+        .logo{
+            padding: 25px 0;
+            display: block;
+        }
+    }
+    
+}
+// LOGO IMAGE SWITCHER
+[data-theme=light]{
+    .logo-area{
+        img.light{
+            display: block;
+        }
+        img.dark{
+            display: none;
+        }
+    }
+
+}
+[data-theme=dark]{
+    .logo-area{
+        img.light{
+            display: none;
+        }
+        img.dark{
+            display: block;
+        }
+    }
+    .header--sticky.style-six{
+        & .main-nav-area{
+            ul{
+                li{
+                    a{
+                        color: #fff;
+                    }
+                }
+            }
+        }
+        & .button-area-start{
+            .text-btn{
+                color: #fff;
+            }
+        }
+    }
+
+    .header--sticky.sticky{
+        background: var(--sticky-menu-dark);
+        & .main-nav-area{
+            ul{
+                li{
+                    a{
+                        color: #fff;
+                    }
+                }
+            }
+        }
+        & .button-area-start{
+            .call-us, .text-btn{
+                color: #fff;
+            }
+        }
+        
+    }
+}
+
+[data-theme=dark]
+// LOGO IMAGE SWITCHER END
+
+// HOMEPAGE SIX MENU DARK
+[data-theme=dark]{
+    .header--sticky.style-six {
+        .main-nav-area{
+            ul{
+                li{
+                    a{
+                        color: #fff;
+                    }
+                }
+            }
+        }
+    }
+}
+.header-style-one{
+    position: absolute;
+    z-index: 1;
+    border-bottom: 1px solid #8989892c;
+    width: 100%;
+    z-index: 5;
+    .header-style-one-wrapper{
+        .main-nav-area{
+            margin-left: 120px;
+            @media #{$smlg-device} {
+                margin-left: 0;
+            }
+            @media #{$md-layout} {
+                display: none;
+            }
+            @media #{$sm-layout} {
+                display: none;
+            }
+        }
+        .button-area-start{
+            a.text-btn{
+                @media(max-width:768px){
+                    display: none;
+                }
+            }
+        }
+    }
+}
+
+
+
+.header--sticky {
+    transition: 0s;
+    &.style-six{
+        background: var(--body-bg);
+    }
+}
+
+
+
+header.header-two{
+    display: block;
+    &.border-bottom{
+        border-bottom: 1px solid var(--color-border) !important;
+    }
+}
+
+.header-two-content-main{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    a.logo-area{
+        padding: 25px 0;
+    }
+    .header-end-area{
+        display: flex;
+        align-items: center;
+        gap: 32px;
+        a.reqiest{
+            font-weight: 800;
+            font-family: var(--font-primary);
+            @media(max-width:768px){
+                display: none;
+            }
+        }
+        .rts-btn{
+            @media(max-width:576px){
+                display: none;
+            }
+        }
+    }
+}
+
+.header--sticky.sticky {
+    position: fixed !important;
+    top: 0;
+    display: block;
+    width: 100%;
+    box-shadow: 0px 7px 18px #1810100d;
+    background: #fff;
+    z-index: 999;
+    border: none !important;
+}
+
+
+// header three area
+
+
+.header-three{
+    width: 100%;
+    position: absolute;
+    .header-wrapper-main-three{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        .header-right-area{
+            display: flex;
+            align-items: center;
+            gap: 32px;
+            .main-nav-area{
+                @media(max-width:991px){
+                    display: none;
+                }
+                ul li a{
+                    color: #fff;
+                }
+            }
+            .rts-btn{
+                @media(max-width:576px){
+                    display: none;
+                }
+            }
+        }
+        .logo-area{
+            padding: 25px 0;
+        }
+    }
+}

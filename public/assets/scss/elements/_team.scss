@@ -1,0 +1,193 @@
+// team area
+
+.expart-team-area-7{
+    border-radius: 32px;
+    background: var(--team-bg);
+    &.team-five{
+        .title-style-one-center{
+            .pre{
+                color: var(--color-primary-2);
+            }
+        }
+    }
+    &.inner{
+        background: var(--team-bg);
+    }
+}
+
+.single-team-area-7{
+    text-align: center;
+    .thumbnail{
+        display: block;
+        border-radius: 50%;
+        max-width: max-content;
+        margin: auto;
+        margin-bottom: 24px;
+        img{
+            max-width: max-content;
+            transition: .3s;
+            border-radius: 50%;
+            width: 50%;
+        }
+    }
+    .title{
+        font-size: 20px;
+        font-style: normal;
+        font-weight: 800;
+        line-height: 120%;
+        margin-bottom: 2px;
+    }
+    .designation{
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 400;
+        color: #717383;
+    }
+    &:hover{
+        .thumbnail{
+            img{
+                transform: scale(1.1);
+            }
+        }
+    }
+}
+
+
+
+.mySwiper-testimonials-7{
+    .swiper-pagination{
+        .swiper-pagination-bullet{
+            height: 11px;
+            width: 11px;
+            background: #F8F9FB;
+            opacity: 1;
+            &.swiper-pagination-bullet-active{
+                background: var(--color-gradient);
+            }
+        }
+    }
+}
+
+
+
+
+
+// team area start
+
+
+.single-team-area-start{
+    &:hover{
+        .thumbnail{
+            img{
+                transform: rotateY(-180deg);
+            }
+        }
+    }
+    .thumbnail{
+        display: flex;
+        justify-content:center;
+        overflow: hidden;
+        border: 1px solid var(--color-border);
+        border-radius: 24px;
+        background: #F8F9FB;
+        margin-bottom: 24px;
+        padding-top: 40px;
+        height: 364px;
+        img{
+            transition: .8s;
+        }
+    }
+    .inner-content{
+        text-align: center;
+        .title{
+            font-size: 20px;
+            font-style: normal;
+            font-weight: 800;
+            line-height: 120%;
+            letter-spacing: -0.4px;
+            margin-bottom: 3px;
+        }
+        span{
+            font-size: 14px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 150%;
+            letter-spacing: -0.28px;
+            color: #717383;
+        }
+    }
+}
+
+.rts-team-area{
+    &.about{
+        position: relative;
+        .shape-area{
+            img{
+                position: absolute;
+                &.one{
+                    right: 25%;
+                    top: 15%;
+                }
+                &.two{
+                    left: 35%;
+                    top: 58%;
+                    transform: translateY(-58%);
+                    @media(max-width:576px){
+                        display: none;
+                    }
+                }
+                &.three{
+                    left: 25%;
+                    top: 7%;
+                }
+                &.four{
+                    right: 32%;
+                    bottom: 6%;
+                    @media(max-width:576px){
+                        display: none;
+                    }
+                }
+            }
+        }
+    }
+    &.inner{
+        background: var(--team-bg);
+        position: relative;
+        .shape-area{
+            img{
+                position: absolute;
+                &.one{
+                    right: 25%;
+                    top: 15%;
+                }
+                &.two{
+                    left: 35%;
+                    top: 58%;
+                    transform: translateY(-58%);
+                    @media(max-width:576px){
+                        display: none;
+                    }
+                }
+                &.three{
+                    left: 25%;
+                    top: 7%;
+                }
+                &.four{
+                    right: 32%;
+                    bottom: 6%;
+                    @media(max-width:576px){
+                        display: none;
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
