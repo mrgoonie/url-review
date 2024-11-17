@@ -4,11 +4,40 @@ import { z } from "zod";
 import { env } from "@/env";
 
 export const OPENROUTER_BASE_API_URL = "https://openrouter.ai/api/v1";
-export const APP_MODELS = [
+export const DEFAULT_AI_MODELS = [
   "google/gemini-flash-1.5",
+  "google/gemini-flash-1.5-8b",
   "google/gemini-pro-1.5",
-  "anthropic/claude-3-haiku",
-];
+  "openai/chatgpt-4o-latest",
+  "openai/gpt-4o-mini",
+  "anthropic/claude-3.5-haiku",
+  "anthropic/claude-3.5-sonnet",
+  "meta-llama/llama-3.2-3b-instruct",
+  "meta-llama/llama-3.1-70b-instruct:nitro",
+  "perplexity/llama-3.1-sonar-large-128k-chat",
+  "nvidia/llama-3.1-nemotron-70b-instruct",
+  "qwen/qwen-2.5-coder-32b-instruct",
+  "qwen/qwen-2.5-72b-instruct",
+  "eva-unit-01/eva-qwen-2.5-32b",
+] as const;
+export const TextModelSchema = z.enum(DEFAULT_AI_MODELS);
+export type TextModel = z.infer<typeof TextModelSchema>;
+
+export const DEFAULT_VISION_MODELS = [
+  "google/gemini-pro-1.5",
+  "google/gemini-pro-vision",
+  "google/gemini-flash-1.5",
+  "google/gemini-flash-1.5-8b",
+  "anthropic/claude-3.5-sonnet",
+  "anthropic/claude-3.5-haiku",
+  "openai/chatgpt-4o-latest",
+  "openai/gpt-4o-mini",
+  "meta-llama/llama-3.2-90b-vision-instruct",
+  "meta-llama/llama-3.2-11b-vision-instruct",
+  "qwen/qwen-2-vl-72b-instruct",
+] as const;
+export const VisionModelSchema = z.enum(DEFAULT_VISION_MODELS);
+export type VisionModel = z.infer<typeof VisionModelSchema>;
 
 export const AskAiMessageContentSchema = z.union([
   z.string(),
@@ -196,7 +225,9 @@ export async function fetchAi(params: AskAiParams, options: FetchAiOptions = {})
   };
 
   // if no model or models provided, use default APP_MODELS
-  if (!model && !models) data.models = APP_MODELS;
+  if (!model && !models) data.models = DEFAULT_AI_MODELS;
+  if (model && !models) data.model = model;
+  if (models && !model) data.models = models;
 
   if (debug) {
     console.log("Fetch AI Request:", { url, headers });

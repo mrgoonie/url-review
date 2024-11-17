@@ -1,8 +1,8 @@
 import express from "express";
 
-export const apiHealthzRouter = express.Router();
+export const apiScreenshotRouter = express.Router();
 
-apiHealthzRouter.get("/", (_, res) => {
+apiScreenshotRouter.post("/", (_, res) => {
   res.status(200).json({
     success: true,
     message: "Service is healthy",

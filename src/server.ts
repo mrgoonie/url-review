@@ -8,17 +8,15 @@ import { fileURLToPath } from "url";
 
 import { env } from "@/env";
 import { validateSession, verifyRequest } from "@/lib/auth";
+import { browserPool } from "@/lib/playwright";
 import { createInitialPlans } from "@/modules/plan/plans";
-import { initWorkspacePermissions } from "@/modules/workspace/initWorkspacePermissions";
+import { initWorkspacePermissions } from "@/modules/workspace";
 import { apiRouter } from "@/routes/api";
 import { authRouter } from "@/routes/auth";
 import { pageRouter } from "@/routes/pages";
 
-import { createInitialCategories } from "./modules/user-products/category";
-// import { doubleCsrfProtection } from "./middlewares/csrf";
+import { createInitialCategories } from "./modules/category";
 import { polarWebhookRouter } from "./routes/webhooks/polar-webhook";
-
-// import { syncPlans } from "./modules/plan/plans.js";
 
 declare global {
   namespace Express {
@@ -43,23 +41,13 @@ const app = express();
 app.set("trust proxy", ["loopback", "linklocal", "uniquelocal"]);
 
 // webhooks
+// NOTE: webhooks should be the first middleware because it handles raw request body
 app.use(polarWebhookRouter);
 
 // url encoded & body parser
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
-// CSRF protection
-// app.use((req, res, next) => {
-//   if (req.path === "/api/v1/link" && req.method === "POST") {
-//     console.log("req.path :>> ", req.path);
-//     // Skip CSRF for this specific route
-//     next();
-//   } else {
-//     doubleCsrfProtection(req, res, next);
-//   }
-// });
 
 // template engine: EJS
 app.set("views", path.join(__dirname, "views"));
@@ -88,6 +76,7 @@ app.use((error: any, _req: express.Request, res: express.Response, _next: expres
 // start server
 async function startServer() {
   await initWorkspacePermissions();
+  await browserPool.initialize();
   await createInitialCategories();
 
   app.listen(env.PORT, () => {

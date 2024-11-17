@@ -1,8 +1,7 @@
 import AppConfig from "@/config/AppConfig";
 import { clientEnv } from "@/env";
 import { prisma } from "@/lib/db";
-import { getGroupAds } from "@/modules/group-ads";
-import { getCategories } from "@/modules/products";
+import { getCategories } from "@/modules/category";
 import { maskUser } from "@/modules/user";
 
 import { pageRouter } from "./router";
@@ -18,7 +17,6 @@ pageRouter.get("/", async (_req, res) => {
     : null;
   // console.log(`user :>>`, user);
 
-  const { list: groupAds } = await getGroupAds({}, { page: 1, limit: 10 });
   const categories = await getCategories();
 
   return res.render("master", {
@@ -28,7 +26,6 @@ pageRouter.get("/", async (_req, res) => {
     path_name: "/",
     clientEnv,
     user: user ? maskUser(user) : null,
-    groupAds,
     categories,
   });
 });

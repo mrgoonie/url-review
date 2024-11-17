@@ -1,8 +1,6 @@
-import { type Browser, chromium, firefox } from "playwright";
-
 import { wait } from "@/lib/utils/wait";
 
-import { type PlaywightProxy, testProxyConnection } from "../proxy";
+import { type PlaywightProxy } from "../proxy";
 import { browserPool } from "./browser-pool";
 
 interface ScreenshotOptions {

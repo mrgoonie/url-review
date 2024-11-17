@@ -1,16 +1,17 @@
 import chalk from "chalk";
+import { z } from "zod";
 
-import { type AskAiMessage, type AskAiResponse, fetchAi } from ".";
+import { type AskAiMessage, type AskAiResponse, fetchAi, TextModelSchema } from ".";
 
-const model = "meta-llama/llama-3.2-11b-vision-instruct";
+export const JsonValidatorOptionsSchema = z.object({
+  parse: z.boolean().optional().describe("Whether to parse the JSON"),
+  model: TextModelSchema.optional().describe("The AI model to use"),
+  attempts: z.number().optional().describe("The number of attempts to fix the JSON"),
+  maxRetries: z.number().optional().describe("The maximum number of retries to fix the JSON"),
+  debug: z.boolean().optional().describe("Whether to log debug information"),
+});
 
-export type JsonValidatorOptions = {
-  parse?: boolean;
-  model?: string;
-  attempts?: number;
-  maxRetries?: number;
-  debug?: boolean;
-};
+export type JsonValidatorOptions = z.infer<typeof JsonValidatorOptionsSchema>;
 
 export class JsonValidatorError extends Error {
   constructor(public data: { message: string; data: any }) {
@@ -19,7 +20,8 @@ export class JsonValidatorError extends Error {
 }
 
 export async function jsonValidator(json: string, options?: JsonValidatorOptions) {
-  if (!options) options = { model, attempts: 0, maxRetries: 5, parse: false };
+  if (!options) options = {};
+  if (typeof options.model === "undefined") options.model = "google/gemini-flash-1.5-8b";
   if (typeof options.attempts === "undefined") options.attempts = 0;
   if (typeof options.maxRetries === "undefined") options.maxRetries = 5;
   if (typeof options.parse === "undefined") options.parse = false;
@@ -64,7 +66,7 @@ export async function jsonValidator(json: string, options?: JsonValidatorOptions
             </instructions>`,
       },
     ];
-    const res = (await fetchAi({ model, messages })) as AskAiResponse;
+    const res = (await fetchAi({ model: options.model, messages })) as AskAiResponse;
 
     let snippet = res.choices?.map((choice) => choice.message.content)?.join("\n");
     if (!snippet) {
@@ -77,3 +79,5 @@ export async function jsonValidator(json: string, options?: JsonValidatorOptions
     return jsonValidator(snippet, options);
   }
 }
+
+export const validateJson = jsonValidator;

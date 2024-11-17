@@ -7,7 +7,7 @@ import { uploadFileBuffer } from "@/lib/cloud-storage/storage-upload";
 import { apiKeyAuth } from "@/middlewares/api_key_auth";
 import { getUser } from "@/modules/user";
 
-export const uploadRouter = express.Router();
+export const apiUploadRouter = express.Router();
 const upload = multer();
 
 // Zod schema for file upload validation
@@ -22,23 +22,37 @@ const fileUploadSchema = z.object({
   size: z.number().max(5 * 1024 * 1024, { message: "File size must be less than 5MB" }),
 });
 
-uploadRouter.post(
+apiUploadRouter.post(
   "/",
   validateSession,
   apiKeyAuth,
   upload.single("image"),
   async (req, res, next) => {
     const userId = res.locals["user"]?.id;
-    if (!userId) return res.status(401).json({ status: 0, message: "Unauthorized" });
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+        error: "User ID not found in session",
+      });
+    }
+
     const user = await getUser(userId);
-    if (!user) return res.status(401).json({ status: 0, message: "Unauthorized" });
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+        error: "User not found",
+      });
+    }
 
     try {
       // Check if file exists
       if (!req.file) {
         return res.status(400).json({
-          status: 0,
+          success: false,
           message: "No file uploaded",
+          error: "File is required",
         });
       }
 
@@ -58,7 +72,7 @@ uploadRouter.post(
 
       // Return upload result
       res.status(200).json({
-        status: 1,
+        success: true,
         message: "Image uploaded successfully",
         data: {
           publicUrl: uploadResult.publicUrl,
@@ -70,7 +84,7 @@ uploadRouter.post(
 
       if (error instanceof z.ZodError) {
         return res.status(400).json({
-          status: 0,
+          success: false,
           message: "Invalid file",
           errors: error.errors,
         });
