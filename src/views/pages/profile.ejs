@@ -22,7 +22,9 @@
               .then((data) => {
                 if (data.status === 1) {
                   alert("Create new API key successfully");
-                  location.reload();
+                  setTimeout(() => {
+                    location.reload();
+                  }, 1000);
                   return;
                 }
                 alert(data.message);
@@ -40,7 +42,9 @@
               .then((data) => {
                 if (data.status === 1) {
                   alert("Delete API key successfully");
-                  location.reload();
+                  setTimeout(() => {
+                    location.reload();
+                  }, 1000);
                   return;
                 }
                 alert(data.message);
@@ -58,7 +62,7 @@
           <div class="border border-gray-300 dark:border-gray-600 rounded-md pt-1 pb-2 size-8 text-center">
             <span class="text-gray-500"><%- index + 1 %></span>
           </div>
-          <div>
+          <div class="flex-grow">
             <p class="text-base font-bold"><%- apiKey.name %> (<%- apiKey.displayCreatedAt %>)</p>
             <%- include('../common/link-copy', { link: apiKey.key }) %>
           </div>
