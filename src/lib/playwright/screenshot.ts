@@ -20,6 +20,7 @@ interface ScreenshotOptions {
   };
   proxy?: PlaywightProxy;
   delayAfterLoad?: number;
+  timeout?: number;
   debug?: boolean;
 }
 
@@ -54,8 +55,8 @@ export async function screenshot(url: string, options: ScreenshotOptions = {}) {
 
     try {
       const page = await context.newPage();
-      page.setDefaultTimeout(60_000);
-      page.setDefaultNavigationTimeout(60_000);
+      page.setDefaultTimeout(options.timeout ?? 60_000);
+      page.setDefaultNavigationTimeout(options.timeout ?? 60_000);
 
       await page.goto(url, { waitUntil: "domcontentloaded" });
       console.log(`screenshot.ts > attemptScreenshot() > Page loaded`);
@@ -99,16 +100,27 @@ export async function screenshot(url: string, options: ScreenshotOptions = {}) {
           : undefined,
       });
 
-      console.log(`screenshot.ts > attemptScreenshot() > Screenshot taken successfully`);
+      if (options.debug) {
+        console.log(
+          "screenshot.ts > attemptScreenshot() > Screenshot buffer :>>",
+          screenshotBuffer
+        );
+        console.log(`screenshot.ts > attemptScreenshot() > Screenshot taken successfully`);
+      }
+
       await page.close();
       await context.close();
+
+      /**
+       * NOTE: Do not close browser, keep it in pool
+       */
       // await browser.close();
 
       return screenshotBuffer;
     } catch (error: any) {
       // await browser.close();
       await context.close();
-      console.error(`screenshot.ts > attemptScreenshot() > Error with ${browserType}:>>`, error);
+      console.error(`screenshot.ts > attemptScreenshot() > Error with ${browserType} :>>`, error);
       throw error;
     }
   }

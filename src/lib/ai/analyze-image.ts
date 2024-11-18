@@ -20,13 +20,17 @@ export const AnalyzeImageOptionsSchema = z
 
 export type AnalyzeImageOptions = z.infer<typeof AnalyzeImageOptionsSchema>;
 
-const DEFAULT_JSON_RESPONSE_FORMAT = JSON.stringify({
-  elements: [{ type: "string" }],
-  properties: {
-    description: { type: "string" },
-    analysis: { type: "string" },
+const DEFAULT_JSON_RESPONSE_FORMAT = JSON.stringify(
+  {
+    elements: [{ type: "string" }],
+    properties: {
+      description: { type: "string" },
+      analysis: { type: "string" },
+    },
   },
-});
+  null,
+  2
+);
 
 export async function analyzeImage(input: AnalyzeImageInput, options?: AnalyzeImageOptions) {
   // validate input
@@ -43,7 +47,7 @@ export async function analyzeImage(input: AnalyzeImageInput, options?: AnalyzeIm
   ${validatedOptions?.jsonResponseFormat ?? DEFAULT_JSON_RESPONSE_FORMAT}`;
 
   const response = (await fetchAi({
-    model: validatedOptions?.model,
+    model: validatedOptions?.model ?? "google/gemini-flash-1.5",
     messages: [
       { role: "system", content: systemPrompt },
       {
@@ -60,13 +64,12 @@ export async function analyzeImage(input: AnalyzeImageInput, options?: AnalyzeIm
   if (!responseContent)
     throw new Error(response.choices[0].error?.message ?? "No response content found");
 
-  const jsonResponse = await validateJson(responseContent, {
-    model: "google/gemini-flash-1.5-8b",
-    maxRetries: 3,
+  const data = await validateJson(responseContent, {
+    maxRetries: 5,
     parse: true,
   });
 
-  return { data: jsonResponse, usage: response.usage, model: response.model };
+  return { data, usage: response.usage, model: response.model };
 }
 
 export async function analyzeImageBase64(

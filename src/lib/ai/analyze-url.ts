@@ -17,6 +17,8 @@ export const AnalyzeUrlOptionsSchema = z
   .object({
     model: TextModelSchema.optional().describe("The AI model to use"),
     jsonResponseFormat: z.string().optional().describe("A JSON response format for the AI"),
+    delayAfterLoad: z.number().optional().describe("Delay after loading the website"),
+    debug: z.boolean().optional().describe("Print debug logs"),
   })
   .optional();
 
@@ -54,7 +56,7 @@ export async function analyzeUrl(input: AnalyzeUrlInput, options?: AnalyzeUrlOpt
   let websiteContent = "";
   try {
     const htmlContent = await getHtmlContent(validatedInput.url, {
-      delayAfterLoad: 3000,
+      delayAfterLoad: validatedOptions?.delayAfterLoad ?? 3000,
     });
 
     // If htmlContent is an array, join the contents
@@ -64,7 +66,7 @@ export async function analyzeUrl(input: AnalyzeUrlInput, options?: AnalyzeUrlOpt
     websiteContent = websiteContent.replace(/<[^>]*>/g, "").trim();
 
     // Limit content length to prevent excessive token usage
-    websiteContent = websiteContent.slice(0, 15000);
+    // websiteContent = websiteContent.slice(0, 15000);
   } catch (error) {
     throw new Error(
       `Failed to fetch website content: ${error instanceof Error ? error.message : "Unknown error"}`
@@ -92,6 +94,7 @@ export async function analyzeUrl(input: AnalyzeUrlInput, options?: AnalyzeUrlOpt
 
   // Fetch AI analysis
   const response = (await fetchAi({
+    stream: false,
     model: validatedOptions?.model,
     messages: [
       { role: "system", content: systemPrompt },

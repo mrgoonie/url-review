@@ -35,7 +35,7 @@ pageRouter.get("/profile", verifyRequest, validateSession, async (_req, res) => 
       return [];
     });
 
-  return res.render("master-dashboard", {
+  return res.render("master", {
     page: "pages/profile",
     path_name: "/profile",
     page_name: "Profile",

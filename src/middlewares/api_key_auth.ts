@@ -3,6 +3,8 @@ import type { RequestHandler } from "express";
 import { prisma } from "@/lib/db";
 
 export const apiKeyAuth: RequestHandler = async (req, res, next) => {
+  console.log("api_key_auth.ts > apiKeyAuth > res.locals.user :>>", res.locals.user);
+  console.log("api_key_auth.ts > apiKeyAuth > res.locals.userId :>>", res.locals.userId);
   try {
     let apiKey = req.headers["x-api-key"]?.toString();
 

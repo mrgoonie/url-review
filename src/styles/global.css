@@ -20,10 +20,15 @@
     @apply text-lg;
   }
   a {
-    @apply text-blue-600 dark:text-blue-400; /* Added dark mode support */
+    @apply text-blue-600 dark:text-blue-400;
   }
   p {
     @apply mt-4 mb-8;
+  }
+  /* Transition for all links and buttons */
+  a,
+  button {
+    @apply transition-all duration-300;
   }
   input {
     @apply outline-none focus:ring-0 p-2 dark:bg-gray-700 dark:text-white; /* Added dark mode support */

@@ -398,7 +398,8 @@ model WebUrlCategory {
 model Review {
     id           String       @id @default(uuid())
     url          String
-    model        String
+    textModel    String?
+    visionModel  String?
     instructions String?
     status       ReviewStatus @default(PENDING)
 
@@ -441,18 +442,19 @@ model ReviewCategory {
 
 // Screenshot model to store website screenshots
 model Screenshot {
-    id             String           @id @default(uuid())
-    url            String
-    imageUrl       String
-    fullPage       Boolean          @default(false)
-    deviceType     ScreenshotDevice @default(DESKTOP)
-    viewportWidth  Int
-    viewportHeight Int
-    viewportScale  Float
+    id       String @id @default(uuid())
+    url      String
+    imageUrl String
+
+    fullPage       Boolean?          @default(false)
+    deviceType     ScreenshotDevice? @default(DESKTOP)
+    viewportWidth  Int?
+    viewportHeight Int?
+    viewportScale  Float?
 
     // Relationships
-    reviewId String
-    review   Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+    reviewId String?
+    review   Review? @relation(fields: [reviewId], references: [id], onDelete: Cascade)
 
     createdAt DateTime @default(now())
 }

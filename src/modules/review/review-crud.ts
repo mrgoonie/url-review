@@ -1,11 +1,13 @@
 import { type Prisma, ReviewStatus } from "@prisma/client";
 import { z } from "zod";
 
+import { TextModelSchema, VisionModelSchema } from "@/lib/ai";
 import { prisma } from "@/lib/db";
 
 export const ReviewCreateDataSchema = z.object({
   url: z.string().url(),
-  model: z.string(),
+  textModel: TextModelSchema.optional(),
+  visionModel: VisionModelSchema.optional(),
   instructions: z.string().optional(),
   metadata: z.record(z.any()).optional(),
   status: z.nativeEnum(ReviewStatus).optional(),
@@ -28,6 +30,10 @@ export async function createReview(input: ReviewCreateData) {
   const validatedInput = ReviewCreateDataSchema.parse(input);
 
   const { categories, userId, workspaceId, ...reviewData } = validatedInput;
+
+  // Set default models if not provided
+  if (!reviewData.textModel) reviewData.textModel = "google/gemini-flash-1.5";
+  if (!reviewData.visionModel) reviewData.visionModel = "google/gemini-flash-1.5";
 
   return prisma.review.create({
     data: {

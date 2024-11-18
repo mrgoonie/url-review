@@ -4,6 +4,8 @@ import cookieParser from "cookie-parser";
 import express from "express";
 import type { Session, User } from "lucia";
 import path from "path";
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUi from "swagger-ui-express";
 import { fileURLToPath } from "url";
 
 import { env } from "@/env";
@@ -15,6 +17,8 @@ import { apiRouter } from "@/routes/api";
 import { authRouter } from "@/routes/auth";
 import { pageRouter } from "@/routes/pages";
 
+import { swaggerOptions } from "./config";
+import { fetchListAIModels } from "./lib/ai/models";
 import { createInitialCategories } from "./modules/category";
 import { polarWebhookRouter } from "./routes/webhooks/polar-webhook";
 
@@ -67,6 +71,10 @@ app.use(validateSession);
 app.use(authRouter);
 app.use(pageRouter);
 
+// swagger
+const specs = swaggerJSDoc(swaggerOptions());
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
+
 // error handler
 app.use((error: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   console.error(chalk.red(`server.ts > error handler > Server error:`, error));
@@ -78,6 +86,7 @@ async function startServer() {
   await initWorkspacePermissions();
   await browserPool.initialize();
   await createInitialCategories();
+  await fetchListAIModels({ debug: true });
 
   app.listen(env.PORT, () => {
     console.log(chalk.green(`🚀 Server running on port ${env.PORT}`));

@@ -1,5 +1,5 @@
 import { languages } from "../translate/settings";
-import { type AskAiResponse, fetchAi } from "./fetch-ai";
+import { type AskAiResponse, fetchAi, type TextModel } from "./fetch-ai";
 
 // usage purposes of the AI response content
 export const usagePurposes = [
@@ -28,7 +28,7 @@ export type SummarizeOptions = {
    * AI Model in string (if provided, will override the models).
    * @example "mistralai/mixtral-8x7b-instruct:nitro"
    */
-  model?: string;
+  model?: TextModel;
   /**
    * AI Models in array (if provided, will override the model).
    * @example ["mistralai/mixtral-8x7b-instruct:nitro", "anthropic/claude-3-haiku"]

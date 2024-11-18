@@ -1,7 +1,13 @@
 import axios from "axios";
+import axiosRetry from "axios-retry";
 import { z } from "zod";
 
 import { env } from "@/env";
+
+import { calculateAiCostByUsage } from "../utils";
+
+// Retry configuration
+axiosRetry(axios, { retries: 3, retryDelay: axiosRetry.exponentialDelay });
 
 export const OPENROUTER_BASE_API_URL = "https://openrouter.ai/api/v1";
 export const DEFAULT_AI_MODELS = [
@@ -10,7 +16,7 @@ export const DEFAULT_AI_MODELS = [
   "google/gemini-pro-1.5",
   "openai/chatgpt-4o-latest",
   "openai/gpt-4o-mini",
-  "anthropic/claude-3.5-haiku",
+  "anthropic/claude-3-5-haiku",
   "anthropic/claude-3.5-sonnet",
   "meta-llama/llama-3.2-3b-instruct",
   "meta-llama/llama-3.1-70b-instruct:nitro",
@@ -67,7 +73,9 @@ export const AskAiMessageSchema = z.object({
 export type AskAiMessage = z.infer<typeof AskAiMessageSchema>;
 
 export const AskAiParamsSchema = z.object({
-  model: z.string().optional().describe(`The model used for completion.`),
+  model: TextModelSchema.or(VisionModelSchema)
+    .optional()
+    .describe(`The model used for completion.`),
   models: z.array(z.string()).optional().describe(`Fallback AI models routing.`),
   messages: z.array(AskAiMessageSchema).describe(`Array of messages.`),
   stream: z.boolean().default(false).optional(),
@@ -191,7 +199,16 @@ export function extractContent(content: AskAiMessageContent): string {
 
 export interface FetchAiOptions {
   debug?: boolean;
+  /**
+   * Timeout for the request
+   * @default 5 minutes
+   */
   timeout?: number;
+  /**
+   * Number of retries for the request
+   * @default 3
+   */
+  maxRetries?: number;
 }
 
 export class FetchAiError extends Error {
@@ -207,8 +224,12 @@ export class FetchAiError extends Error {
 }
 
 export async function fetchAi(params: AskAiParams, options: FetchAiOptions = {}) {
-  const { model, models, messages, ...otherParams } = params;
-  const { debug = false, timeout = 5 * 60 * 1000 } = options;
+  const { model, models, messages, stream = false, ...otherParams } = params;
+  const { debug = false, timeout = 5 * 60 * 1000, maxRetries = 3 } = options;
+
+  // re-configure axios retry if needed
+  if (maxRetries !== 3)
+    axiosRetry(axios, { retries: maxRetries, retryDelay: axiosRetry.exponentialDelay });
 
   const url = `${OPENROUTER_BASE_API_URL}/chat/completions`;
   const headers = {
@@ -220,12 +241,12 @@ export async function fetchAi(params: AskAiParams, options: FetchAiOptions = {})
 
   const data: any = {
     messages,
-    stream: params.stream,
+    stream,
     ...otherParams,
   };
 
   // if no model or models provided, use default APP_MODELS
-  if (!model && !models) data.models = DEFAULT_AI_MODELS;
+  if (!model && !models) data.models = DEFAULT_AI_MODELS.slice(0, 3);
   if (model && !models) data.model = model;
   if (models && !model) data.models = models;
 
@@ -235,7 +256,8 @@ export async function fetchAi(params: AskAiParams, options: FetchAiOptions = {})
   }
 
   try {
-    if (params.stream) {
+    // stream response
+    if (stream) {
       return await axios({
         method: "POST",
         url,
@@ -246,6 +268,7 @@ export async function fetchAi(params: AskAiParams, options: FetchAiOptions = {})
       });
     }
 
+    // non-stream response
     const response = await axios({
       method: "POST",
       url,
@@ -257,12 +280,23 @@ export async function fetchAi(params: AskAiParams, options: FetchAiOptions = {})
 
     if (response.data.error) throw new FetchAiError(JSON.parse(response.data.error.message).error);
 
-    return response.data as AskAiResponse;
+    const responseData = response.data as AskAiResponse;
+
+    // calculate total cost
+    const totalCost = calculateAiCostByUsage(responseData.model, responseData.usage);
+    responseData.usage.total_cost = totalCost;
+
+    return responseData;
   } catch (error: any) {
     if (axios.isAxiosError(error)) {
       if (error.code === "ECONNABORTED") throw new Error("Request timed out");
       console.error(error);
-      throw new Error(`HTTP error! status: ${error.response?.status}, message: ${error.message}`);
+      const errorData = error.response?.data;
+      throw new Error(
+        `HTTP error! status: ${error.response?.status}, message: ${error.message}, data: ${
+          errorData ? JSON.stringify(errorData, null, 2) : "<no data>"
+        }`
+      );
     }
     throw error;
   }

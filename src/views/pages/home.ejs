@@ -1,10 +1,23 @@
-<div class="px-6 pt-80 pb-60 flex flex-col items-center justify-center">
+<div class="px-6 py-20 flex flex-col items-center justify-center">
   <div class="text-center bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 border border-gray-100 dark:border-gray-700">
     <h1 class="font-bold text-gray-800 dark:text-gray-200">Hello World!</h1>
     <p>ReviewWeb.site is a tool that utilizes AI to helps you to scan through the websites and provide feedbacks based on the content.</p>
-    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"><i class="ri-login-box-line mr-1"></i> Login</button>
-    <a href="https://github.com/mrgoonie/url-review" target="_blank" class="bg-black hover:bg-gray-800 text-white font-bold inline-block py-2 px-4 rounded">
-      <i class="ri-github-line mr-1"></i> Github
-    </a>
+    <div class="flex flex-wrap justify-center items-center gap-2">
+      <% if (!user) { %>
+      <a href="/login" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        <i class="ri-login-box-line mr-1"></i> Login
+      </a>
+      <% } else { %>
+      <a href="/logout" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+        <i class="ri-logout-box-line mr-1"></i> Logout
+      </a>
+      <% } %>
+      <a href="/api-docs" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+        <i class="ri-book-open-line mr-1"></i> API Docs
+      </a>
+      <a href="https://github.com/mrgoonie/url-review" target="_blank" class="bg-black hover:bg-gray-800 text-white font-bold py-2 px-4 rounded">
+        <i class="ri-github-line mr-1"></i> Contribute
+      </a>
+    </div>
   </div>
 </div>
