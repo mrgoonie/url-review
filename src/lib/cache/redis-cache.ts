@@ -19,14 +19,6 @@ export const redis = env.REDIS_URL
       maxRetriesPerRequest: 3,
       retryStrategy,
     })
-  : env.REDIS_HOST && env.REDIS_PORT && env.REDIS_PASSWORD
-  ? new IORedis(env.REDIS_HOST, {
-      port: parseInt(env.REDIS_PORT),
-      password: env.REDIS_PASSWORD,
-      keyPrefix: env.REDIS_PREFIX || "ziione:",
-      maxRetriesPerRequest: 3,
-      retryStrategy,
-    })
   : null;
 
 // Redis client (Subscriber)
