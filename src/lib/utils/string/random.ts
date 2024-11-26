@@ -1,3 +1,5 @@
+import bcrypt from "bcrypt";
+
 /**
  * Generates a random string of the specified length using only digits and alphabet characters.
  * @param length - The length of the random string to generate.
@@ -11,4 +13,11 @@ export function generateRandomString(length: number): string {
     result += characters[randomIndex];
   }
   return result;
+}
+
+export async function generateRandomApiKey(): Promise<string> {
+  const saltRounds = 10;
+  const token = crypto.randomUUID();
+  const hashedToken = await bcrypt.hash(token, saltRounds);
+  return "wrk_" + hashedToken.replace(/[^a-zA-Z0-9]/g, "");
 }

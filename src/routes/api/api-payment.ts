@@ -4,7 +4,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/db";
 
 // Base URL: /api/v1/payments
-const router = express.Router();
+export const apiPaymentRouter = express.Router();
 
 // Define the schema for the topup request
 const topupSchema = z.object({
@@ -13,7 +13,7 @@ const topupSchema = z.object({
 });
 
 // Topup route
-router.post("/topup", async (req, res, next) => {
+apiPaymentRouter.post("/topup", async (req, res) => {
   try {
     // Validate request body
     const validatedData = topupSchema.parse(req.body);
@@ -22,16 +22,37 @@ router.post("/topup", async (req, res, next) => {
     console.log("api-payment > topup() > validatedData :>>", validatedData);
 
     // If success, update the user balance
-    await prisma.user.update({
+    const updatedUser = await prisma.user.update({
       where: { id: validatedData.userId },
       data: { balance: { increment: validatedData.amount } },
+      select: { id: true, balance: true },
     });
 
-    // Respond with success
-    res.status(200).json({ message: "Topup successful", data: validatedData });
+    // Respond with success following standard API response
+    res.status(201).json({
+      success: true,
+      message: "Topup successful",
+      data: {
+        userId: updatedUser.id,
+        newBalance: updatedUser.balance,
+      },
+    });
   } catch (error) {
-    next(error); // Pass the error to the next middleware
+    console.error("api-payment > topup() > error :>>", error);
+
+    // Handle different types of errors with appropriate status codes
+    if (error instanceof z.ZodError) {
+      res.status(400).json({
+        success: false,
+        message: "Invalid input",
+        errors: error.errors,
+      });
+    } else {
+      res.status(500).json({
+        success: false,
+        message: "Internal server error",
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
+    }
   }
 });
-
-export const paymentRouter = router;

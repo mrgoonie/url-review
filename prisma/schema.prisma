@@ -346,6 +346,24 @@ model ApiKey {
 
 // ------------------ APP SPECIFIC SCHEMAS ------------------
 
+// Category model
+model Category {
+    id           String    @id @default(uuid())
+    name         String
+    slug         String    @unique
+    status       String
+    description  String?
+    icon         String?
+    parentId     String?
+    translations Json?
+    createdAt    DateTime  @default(now())
+    updatedAt    DateTime? @updatedAt
+
+    // Relation to reviews and web urls
+    reviews ReviewCategory[]
+    webUrls WebUrlCategory[]
+}
+
 // Cached website data
 model WebUrl {
     id String @id @default(uuid())
@@ -359,19 +377,35 @@ model WebUrl {
     workspaceId String?
     workspace   Workspace? @relation(fields: [workspaceId], references: [id])
 
+    // Many-to-Many relationship with Categories
+    categories WebUrlCategory[]
+
     createdAt DateTime  @default(now())
     updatedAt DateTime? @updatedAt
+}
+
+// Intermediate model for Many-to-Many relationship between WebUrl and Category
+model WebUrlCategory {
+    webUrlId   String
+    webUrl     WebUrl   @relation(fields: [webUrlId], references: [id], onDelete: Cascade)
+    categoryId String
+    category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+    @@id([webUrlId, categoryId])
 }
 
 // Review model to store website review results
 model Review {
     id           String       @id @default(uuid())
     url          String
-    model        String
+    textModel    String?
+    visionModel  String?
     instructions String?
     status       ReviewStatus @default(PENDING)
 
     // Review results
+    metadata       Json?
+    errorMessage   String?
     aiAnalysis     Json?
     seoScore       Float?
     securityScore  Float?
@@ -383,6 +417,9 @@ model Review {
     // Screenshots
     screenshots Screenshot[]
 
+    // Many-to-Many relationship with Categories
+    categories ReviewCategory[]
+
     // Relationships
     userId      String
     user        User       @relation(fields: [userId], references: [id])
@@ -393,20 +430,31 @@ model Review {
     updatedAt DateTime? @updatedAt
 }
 
+// Intermediate model for Many-to-Many relationship between Review and Category
+model ReviewCategory {
+    reviewId   String
+    review     Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+    categoryId String
+    category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+    @@id([reviewId, categoryId])
+}
+
 // Screenshot model to store website screenshots
 model Screenshot {
-    id             String           @id @default(uuid())
-    url            String
-    imageUrl       String
-    fullPage       Boolean          @default(false)
-    deviceType     ScreenshotDevice @default(DESKTOP)
-    viewportWidth  Int
-    viewportHeight Int
-    viewportScale  Float
+    id       String @id @default(uuid())
+    url      String
+    imageUrl String
+
+    fullPage       Boolean?          @default(false)
+    deviceType     ScreenshotDevice? @default(DESKTOP)
+    viewportWidth  Int?
+    viewportHeight Int?
+    viewportScale  Float?
 
     // Relationships
-    reviewId String
-    review   Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+    reviewId String?
+    review   Review? @relation(fields: [reviewId], references: [id], onDelete: Cascade)
 
     createdAt DateTime @default(now())
 }

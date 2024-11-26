@@ -24,6 +24,8 @@ always use async/await for better readability and performance
 always use `next()` for error handling of all routers
 always use try-catch for fallback error handling
 always use zod for validation
+always generate swagger docs for all APIs
+always use `bearerAuth` and `ApiKeyAuth` for swagger security
 
 ### Project Description
 

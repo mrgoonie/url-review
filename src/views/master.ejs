@@ -46,54 +46,7 @@
   </div>
   <!-- pre loader end -->
 
-  <!-- THEME MODE SWITCHER -->
-  <div class="rts-switcher rts-theme-mode">
-    <div class="rts-darkmode">
-      <a id="rts-data-toggle" class="rts-dark-light">
-        <i class="rts-go-dark fal fa-moon"></i>
-        <i class="rts-go-light fa-light fa-sun-bright"></i>
-      </a>
-    </div>
-  </div>
-  <!-- THEME MODE SWITCHER END -->
-
-  <!-- progress area start -->
-  <div class="progress-wrap">
-    <svg class="progress-circle svg-content" width="100%" height="100%" viewBox="-1 -1 102 102">
-      <path d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98" style="transition: stroke-dashoffset 10ms linear 0s; stroke-dasharray: 307.919, 307.919; stroke-dashoffset: 307.919;"></path>
-    </svg>
-  </div>
-  <!-- progress area end -->
-
-  <!-- DRAWERS -->
-  <% 
-  // Define the content separately for clarity
-  const groupAdPreviewContent = include('common/group-ad-preview');
-  %>
-  <%- include('common/drawers', {
-    drawerId: 'group-ad-preview',
-    drawerTitle: 'Group Ad Preview',
-    drawerContent: groupAdPreviewContent,
-    drawerPlacement: 'right', // 'right', 'left', 'top', 'bottom'
-    drawerSize: 'medium',     // 'small', 'medium', 'large'
-    drawerMaskCloseable: true // allows closing by clicking outside
-  }) %>
-
-  <%
-  const productCreateFormContent = include('common/product-create-form');
-  %>
-  <%- include('common/drawers', {
-    drawerId: 'create-product',
-    drawerTitle: 'Create New Product',
-    drawerContent: productCreateFormContent,
-    drawerFooter: `<button class="rts-btn btn-primary" onclick="closeDrawer('create-product')">Create Product</button>`,
-    drawerPlacement: 'right', // 'right', 'left', 'top', 'bottom'
-    drawerSize: 'medium',     // 'small', 'medium', 'large'
-    drawerMaskCloseable: true, // allows closing by clicking outside
-  }) %>
-
   <!-- Scripts -->
-
   <!-- Day.js -->
   <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
   <!-- marked.js -->
@@ -113,30 +66,14 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <!-- Main JS -->
-  <script defer src="/assets/js/plugins/bootstrap.min.js"></script>
-  <script defer src="/assets/js/plugins/metismenu.js"></script>
-  <script defer src="/assets/js/vendor/jqueryui.js"></script>
-  <script defer src="/assets/js/vendor/waypoint.js"></script>
-  <script defer src="/assets/js/plugins/swiper.js"></script>
-  <script defer src="/assets/js/plugins/theia-sticky-sidebar.min.js"></script>
   <script defer src="/assets/js/plugins/gsap.min.js"></script>
-  <script defer src="/assets/js/plugins/scrolltigger.js"></script>
-  <script defer src="/assets/js/vendor/split-text.js"></script>
-  <script defer src="/assets/js/vendor/split-type.js"></script>
-  <script defer src="/assets/js/vendor/waw.js"></script>
-  <script defer src="/assets/js/plugins/counter-up.js"></script>
-  <script defer src="/assets/js/plugins/magnific-popup.js"></script>
-  <!-- contact form js -->
-  <script defer src="/assets/js/plugins/contact-form.js"></script>
   <!-- Users -->
   <script defer src="/assets/js/auth.js"></script>
   <!-- Drawers -->
   <script defer src="/assets/js/plugins/drawers.js"></script>
   <!-- Modals -->
   <script defer src="/assets/js/plugins/modals.js"></script>
-  <!-- Group Ads -->
-  <script defer src="/assets/js/group-ads.js"></script>
-  <script defer src="/assets/js/main.js"></script>
+  <!-- Tippy -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       tippy('.tippy', {
@@ -145,10 +82,6 @@
         interactive: true,
       });
     });
-    // bootstrap tooltip
-    $(function() {
-      $('[data-toggle="tooltip"]').tooltip();
-    })
   </script>
 </body>
 

@@ -1,11 +1,13 @@
 import axios from "axios";
+import axiosRetry from "axios-retry";
 import { toFloat } from "diginext-utils/dist/object";
 import { z } from "zod";
 
 import { redis } from "@/lib/cache";
 
 import { sortToFirst } from "../utils/array";
-import { retry } from "../utils/retry";
+
+axiosRetry(axios, { retries: 5, retryDelay: axiosRetry.exponentialDelay });
 
 export const AiModelSchema = z.object({
   id: z.string(),
@@ -65,10 +67,10 @@ export const aiProviders = [
 ] as const;
 export type AIProvider = (typeof aiProviders)[number];
 
-export async function fetchListAIModels() {
+export async function fetchListAIModels(options: { debug?: boolean; skipCache?: boolean } = {}) {
   try {
     // get "aiModels" & "aiVisionModels" from redis (if redis is available)
-    if (redis) {
+    if (redis && !options.skipCache) {
       const aiModelsCache = await redis.get("aiModels");
       const aiVisionModelsCache = await redis.get("aiVisionModels");
       if (aiVisionModelsCache) aiVisionModels = JSON.parse(aiVisionModelsCache);
@@ -79,7 +81,7 @@ export async function fetchListAIModels() {
     }
 
     // const cacheFilePath = path.resolve(STORAGE_PATH, 'models.json');
-    let res = await retry(() => axios.get(`${OPENROUTER_BASE_API_URL}/models`), 5);
+    let res = await axios.get(`${OPENROUTER_BASE_API_URL}/models`);
 
     const { data: responseData } = res;
 
@@ -87,35 +89,7 @@ export async function fetchListAIModels() {
      * Need to filter out some models, since Discord only support max. 25 choices
      * - Source: https://openrouter.ai/api/v1/models
      */
-    const _list = [...responseData.data].filter(
-      (item) =>
-        (item.id.indexOf("google/gem") > -1 ||
-          item.id.indexOf("meta-llama/llama") > -1 ||
-          item.id.indexOf("mistralai/mixtral") > -1 ||
-          item.id.indexOf("openai/gpt-3.5-turbo-16k") > -1 ||
-          item.id.indexOf("openai/gpt-4-turbo-preview") > -1 ||
-          item.id.indexOf("openai/gpt-4-32k") > -1 ||
-          item.id.indexOf("openai/gpt-4o") > -1 ||
-          item.id.indexOf("gryphe/mythomax") > -1 ||
-          item.id.indexOf("databricks/dbrx") > -1 ||
-          item.id.indexOf("mistralai/mistral") > -1 ||
-          item.id.indexOf("nousresearch/") > -1 ||
-          item.id.indexOf("deepseek/") > -1 ||
-          item.id.indexOf("perplexity/") > -1 ||
-          item.id.indexOf("01-ai/") > -1 ||
-          item.id.indexOf("microsoft/wizardlm") > -1 ||
-          item.id.indexOf("cohere/command-r") > -1 ||
-          item.id.indexOf("qwen/qwen") > -1 ||
-          item.id.indexOf("anthropic/claude-3") > -1) &&
-        // exclude "free" models
-        item.id.indexOf(":free") === -1 &&
-        // exclude "beta" models
-        item.id.indexOf(":beta") === -1 &&
-        // exclude "old" models
-        item.id.indexOf("-0314") === -1 &&
-        // exclude "vision" models
-        item.id.indexOf("vision") === -1
-    ) as AIModel[];
+    const _list = [...responseData.data] as AIModel[];
 
     // sort models
     let models = sortToFirst(_list.sort(), "id", "meta");
@@ -189,16 +163,10 @@ export async function fetchListAIModels() {
     aiVisionModels = visions;
 
     // print out
-    // console.log(
-    //     '[AI] Available AI models :>> ',
-    //     aiModels.map((item) => item.id)
-    // );
-    // console.log(
-    //     '[AI] Available vision models :>> ',
-    //     aiVisionModels.map((item) => item.id)
-    // );
-    console.log("[AI] Total AI models :>> ", aiModels.length);
-    console.log("[AI] Total AI vision models :>> ", aiVisionModels.length);
+    if (options.debug) {
+      console.log("[AI] Total AI models :>> ", aiModels.length);
+      console.log("[AI] Total AI vision models :>> ", aiVisionModels.length);
+    }
 
     // add to redis (if redis is available) and set expire time to 24 hours
     if (redis) {
@@ -206,14 +174,9 @@ export async function fetchListAIModels() {
       redis.set("aiVisionModels", JSON.stringify(aiVisionModels), "EX", 24 * 60 * 60);
     }
 
-    // aiModels.push(...models);
-    // aiVisionModels.push(...visions);
     return models as AIModel[]; // Trả về danh sách mô hình AI
   } catch (e: any) {
     console.log(`[FETCH_AI_MODELS] e :>> `, e);
-    // console.log(`[FETCH_AI_MODELS] e.response :>> `, e.response);
-    // console.log(`[FETCH_AI_MODELS] e.message :>> `, e.message);
-    // const err = e.response?.data?.error?.message || e.message;
     return []; // Trả về mảng rỗng trong trường hợp có lỗi
   }
 }

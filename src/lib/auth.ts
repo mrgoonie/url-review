@@ -41,6 +41,7 @@ export const lucia = new Lucia(adapter, {
 });
 
 declare module "lucia" {
+  // eslint-disable-next-line no-unused-vars
   interface Register {
     Lucia: typeof Lucia;
     DatabaseUserAttributes: DatabaseUserAttributes;
@@ -67,6 +68,7 @@ export const validateSession: RequestHandler = async (req, res, next) => {
   const sessionId = lucia.readSessionCookie(req.headers.cookie ?? "");
   if (!sessionId) {
     res.locals.user = null;
+    res.locals.userId = null;
     res.locals.session = null;
     return next();
   }
@@ -80,5 +82,6 @@ export const validateSession: RequestHandler = async (req, res, next) => {
   }
   res.locals.session = session;
   res.locals.user = user;
+  res.locals.userId = user?.id ?? null;
   return next();
 };

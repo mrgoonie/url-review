@@ -1,3 +1,5 @@
+export * from "./analyze-image";
+export * from "./analyze-url";
 export * from "./extract-code";
 export * from "./fetch-ai";
 export * from "./generate-article-meta";

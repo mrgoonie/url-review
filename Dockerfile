@@ -27,7 +27,8 @@ COPY prisma ./prisma
 RUN bun install
 
 # Install Playwright with PNPM
-RUN pnpm exec playwright install --with-deps
+# RUN pnpm exec playwright install --with-deps
+RUN bunx playwright install --with-deps
 
 # Install Playwright with YARN
 # RUN yarn playwright install

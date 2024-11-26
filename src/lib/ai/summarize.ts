@@ -1,5 +1,5 @@
 import { languages } from "../translate/settings";
-import { type AskAiResponse, fetchAi } from "./fetch-ai";
+import { type AskAiResponse, fetchAi, type TextModel } from "./fetch-ai";
 
 // usage purposes of the AI response content
 export const usagePurposes = [
@@ -25,10 +25,15 @@ export const usagePurposeLengths = [
 
 export type SummarizeOptions = {
   /**
-   * AI Model in string.
+   * AI Model in string (if provided, will override the models).
    * @example "mistralai/mixtral-8x7b-instruct:nitro"
    */
-  model?: string;
+  model?: TextModel;
+  /**
+   * AI Models in array (if provided, will override the model).
+   * @example ["mistralai/mixtral-8x7b-instruct:nitro", "anthropic/claude-3-haiku"]
+   */
+  models?: string[];
   length?: string | number;
   purpose?: string;
   toLanguage?: string | null;
@@ -38,12 +43,9 @@ export type SummarizeOptions = {
 };
 
 export async function summarize(content: string, options?: SummarizeOptions) {
-  // if content is too large -> fallback to gemini flash 1.5 (1M context length)
-  const model = options?.model || `google/gemini-flash-1.5`;
-
   const result = (await fetchAi({
-    // model,
-    // models: ["google/gemini-flash-1.5", "google/gemini-pro-1.5", "anthropic/claude-3-haiku"],
+    model: options?.model,
+    models: options?.models,
     messages: [
       {
         role: "system",
