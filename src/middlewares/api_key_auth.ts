@@ -42,12 +42,11 @@ export const apiKeyAuth: RequestHandler = async (req, res, next) => {
     }
 
     // assign api key to locals
-    res.locals["apiKey"] = key;
+    res.locals.apiKey = key;
 
     // Only set user if it's not already set
-    if (!res.locals.user) {
-      res.locals["user"] = key.user;
-    }
+    if (!res.locals.user) res.locals.user = key.user;
+    if (!res.locals.userId) res.locals.userId = key.user.id;
 
     next();
   } catch (error) {

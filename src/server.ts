@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+import type { ApiKey } from "@prisma/client";
 import chalk from "chalk";
 import cookieParser from "cookie-parser";
 import express from "express";
@@ -26,6 +27,8 @@ declare global {
   namespace Express {
     interface Locals {
       user: User | null;
+      userId: string | null;
+      apiKey: ApiKey | null;
       session: Session | null;
       csrfToken: string;
     }
