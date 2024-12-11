@@ -180,7 +180,19 @@ apiScreenshotRouter.post("/", validateSession, apiKeyAuth, async (req, res) => {
     const screenshotData = ScreenshotRequestSchema.parse({ ...req.body, userId });
 
     // take screenshot
-    const imageBuffer = await screenshot(screenshotData.url, { debug: IsDev() });
+    const size =
+      typeof screenshotData.viewportWidth !== "undefined" &&
+      typeof screenshotData.viewportHeight !== "undefined"
+        ? {
+            width: screenshotData.viewportWidth,
+            height: screenshotData.viewportHeight,
+          }
+        : undefined;
+    const imageBuffer = await screenshot(screenshotData.url, {
+      debug: IsDev(),
+      size,
+      fullPage: screenshotData.fullPage,
+    });
 
     // upload to cloudflare r2
     const imageFileName = `screenshots/${dayjs().format("YYYY-MM-DD_HH-mm-ss")}.png`;
