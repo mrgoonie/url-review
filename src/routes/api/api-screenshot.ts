@@ -27,6 +27,7 @@ const ScreenshotRequestSchema = z.object({
   viewportWidth: z.number().int().min(100).max(3840).optional().default(1400),
   viewportHeight: z.number().int().min(100).max(2160).optional().default(800),
   viewportScale: z.number().min(0.1).max(3).optional().default(1),
+  initialDelay: z.number().optional().default(0),
   reviewId: z.string().uuid().optional(),
   userId: z.string().uuid(),
 });
@@ -43,6 +44,7 @@ const ScreenshotRequestSchema = z.object({
  *           type: string
  *           format: url
  *           description: Website URL to capture screenshot
+ *           required: true
  *         fullPage:
  *           type: boolean
  *           default: false
@@ -70,10 +72,20 @@ const ScreenshotRequestSchema = z.object({
  *           maximum: 3
  *           default: 1
  *           description: Viewport scale factor
+ *         initialDelay:
+ *           type: number
+ *           minimum: 0
+ *           maximum: 10000
+ *           default: 0
+ *           description: Initial delay in milliseconds
  *         reviewId:
  *           type: string
  *           format: uuid
  *           description: Associated review ID
+ *         userId:
+ *           type: string
+ *           format: uuid
+ *           description: User ID
  *       required:
  *         - url
  *
@@ -180,7 +192,20 @@ apiScreenshotRouter.post("/", validateSession, apiKeyAuth, async (req, res) => {
     const screenshotData = ScreenshotRequestSchema.parse({ ...req.body, userId });
 
     // take screenshot
-    const imageBuffer = await screenshot(screenshotData.url, { debug: IsDev() });
+    const size =
+      typeof screenshotData.viewportWidth !== "undefined" &&
+      typeof screenshotData.viewportHeight !== "undefined"
+        ? {
+            width: screenshotData.viewportWidth,
+            height: screenshotData.viewportHeight,
+          }
+        : undefined;
+    const imageBuffer = await screenshot(screenshotData.url, {
+      debug: IsDev(),
+      size,
+      fullPage: screenshotData.fullPage,
+      delayAfterLoad: screenshotData.initialDelay,
+    });
 
     // upload to cloudflare r2
     const imageFileName = `screenshots/${dayjs().format("YYYY-MM-DD_HH-mm-ss")}.png`;
