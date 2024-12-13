@@ -44,6 +44,7 @@ const ScreenshotRequestSchema = z.object({
  *           type: string
  *           format: url
  *           description: Website URL to capture screenshot
+ *           required: true
  *         fullPage:
  *           type: boolean
  *           default: false
@@ -71,10 +72,20 @@ const ScreenshotRequestSchema = z.object({
  *           maximum: 3
  *           default: 1
  *           description: Viewport scale factor
+ *         initialDelay:
+ *           type: number
+ *           minimum: 0
+ *           maximum: 10000
+ *           default: 0
+ *           description: Initial delay in milliseconds
  *         reviewId:
  *           type: string
  *           format: uuid
  *           description: Associated review ID
+ *         userId:
+ *           type: string
+ *           format: uuid
+ *           description: User ID
  *       required:
  *         - url
  *
