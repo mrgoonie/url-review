@@ -27,6 +27,7 @@ const ScreenshotRequestSchema = z.object({
   viewportWidth: z.number().int().min(100).max(3840).optional().default(1400),
   viewportHeight: z.number().int().min(100).max(2160).optional().default(800),
   viewportScale: z.number().min(0.1).max(3).optional().default(1),
+  initialDelay: z.number().optional().default(0),
   reviewId: z.string().uuid().optional(),
   userId: z.string().uuid(),
 });
@@ -192,6 +193,7 @@ apiScreenshotRouter.post("/", validateSession, apiKeyAuth, async (req, res) => {
       debug: IsDev(),
       size,
       fullPage: screenshotData.fullPage,
+      delayAfterLoad: screenshotData.initialDelay,
     });
 
     // upload to cloudflare r2
