@@ -19,6 +19,9 @@ interface ScreenshotOptions {
     height?: number;
   };
   proxy?: PlaywightProxy;
+  /**
+   * Delay in milliseconds to wait after the page has loaded.
+   */
   delayAfterLoad?: number;
   timeout?: number;
   debug?: boolean;
