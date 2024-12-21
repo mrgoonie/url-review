@@ -1031,6 +1031,10 @@ input::placeholder {
   max-width: 1024px !important;
 }
 
+.max-w-3xl {
+  max-width: 48rem;
+}
+
 .max-w-none {
   max-width: none;
 }
