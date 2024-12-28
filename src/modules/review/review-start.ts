@@ -167,8 +167,9 @@ export async function startReview(input: ReviewCreateData, options?: ReviewStart
           const linkAnalysis = await analyzeUrl(
             {
               url: link,
-              systemPrompt:
-                "Analyze the linked webpage for content safety, relevance, and potential risks",
+              systemPrompt: `Analyze the linked webpage for content safety, relevance, and potential risks. ${
+                validatedInput.instructions || ""
+              }`,
               instructions:
                 "Provide a comprehensive assessment of the webpage's content and potential issues",
             },

@@ -213,7 +213,7 @@ apiReviewRouter.post("/", validateSession, apiKeyAuth, async (req, res) => {
  *                   type: string
  */
 apiReviewRouter.get("/:reviewId", validateSession, apiKeyAuth, async (req, res) => {
-  const userId = res.locals["userId"];
+  const userId = res.locals["userId"]!;
   const { reviewId } = req.params;
 
   try {
@@ -331,7 +331,7 @@ apiReviewRouter.get("/:reviewId", validateSession, apiKeyAuth, async (req, res) 
  *                   type: string
  */
 apiReviewRouter.get("/", validateSession, apiKeyAuth, async (req, res) => {
-  const userId = res.locals["userId"];
+  const userId = res.locals["userId"]!;
   const page = parseInt(req.query["page"]?.toString() ?? "1");
   const limit = parseInt(req.query["limit"]?.toString() ?? "10");
 
