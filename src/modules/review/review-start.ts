@@ -121,8 +121,10 @@ export async function startReview(input: ReviewCreateData, options?: ReviewStart
     // 6. Run AI analysis on HTML content
     const htmlAnalysis = await analyzeUrl(
       {
+        systemPrompt: `Analyze the website content for safety, quality, and potential improvements. ${
+          validatedInput.instructions || ""
+        }`,
         url: validatedInput.url,
-        systemPrompt: "Analyze the website content for safety, quality, and potential improvements",
       },
       { model: validatedOptions?.textModel, debug: validatedOptions.debug }
     );
