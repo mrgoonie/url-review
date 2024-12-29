@@ -24,16 +24,26 @@ export const AnalyzeUrlOptionsSchema = z
 
 export type AnalyzeUrlOptions = z.infer<typeof AnalyzeUrlOptionsSchema>;
 
-const DEFAULT_JSON_RESPONSE_FORMAT = JSON.stringify({
+export const DEFAULT_JSON_RESPONSE_FORMAT = JSON.stringify({
   properties: {
+    isAppropriate: {
+      type: "boolean",
+      description: "Whether the content is appropriate based on the instructions",
+    },
     isHarmful: { type: "boolean" },
     reason: { type: "string" },
-    score: { type: "number", minimum: 0, maximum: 100 },
+    score: {
+      type: "number",
+      minimum: 0,
+      maximum: 100,
+      description: "On the scale of 0 to 100, where 0 is appropriate and 100 is inappropriate",
+    },
     harmfulContentTypes: {
       type: "array",
       items: {
         type: "string",
         enum: [
+          "appropiated_category",
           "sexual_content",
           "hate_speech",
           "violence",
@@ -76,6 +86,12 @@ export async function analyzeUrl(input: AnalyzeUrlInput, options?: AnalyzeUrlOpt
   // Set default prompts for harmful content detection
   const systemPrompt = `You are an AI content safety detector specialized in identifying harmful, inappropriate, or dangerous website content.`;
   const instructions = `Carefully analyze the website content and detect any harmful elements:
+  ${
+    validatedInput.instructions
+      ? `## Appropriated Instructions:\n${validatedInput.instructions}\n`
+      : ""
+  }
+
   ## Harmful Content Detection Instructions:
   - Thoroughly scan the content for potentially harmful material
   - Identify specific types of harmful content
@@ -90,7 +106,10 @@ export async function analyzeUrl(input: AnalyzeUrlInput, options?: AnalyzeUrlOpt
   - Violent or graphic descriptions
   - Political extremism
   - Misinformation or dangerous propaganda
-  - Explicit or offensive language`;
+  - Explicit or offensive language
+  
+  ## Here is the website content:
+  ${websiteContent}`;
 
   // Fetch AI analysis
   const response = (await fetchAi({
@@ -98,13 +117,7 @@ export async function analyzeUrl(input: AnalyzeUrlInput, options?: AnalyzeUrlOpt
     model: validatedOptions?.model,
     messages: [
       { role: "system", content: systemPrompt },
-      {
-        role: "user",
-        content: [
-          { type: "text", text: instructions },
-          { type: "text", text: websiteContent },
-        ],
-      },
+      { role: "user", content: instructions },
     ],
   })) as AskAiResponse;
 

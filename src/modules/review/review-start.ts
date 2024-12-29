@@ -202,7 +202,12 @@ export async function startReview(input: ReviewCreateData, options?: ReviewStart
       status: ReviewStatus.COMPLETED,
       aiAnalysis: {
         html: htmlAnalysis,
-        screenshot: screenshotAnalysis.screenshot,
+        screenshot: {
+          ...screenshotAnalysis.screenshot,
+          data: screenshotAnalysis.data,
+          usage: screenshotAnalysis.usage,
+          model: screenshotAnalysis.model,
+        },
         images: imagesAnalysis.filter((analysis) => analysis !== null),
         links: linksAnalysis,
       },

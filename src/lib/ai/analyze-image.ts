@@ -20,17 +20,20 @@ export const AnalyzeImageOptionsSchema = z
 
 export type AnalyzeImageOptions = z.infer<typeof AnalyzeImageOptionsSchema>;
 
-const DEFAULT_JSON_RESPONSE_FORMAT = JSON.stringify(
-  {
-    elements: [{ type: "string" }],
-    properties: {
-      description: { type: "string" },
-      analysis: { type: "string" },
-    },
+const DEFAULT_JSON_RESPONSE_FORMAT = JSON.stringify({
+  isAppropriate: {
+    type: "boolean",
+    description: "Whether the content is appropriate based on the instructions",
   },
-  null,
-  2
-);
+  isHarmful: { type: "boolean", description: "Whether the content is harmful" },
+  reason: { type: "string" },
+  score: {
+    type: "number",
+    minimum: 0,
+    maximum: 100,
+    description: "On the scale of 0 to 100, where 0 is appropriate and 100 is inappropriate",
+  },
+});
 
 export async function analyzeImage(input: AnalyzeImageInput, options?: AnalyzeImageOptions) {
   // validate input
@@ -38,10 +41,15 @@ export async function analyzeImage(input: AnalyzeImageInput, options?: AnalyzeIm
   const validatedOptions = AnalyzeImageOptionsSchema.parse(options);
 
   const systemPrompt = validatedInput.systemPrompt ?? `You are an AI image analysis tool.`;
-  const instructions =
-    validatedInput.instructions ??
-    `Analyze the image following these instructions:
-  ## Instructions:
+  const instructions = `Analyze the image following these instructions:
+  ${
+    validatedInput.instructions
+      ? `## Appropiated Review Instructions:\n${validatedInput.instructions}`
+      : ""
+  }
+  ## Additional Instructions:
+  - Thoroughly scan the content for potentially harmful material
+  - Identify specific types of harmful content
   - Return a JSON object based on this format:
   ## JSON Response Format:
   ${validatedOptions?.jsonResponseFormat ?? DEFAULT_JSON_RESPONSE_FORMAT}`;
