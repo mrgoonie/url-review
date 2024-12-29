@@ -31,7 +31,7 @@ const DEFAULT_JSON_RESPONSE_FORMAT = JSON.stringify({
     type: "number",
     minimum: 0,
     maximum: 100,
-    description: "On the scale of 0 to 100, where 0 is appropriate and 100 is inappropriate",
+    description: "On the scale of 0 to 100, where 0 is not appropriate and 100 is appropriate",
   },
 });
 
