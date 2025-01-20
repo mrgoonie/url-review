@@ -24,16 +24,27 @@ export const AnalyzeUrlOptionsSchema = z
 
 export type AnalyzeUrlOptions = z.infer<typeof AnalyzeUrlOptionsSchema>;
 
-const DEFAULT_JSON_RESPONSE_FORMAT = JSON.stringify({
+export const DEFAULT_JSON_RESPONSE_FORMAT = JSON.stringify({
   properties: {
+    isAppropriate: {
+      type: "boolean",
+      description: "Whether the content is appropriate based on the instructions",
+    },
     isHarmful: { type: "boolean" },
     reason: { type: "string" },
-    score: { type: "number", minimum: 0, maximum: 100 },
+    score: {
+      type: "number",
+      minimum: 0,
+      maximum: 10,
+      description:
+        "Appropriateness score based on the scale of 0 to 10, where 0 is not appropriate and 10 is appropriate",
+    },
     harmfulContentTypes: {
       type: "array",
       items: {
         type: "string",
         enum: [
+          "appropiated_category",
           "sexual_content",
           "hate_speech",
           "violence",
@@ -75,14 +86,19 @@ export async function analyzeUrl(input: AnalyzeUrlInput, options?: AnalyzeUrlOpt
 
   // Set default prompts for harmful content detection
   const systemPrompt = `You are an AI content safety detector specialized in identifying harmful, inappropriate, or dangerous website content.`;
-  const instructions = `Carefully analyze the website content and detect any harmful elements:
+  const instructions =
+    validatedInput.instructions + "## Here is the website content:\n" + websiteContent ||
+    `Carefully analyze the website content and detect any harmful elements:
+  
   ## Harmful Content Detection Instructions:
   - Thoroughly scan the content for potentially harmful material
   - Identify specific types of harmful content
   - Provide a comprehensive safety assessment
   - Return a structured JSON object based on this format:
   ## JSON Response Format:
+  \`\`\`
   ${validatedOptions?.jsonResponseFormat ?? DEFAULT_JSON_RESPONSE_FORMAT}
+  \`\`\`
 
   ## Specific Areas to Evaluate:
   - Sexual or explicit content
@@ -90,7 +106,10 @@ export async function analyzeUrl(input: AnalyzeUrlInput, options?: AnalyzeUrlOpt
   - Violent or graphic descriptions
   - Political extremism
   - Misinformation or dangerous propaganda
-  - Explicit or offensive language`;
+  - Explicit or offensive language
+  
+  ## Here is the website content:
+  ${websiteContent}`;
 
   // Fetch AI analysis
   const response = (await fetchAi({
@@ -98,13 +117,7 @@ export async function analyzeUrl(input: AnalyzeUrlInput, options?: AnalyzeUrlOpt
     model: validatedOptions?.model,
     messages: [
       { role: "system", content: systemPrompt },
-      {
-        role: "user",
-        content: [
-          { type: "text", text: instructions },
-          { type: "text", text: websiteContent },
-        ],
-      },
+      { role: "user", content: instructions },
     ],
   })) as AskAiResponse;
 

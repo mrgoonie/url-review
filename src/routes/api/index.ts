@@ -5,6 +5,7 @@ import { apiKeyRouter } from "./api-key";
 import { apiPaymentRouter } from "./api-payment";
 import { apiProfileRouter } from "./api-profile";
 import { apiReviewRouter } from "./api-review";
+import { apiScrapeRouter } from "./api-scrape";
 import { apiScreenshotRouter } from "./api-screenshot";
 import { apiUploadRouter } from "./api-upload";
 
@@ -22,3 +23,4 @@ apiRouter.use("/api/v1/api_key", apiKeyRouter);
 apiRouter.use("/api/v1/payments", apiPaymentRouter);
 apiRouter.use("/api/v1/screenshot", apiScreenshotRouter);
 apiRouter.use("/api/v1/review", apiReviewRouter);
+apiRouter.use("/api/v1/scrape", apiScrapeRouter);

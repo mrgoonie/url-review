@@ -121,8 +121,9 @@ export async function startReview(input: ReviewCreateData, options?: ReviewStart
     // 6. Run AI analysis on HTML content
     const htmlAnalysis = await analyzeUrl(
       {
+        systemPrompt: `Analyze the website content for safety, quality, and potential improvements.`,
+        instructions: validatedInput.instructions || "",
         url: validatedInput.url,
-        systemPrompt: "Analyze the website content for safety, quality, and potential improvements",
       },
       { model: validatedOptions?.textModel, debug: validatedOptions.debug }
     );
@@ -167,8 +168,9 @@ export async function startReview(input: ReviewCreateData, options?: ReviewStart
           const linkAnalysis = await analyzeUrl(
             {
               url: link,
-              systemPrompt:
-                "Analyze the linked webpage for content safety, relevance, and potential risks",
+              systemPrompt: `Analyze the linked webpage for content safety, relevance, and potential risks. ${
+                validatedInput.instructions || ""
+              }`,
               instructions:
                 "Provide a comprehensive assessment of the webpage's content and potential issues",
             },
@@ -200,7 +202,12 @@ export async function startReview(input: ReviewCreateData, options?: ReviewStart
       status: ReviewStatus.COMPLETED,
       aiAnalysis: {
         html: htmlAnalysis,
-        screenshot: screenshotAnalysis.screenshot,
+        screenshot: {
+          ...screenshotAnalysis.screenshot,
+          data: screenshotAnalysis.data,
+          usage: screenshotAnalysis.usage,
+          model: screenshotAnalysis.model,
+        },
         images: imagesAnalysis.filter((analysis) => analysis !== null),
         links: linksAnalysis,
       },
