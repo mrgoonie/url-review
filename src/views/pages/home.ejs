@@ -1,23 +1,80 @@
 <div class="px-6 py-20 flex flex-col items-center justify-center">
   <div class="text-center bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 border border-gray-100 dark:border-gray-700">
-    <h1 class="font-bold text-gray-800 dark:text-gray-200">Hello World!</h1>
+    <h1 class="font-bold text-gray-800 dark:text-gray-200">FREE Website Review AI Tool & API</h1>
     <p>ReviewWeb.site is a tool that utilizes AI to helps you to scan through the websites and provide feedbacks based on the content.</p>
-    <div class="flex flex-wrap justify-center items-center gap-2">
-      <% if (!user) { %>
-      <a href="/login" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-        <i class="ri-login-box-line mr-1"></i> Login
-      </a>
-      <% } else { %>
-      <a href="/logout" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-        <i class="ri-logout-box-line mr-1"></i> Logout
-      </a>
-      <% } %>
-      <a href="/api-docs" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-        <i class="ri-book-open-line mr-1"></i> API Docs
-      </a>
-      <a href="https://github.com/mrgoonie/url-review" target="_blank" class="bg-black hover:bg-gray-800 text-white font-bold py-2 px-4 rounded">
-        <i class="ri-github-line mr-1"></i> Contribute
-      </a>
+    <div class="flex flex-col gap-4">
+      <h2 class="mb-2">Examples</h2>
+      <!-- Check appropriated website -->
+      <div class="w-full max-w-2xl mx-auto p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+        <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+          <i class="ri-checkbox-circle-line"></i>
+          Check appropriated website
+          </h2>
+          <form id="reviewForm" class="space-y-4">
+            <div class="relative">
+              <div class="flex gap-2">
+                <div class="relative flex-1">
+                  <i class="ri-link absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                  <input type="url" id="websiteUrl" name="url" class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="https://example.com" required />
+                </div>
+                <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 flex items-center gap-2">
+                  <i class="ri-search-line"></i>
+                  Review
+                </button>
+              </div>
+              <div id="urlError" class="text-red-500 text-sm mt-1 hidden"></div>
+            </div>
+          </form>
+          <div id="reviewResult" class="mt-4 p-4 rounded-lg border border-gray-200 dark:border-gray-700 hidden">
+            <div class="animate-pulse flex space-x-4">
+              <div class="flex-1 space-y-4 py-1">
+                <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+                <div class="space-y-2">
+                  <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                  <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-5/6"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+      </div>
+      <!-- Scan all broken links of website -->
+      <div class="w-full max-w-2xl mx-auto p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+        <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+          <i class="ri-link-unlink-m"></i>
+          Scan Broken Links
+          </h2>
+          <form id="broken-links-form" class="flex gap-2">
+            <input type="url" name="url" placeholder="Enter website URL" required class="flex-1 rounded-md border-0 py-1.5 text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-600 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 dark:focus:ring-indigo-500 dark:bg-gray-700 sm:text-sm sm:leading-6">
+            <button type="submit" class="rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 dark:hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:focus-visible:outline-indigo-500">
+              <span class="default-text">Scan</span>
+              <span class="loading-text hidden">
+                <i class="ri-loader-4-line animate-spin"></i>
+                Scanning...
+              </span>
+            </button>
+          </form>
+      </div>
+
+      <div class="flex flex-wrap justify-center items-center gap-2">
+        <% if (!user) { %>
+        <a href="/login" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          <i class="ri-login-box-line mr-1"></i> Login
+        </a>
+        <% } else { %>
+        <a href="/logout" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+          <i class="ri-logout-box-line mr-1"></i> Logout
+        </a>
+        <% } %>
+        <a href="/api-docs" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+          <i class="ri-book-open-line mr-1"></i> API Docs
+        </a>
+        <a href="https://github.com/mrgoonie/url-review" target="_blank" class="bg-black hover:bg-gray-800 text-white font-bold py-2 px-4 rounded">
+          <i class="ri-github-line mr-1"></i> Contribute
+        </a>
+      </div>
     </div>
   </div>
 </div>
+
+<script src="/js/review.js"></script>
+<script src="/js/scan-links.js"></script>

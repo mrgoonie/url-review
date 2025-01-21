@@ -43,6 +43,7 @@ export async function reviewUrlByCaptureWebUrl(
   const image = await screenshot(url, {
     delayAfterLoad: options?.delayAfterLoad ?? 3000,
     timeout: options?.timeout ?? 60_000,
+    size: { width: 1400, height: 1400 },
   });
   const base64 = await bufferToBase64(image);
   // if (options?.debug) console.log("reviewUrlByCaptureWebUrl() > base64 :>> ", base64);

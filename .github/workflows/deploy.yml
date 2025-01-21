@@ -15,7 +15,7 @@ env:
 # CI/CD STEPS
 jobs:
   deploy:
-    name: Deploy to [readtube.me]
+    name: Deploy to [reviewweb.site]
     runs-on: ubuntu-latest
     if: always() && !cancelled() && !failure() && contains(github.ref, 'main')
     steps:

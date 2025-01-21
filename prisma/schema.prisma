@@ -472,3 +472,34 @@ enum ScreenshotDevice {
     MOBILE
     TABLET
 }
+
+model BrokenLink {
+    id         String   @id @default(uuid())
+    url        String // The URL being scanned
+    brokenUrl  String // The broken link found
+    statusCode Int? // HTTP status code
+    error      String? // Error message if any
+    createdAt  DateTime @default(now())
+    updatedAt  DateTime @updatedAt
+
+    @@index([url])
+}
+
+enum ScanLinkStatus {
+    PENDING
+    IN_PROGRESS
+    COMPLETED
+    FAILED
+}
+
+model ScanLinkResult {
+    id          String         @id @default(uuid())
+    url         String // The URL being scanned
+    status      ScanLinkStatus // Scan status
+    links       String[]
+    statusCodes Int[]
+    createdAt   DateTime       @default(now())
+    updatedAt   DateTime       @updatedAt
+
+    @@index([url])
+}
