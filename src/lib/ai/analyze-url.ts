@@ -128,7 +128,7 @@ export async function analyzeUrl(input: AnalyzeUrlInput, options?: AnalyzeUrlOpt
   // Validate and parse JSON response
   const jsonResponse = await validateJson(responseContent, {
     model: "google/gemini-flash-1.5-8b",
-    maxRetries: 3,
+    maxRetries: 5,
     parse: true,
   });
 
