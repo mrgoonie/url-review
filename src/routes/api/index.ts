@@ -1,5 +1,6 @@
 import express from "express";
 
+import { apiAiRouter } from "./api-ai";
 import { apiHealthzRouter } from "./api-healthz";
 import { apiKeyRouter } from "./api-key";
 import { apiPaymentRouter } from "./api-payment";
@@ -24,3 +25,4 @@ apiRouter.use("/api/v1/payments", apiPaymentRouter);
 apiRouter.use("/api/v1/screenshot", apiScreenshotRouter);
 apiRouter.use("/api/v1/review", apiReviewRouter);
 apiRouter.use("/api/v1/scrape", apiScrapeRouter);
+apiRouter.use("/api/v1/ai", apiAiRouter);

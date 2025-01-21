@@ -39,7 +39,7 @@
           </span>
         </div>
         <div class="space-y-4">
-          <img src="<%= review.aiAnalysis.screenshot.imageUrl %>" alt="Screenshot Analysis" class="w-full rounded-lg shadow-sm">
+          <img src="<%= review.aiAnalysis.screenshot.imageUrl %>" alt="Screenshot Analysis" class="w-full rounded-lg shadow-sm border dark:border-gray-700">
           <% if (review.aiAnalysis.screenshot.data) { %>
           <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
             <div class="flex items-center gap-2 mb-2">
@@ -72,18 +72,18 @@
         <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
           <div class="prose dark:prose-invert max-w-none text-sm">
             <% if (review.aiAnalysis.html.data.error_message) { %>
-              <% const paragraphs = review.aiAnalysis.html.data.error_message.split('\n\n'); %>
-              <% paragraphs.forEach(function(paragraph) { %>
-                <% if (paragraph.trim().startsWith('*')) { %>
-                <ul class="list-disc list-inside mb-4">
-                  <li class="text-gray-600 dark:text-gray-300"><%= paragraph.trim().substring(2) %></li>
-                </ul>
-                <% } else { %>
-                <p class="text-gray-600 dark:text-gray-300 mb-4"><%= paragraph %></p>
-                <% } %>
-              <% }); %>
+            <% const paragraphs = review.aiAnalysis.html.data.error_message.split('\n\n'); %>
+            <% paragraphs.forEach(function(paragraph) { %>
+            <% if (paragraph.trim().startsWith('*')) { %>
+            <ul class="list-disc list-inside mb-4">
+              <li class="text-gray-600 dark:text-gray-300"><%= paragraph.trim().substring(2) %></li>
+            </ul>
             <% } else { %>
-              <p class="text-gray-600 dark:text-gray-300 mb-4">No analysis data available.</p>
+            <p class="text-gray-600 dark:text-gray-300 mb-4"><%= paragraph %></p>
+            <% } %>
+            <% }); %>
+            <% } else { %>
+            <p class="text-gray-600 dark:text-gray-300 mb-4">No analysis data available.</p>
             <% } %>
           </div>
         </div>
