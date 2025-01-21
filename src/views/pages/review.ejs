@@ -26,64 +26,38 @@
     <!-- AI Analysis -->
     <% if (review.aiAnalysis) { %>
     <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 mb-6">
-      <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">AI Analysis</h2>
-
-      <!-- Screenshot Analysis -->
-      <% if (review.aiAnalysis.screenshot && review.aiAnalysis.screenshot.imageUrl) { %>
-      <div class="mb-8">
-        <div class="flex items-center justify-between mb-3">
-          <h3 class="text-base font-medium text-gray-900 dark:text-white">Screenshot Analysis</h3>
-          <span class="text-sm text-gray-500 dark:text-gray-400">
-            <i class="ri-computer-line mr-1"></i>
-            <%= review.aiAnalysis.screenshot.deviceType %>
-          </span>
-        </div>
-        <div class="space-y-4">
-          <img src="<%= review.aiAnalysis.screenshot.imageUrl %>" alt="Screenshot Analysis" class="w-full rounded-lg shadow-sm border dark:border-gray-700">
-          <% if (review.aiAnalysis.screenshot.data) { %>
-          <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
-            <div class="flex items-center gap-2 mb-2">
-              <% if (!review.aiAnalysis.screenshot.data.isHarmful) { %>
-              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                <i class="ri-shield-check-line mr-1"></i>Safe Content
-              </span>
-              <% } else { %>
-              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
-                <i class="ri-error-warning-line mr-1"></i>Potentially Harmful
-              </span>
-              <% } %>
-              <% if (review.aiAnalysis.screenshot.data.score !== undefined) { %>
-              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-                <i class="ri-star-line mr-1"></i>Score: <%= review.aiAnalysis.screenshot.data.score %>
-              </span>
-              <% } %>
-            </div>
-            <p class="text-gray-600 dark:text-gray-300 text-sm"><%= review.aiAnalysis.screenshot.data.reason %></p>
-          </div>
-          <% } %>
-        </div>
-      </div>
-      <% } %>
-
       <!-- HTML Analysis -->
       <% if (review.aiAnalysis.html && review.aiAnalysis.html.data) { %>
       <div class="mb-8">
         <h3 class="text-base font-medium text-gray-900 dark:text-white mb-3">HTML Analysis</h3>
         <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
-          <div class="prose dark:prose-invert max-w-none text-sm">
-            <% if (review.aiAnalysis.html.data.error_message) { %>
-            <% const paragraphs = review.aiAnalysis.html.data.error_message.split('\n\n'); %>
-            <% paragraphs.forEach(function(paragraph) { %>
-            <% if (paragraph.trim().startsWith('*')) { %>
-            <ul class="list-disc list-inside mb-4">
-              <li class="text-gray-600 dark:text-gray-300"><%= paragraph.trim().substring(2) %></li>
-            </ul>
+          <div class="flex items-center gap-2 mb-2">
+            <% if (!review.aiAnalysis.html.data.properties.isHarmful) { %>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+              <i class="ri-shield-check-line mr-1"></i>Safe Content
+            </span>
             <% } else { %>
-            <p class="text-gray-600 dark:text-gray-300 mb-4"><%= paragraph %></p>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
+              <i class="ri-error-warning-line mr-1"></i>Potentially Harmful
+            </span>
             <% } %>
-            <% }); %>
-            <% } else { %>
-            <p class="text-gray-600 dark:text-gray-300 mb-4">No analysis data available.</p>
+            <% if (review.aiAnalysis.html.data.properties.score !== undefined) { %>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+              <i class="ri-star-line mr-1"></i>Score: <%= review.aiAnalysis.html.data.properties.score %>
+            </span>
+            <% } %>
+          </div>
+          <div class="prose dark:prose-invert max-w-none text-sm">
+            <p class="text-gray-600 dark:text-gray-300 mb-4"><%= review.aiAnalysis.html.data.properties.reason %></p>
+            <% if (review.aiAnalysis.html.data.properties.harmfulContentTypes && review.aiAnalysis.html.data.properties.harmfulContentTypes.length > 0) { %>
+            <div class="mt-2">
+              <p class="font-medium text-gray-900 dark:text-white mb-2">Harmful Content Types:</p>
+              <ul class="list-disc list-inside">
+                <% review.aiAnalysis.html.data.properties.harmfulContentTypes.forEach(function(type) { %>
+                <li class="text-gray-600 dark:text-gray-300"><%= type %></li>
+                <% }); %>
+              </ul>
+            </div>
             <% } %>
           </div>
         </div>
@@ -175,6 +149,47 @@
         </div>
       </div>
       <% } %>
+
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">AI Analysis</h2>
+
+      <!-- Screenshot Analysis -->
+      <% if (review.aiAnalysis.screenshot && review.aiAnalysis.screenshot.imageUrl) { %>
+      <div class="mb-8">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-base font-medium text-gray-900 dark:text-white">Screenshot Analysis</h3>
+          <span class="text-sm text-gray-500 dark:text-gray-400">
+            <i class="ri-computer-line mr-1"></i>
+            <%= review.aiAnalysis.screenshot.deviceType %>
+          </span>
+        </div>
+        <div class="space-y-4">
+          <img src="<%= review.aiAnalysis.screenshot.imageUrl %>" alt="Screenshot Analysis" class="w-full rounded-lg shadow-sm border dark:border-gray-700">
+          <% if (review.aiAnalysis.screenshot.data) { %>
+          <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
+            <div class="flex items-center gap-2 mb-2">
+              <% if (!review.aiAnalysis.screenshot.data.isHarmful) { %>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                <i class="ri-shield-check-line mr-1"></i>Safe Content
+              </span>
+              <% } else { %>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
+                <i class="ri-error-warning-line mr-1"></i>Potentially Harmful
+              </span>
+              <% } %>
+              <% if (review.aiAnalysis.screenshot.data.score !== undefined) { %>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                <i class="ri-star-line mr-1"></i>Score: <%= review.aiAnalysis.screenshot.data.score %>
+              </span>
+              <% } %>
+            </div>
+            <p class="text-gray-600 dark:text-gray-300 text-sm"><%= review.aiAnalysis.screenshot.data.reason %></p>
+          </div>
+          <% } %>
+        </div>
+      </div>
+      <% } %>
+
+
 
       <!-- Model Usage Information -->
       <div class="mt-8 pt-6 border-t dark:border-gray-700">

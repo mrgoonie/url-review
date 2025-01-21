@@ -124,7 +124,7 @@ export async function startReview(input: ReviewCreateData, options?: ReviewStart
     const htmlAnalysis = await analyzeUrl(
       {
         systemPrompt: `Analyze the website content for safety, quality, and potential improvements.`,
-        instructions: validatedInput.instructions || "",
+        instructions: validatedInput.instructions,
         url: validatedInput.url,
       },
       { model: validatedOptions?.textModel, debug: validatedOptions.debug }

@@ -86,9 +86,15 @@ export async function analyzeUrl(input: AnalyzeUrlInput, options?: AnalyzeUrlOpt
 
   // Set default prompts for harmful content detection
   const systemPrompt = `You are an AI content safety detector specialized in identifying harmful, inappropriate, or dangerous website content.`;
-  const instructions =
-    validatedInput.instructions + "## Here is the website content:\n" + websiteContent ||
-    `Carefully analyze the website content and detect any harmful elements:
+  const instructions = validatedInput.instructions
+    ? `${validatedInput.instructions}
+  ## JSON Response Format:
+  \`\`\`
+  ${validatedOptions?.jsonResponseFormat ?? DEFAULT_JSON_RESPONSE_FORMAT}
+  \`\`\`
+  ## Here is the website content:
+  ${websiteContent}`
+    : `Carefully analyze the website content and detect any harmful elements:
   
   ## Harmful Content Detection Instructions:
   - Thoroughly scan the content for potentially harmful material
