@@ -6,11 +6,11 @@ import { IsDev } from "@/config";
 import { TextModelSchema, VisionModelSchema } from "@/lib/ai";
 import { analyzeImageBase64 } from "@/lib/ai/analyze-image";
 import { analyzeUrl } from "@/lib/ai/analyze-url";
-import { getHtmlContent } from "@/lib/playwright/get-html";
 import { getAllImages } from "@/lib/playwright/get-images";
 import { imageUrlToBase64 } from "@/lib/utils";
 import { scrapeMetadata } from "@/modules/metadata/metadata-scrape";
 
+import { extractAllLinksFromUrl } from "../scrape";
 import type { ReviewCreateData } from "./review-crud";
 import { createReview, updateReview } from "./review-crud";
 import { reviewUrlByCaptureWebUrl } from "./review-url-by-screenshot";
@@ -111,7 +111,7 @@ export async function startReview(input: ReviewCreateData, options?: ReviewStart
     // 3. Get links (max 50 or configured)
     const links = validatedOptions?.skipLinkExtraction
       ? []
-      : await extractLinks(validatedInput.url, {
+      : await extractAllLinksFromUrl(validatedInput.url, {
           maxLinks: validatedOptions?.maxExtractedLinks || 50,
         });
 
@@ -240,93 +240,5 @@ export async function startReview(input: ReviewCreateData, options?: ReviewStart
     });
 
     throw error;
-  }
-}
-
-// Robust link extraction with multiple strategies and filtering options
-async function extractLinks(
-  url: string,
-  options?: {
-    type?: "web" | "image" | "file" | "all";
-    maxLinks?: number;
-  }
-): Promise<string[]> {
-  try {
-    const htmlContent = await getHtmlContent(url, { delayAfterLoad: 3000 });
-    const content = Array.isArray(htmlContent) ? htmlContent.join("\n") : htmlContent;
-
-    // More comprehensive link extraction strategies
-    const linkRegexes = [
-      // Standard http/https URLs
-      /https?:\/\/[a-zA-Z0-9\-._~:/?#[\]@!$&'()*+,;=]+/g,
-
-      // URLs with additional characters like parentheses or brackets
-      /https?:\/\/[^\s'"<>()[\]{}]+/g,
-
-      // Capture links within href attributes
-      /href=["']([^"']+)["']/g,
-
-      // Capture links within src attributes
-      /src=["']([^"']+)["']/g,
-    ];
-
-    const extractedLinks = new Set<string>();
-
-    // Apply multiple regex strategies
-    linkRegexes.forEach((regex) => {
-      const matches = content.match(regex) || [];
-      matches.forEach((match) => {
-        // Clean and validate URLs
-        const cleanedUrl = match
-          .replace(/^href=["']|["']$/g, "") // Remove href/src attribute wrappers
-          .replace(/^src=["']|["']$/g, "")
-          .trim();
-
-        // Validate URL and ensure it's not a relative path
-        try {
-          const parsedUrl = new URL(cleanedUrl, url);
-
-          // Only add absolute URLs from the same domain or external domains
-          if (parsedUrl.protocol.startsWith("http")) {
-            extractedLinks.add(parsedUrl.toString());
-          }
-        } catch {
-          // Ignore invalid URLs
-        }
-      });
-    });
-
-    // Filter links based on type option
-    const filteredLinks = Array.from(extractedLinks)
-      .filter((link) => {
-        // Default to all if no type specified
-        const type = options?.type || "all";
-        const fileExtensions = {
-          web: [".html", ".htm", ".php", ".asp", ".aspx"],
-          image: [".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg", ".bmp", ".tiff"],
-          file: [".pdf", ".doc", ".docx", ".xls", ".xlsx", ".txt", ".csv", ".zip", ".rar"],
-        };
-
-        // Exclude common non-content links
-        const isNonContentLink = link.includes("javascript:") || link.includes("mailto:");
-
-        // Check link type
-        if (type === "all") return !isNonContentLink;
-
-        const hasMatchingExtension = fileExtensions[type].some((ext) =>
-          link.toLowerCase().endsWith(ext)
-        );
-
-        return hasMatchingExtension && !isNonContentLink;
-      })
-      .slice(0, options?.maxLinks || 50);
-
-    return filteredLinks;
-  } catch (error) {
-    console.error(
-      `review-start.ts > extractLinks() > Failed to extract links from ${url} :>>`,
-      error
-    );
-    return [];
   }
 }
