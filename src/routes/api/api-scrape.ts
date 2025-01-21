@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { analyzeUrl } from "@/lib/ai";
 import { validateSession } from "@/lib/auth";
+import { prisma } from "@/lib/db";
 import { apiKeyAuth } from "@/middlewares/api_key_auth";
 import { scrapeMetadata } from "@/modules/metadata";
 import {
@@ -382,6 +383,17 @@ apiScrapeRouter.post("/links", validateSession, apiKeyAuth, async (req, res) => 
     // Extract all links from url
     const data = await extractAllLinksFromUrl(url, req.body);
 
+    // Save to database
+    const result = await prisma.scanLinkResult.create({
+      data: {
+        url,
+        status: "COMPLETED",
+        links: data.map((l) => l.link),
+        statusCodes: data.map((l) => l.statusCode || 404),
+      },
+    });
+    console.log(JSON.stringify(result, null, 2));
+
     // Respond with review details
     res.status(201).json({
       success: true,
@@ -389,7 +401,7 @@ apiScrapeRouter.post("/links", validateSession, apiKeyAuth, async (req, res) => 
       total: data.length,
       healthy: data.filter((l) => l.statusCode === 200).length,
       broken: data.filter((l) => l.statusCode !== 200).length,
-      data,
+      data: result,
     });
   } catch (error) {
     console.error("api-scrape.ts > POST / > Error :>>", error);
