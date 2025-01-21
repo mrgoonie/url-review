@@ -109,11 +109,13 @@ export async function startReview(input: ReviewCreateData, options?: ReviewStart
     const limitedImageUrls = imageUrls.slice(0, validatedOptions?.maxExtractedImages || 50);
 
     // 3. Get links (max 50 or configured)
-    const links = validatedOptions?.skipLinkExtraction
-      ? []
-      : await extractAllLinksFromUrl(validatedInput.url, {
-          maxLinks: validatedOptions?.maxExtractedLinks || 50,
-        });
+    const links = (
+      validatedOptions?.skipLinkExtraction
+        ? []
+        : await extractAllLinksFromUrl(validatedInput.url, {
+            maxLinks: validatedOptions?.maxExtractedLinks || 50,
+          })
+    ).map(({ link }) => link);
 
     // 4. Scrape metadata
     const metadata = await scrapeMetadata(validatedInput.url);

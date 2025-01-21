@@ -27,3 +27,55 @@ export const ExtractWebUrlOptionsSchema = z.object({
   debug: z.boolean().optional(),
 });
 export type ExtractWebUrlOptions = z.infer<typeof ExtractWebUrlOptionsSchema>;
+
+export const assetExtensions = [
+  // Images
+  ".jpg",
+  ".jpeg",
+  ".png",
+  ".gif",
+  ".webp",
+  ".svg",
+  ".bmp",
+  ".ico",
+  ".tiff",
+  // Stylesheets and fonts
+  ".css",
+  ".scss",
+  ".less",
+  ".woff",
+  ".woff2",
+  ".ttf",
+  ".eot",
+  ".otf",
+  // Scripts and data
+  ".js",
+  ".jsx",
+  ".ts",
+  ".tsx",
+  ".json",
+  ".xml",
+  // Media
+  ".mp3",
+  ".mp4",
+  ".wav",
+  ".ogg",
+  ".webm",
+  ".avi",
+  ".mov",
+  // Documents
+  ".pdf",
+  ".doc",
+  ".docx",
+  ".xls",
+  ".xlsx",
+  ".csv",
+  // Archives
+  ".zip",
+  ".rar",
+  ".7z",
+  ".tar",
+  ".gz",
+  // manifest
+  ".webmanifest",
+];

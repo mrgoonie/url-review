@@ -57,6 +57,7 @@ export async function getHtmlContent(url: string, options: HtmlContentOptions = 
 
       // Optional delay after page load
       if (options.delayAfterLoad) await wait(options.delayAfterLoad);
+      console.log(`get-html.ts > attemptGetHtmlContent() > HTML content extraction started`);
 
       // Remove potentially intrusive elements
       await page.evaluate(() => {

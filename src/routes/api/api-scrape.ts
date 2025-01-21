@@ -274,8 +274,8 @@ ${options.jsonTemplate}
  *     description: Extracts and returns all valid links found on a webpage. Supports filtering by link type and limiting the number of results.
  *     tags: [Scrape]
  *     security:
- *       - apiKey: []
- *       - sessionAuth: []
+ *       - ApiKeyAuth: []
+ *       - bearerAuth: []
  *     parameters:
  *       - in: query
  *         name: url
@@ -284,6 +284,43 @@ ${options.jsonTemplate}
  *           type: string
  *           format: uri
  *         description: The target URL to extract links from
+ *     requestBody:
+ *       description: Optional configuration for link extraction
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               type:
+ *                 type: string
+ *                 enum: [web, image, file, all]
+ *                 default: all
+ *                 description: Type of links to extract
+ *               maxLinks:
+ *                 type: integer
+ *                 minimum: 1
+ *                 maximum: 1000
+ *                 default: 500
+ *                 description: Maximum number of links to return
+ *               delayAfterLoad:
+ *                 type: integer
+ *                 minimum: 0
+ *                 maximum: 600000
+ *                 default: 5000
+ *                 description: Delay in milliseconds after page load before extracting links (max 10 minutes)
+ *               getStatusCode:
+ *                 type: boolean
+ *                 default: false
+ *                 description: Whether to get HTTP status codes for each link
+ *               autoScrapeInternalLinks:
+ *                 type: boolean
+ *                 default: false
+ *                 description: Whether to automatically scrape internal links
+ *               debug:
+ *                 type: boolean
+ *                 default: false
+ *                 description: Whether to enable debug mode
+ *             additionalProperties: false
  *     responses:
  *       201:
  *         description: Successfully extracted links from the URL
@@ -343,12 +380,15 @@ apiScrapeRouter.post("/links", validateSession, apiKeyAuth, async (req, res) => 
     if (!url) throw new Error("url is required");
 
     // Extract all links from url
-    const data = await extractAllLinksFromUrl(url);
+    const data = await extractAllLinksFromUrl(url, req.body);
 
     // Respond with review details
     res.status(201).json({
       success: true,
       message: "Finished extracting all links from the website url.",
+      total: data.length,
+      healthy: data.filter((l) => l.statusCode === 200).length,
+      broken: data.filter((l) => l.statusCode !== 200).length,
       data,
     });
   } catch (error) {
