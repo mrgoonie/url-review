@@ -1,3 +1,6 @@
+<script>
+  const user = <%- user ? JSON.stringify(user) : 'null' %>;
+</script>
 <div class="px-6 py-20 flex flex-col items-center justify-center">
   <div class="text-center bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 border border-gray-100 dark:border-gray-700">
     <h1 class="font-bold text-gray-800 dark:text-gray-200">FREE Website Review AI Tool & API</h1>
@@ -44,9 +47,12 @@
           Scan Broken Links
           </h2>
           <form id="broken-links-form" class="flex gap-2">
-            <input type="url" name="url" placeholder="Enter website URL" required class="flex-1 rounded-md border-0 py-1.5 text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-600 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 dark:focus:ring-indigo-500 dark:bg-gray-700 sm:text-sm sm:leading-6">
-            <button type="submit" class="rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 dark:hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:focus-visible:outline-indigo-500">
-              <span class="default-text">Scan</span>
+            <div class="relative flex-1">
+              <i class="ri-link absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+              <input type="url" name="url" placeholder="Enter website URL" class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="https://example.com" required>
+            </div>
+            <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 flex items-center gap-2">
+              <span class="default-text"><i class="ri-search-line"></i> Scan</span>
               <span class="loading-text hidden">
                 <i class="ri-loader-4-line animate-spin"></i>
                 Scanning...

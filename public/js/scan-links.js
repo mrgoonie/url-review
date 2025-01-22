@@ -13,6 +13,12 @@ document.addEventListener('DOMContentLoaded', () => {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
+    // Check login
+    if (!user) {
+      window.location.href = '/login';
+      return;
+    }
+
     const urlInput = form.querySelector('input[name="url"]');
     const url = urlInput.value.trim();
 

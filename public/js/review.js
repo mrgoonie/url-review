@@ -7,6 +7,12 @@ document.addEventListener('DOMContentLoaded', () => {
   reviewForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
+    // Check login
+    if (!user) {
+      window.location.href = '/login';
+      return;
+    }
+
     // Reset error state
     urlError.textContent = '';
     urlError.classList.add('hidden');
