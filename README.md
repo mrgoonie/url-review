@@ -48,7 +48,7 @@ Use case:
 - [x] Template Engine (EJS)
 - [x] Styling with TailwindCSS
 - [x] Commitlint
-- [ ] Swagger UI
+- [x] Swagger UI
 
 Uses **PostgreSQL** database.
 
@@ -81,8 +81,8 @@ dx up
 
 ## CI/CD
 
-- [ ] Github Actions: Create Pull Request to `main` branch will trigger a build and push to `preview` environment
-- [ ] Github Actions: Merge Pull Request to `main` branch will trigger a build and push to `production` environment
+- [x] Github Actions: Create Pull Request to `main` branch will trigger a build and push to `preview` environment
+- [x] Github Actions: Merge Pull Request to `main` branch will trigger a build and push to `production` environment
 
 ## Author
 
@@ -93,8 +93,8 @@ Please feel free to contribute to this project!
 
 ## Check out my other products
 
+- [IndieBoosting.com](https://indieboosting.com) - Indie Makers Unite: Feature, Support, Succeed
 - [DigiCord AI](https://digicord.site) - The Most Useful AI Chatbot on Discord
-- [IndieBacklink.com](https://indiebacklink.com) - Indie Makers Unite: Feature, Support, Succeed
 - [BoostTogether.com](https://boosttogether.com) - The Power of WE in Advertising
 - [TopRanking.ai](https://topranking.ai) - AI Directory, listing AI products
 - [ZII.ONE](https://zii.one) - Personalized Link Shortener
