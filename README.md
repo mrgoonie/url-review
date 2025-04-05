@@ -2,7 +2,7 @@
 
 [ReviewWeb.site](https://reviewweb.site) is a tool that utilizes AI to helps you to scan through the websites and provide feedbacks based on the content.
 
-Use case:
+## Use cases:
 - You have a website and want to know how good it is
 - You want to know how to improve your website
 - You want to know how to market your website
@@ -11,11 +11,25 @@ Use case:
 - You want to know if the website is mobile-friendly
 - You want to know if the website is secure or contains malware
 
-### Workflow:
+## Workflow:
 - A user inputs a website url
 - A user provides prompt instructions for the review
 - After submitting, the system will start the review by crawling the website, analyzing the content, and take screenshots, then generate the report
 - The user can review the result and download the report
+
+## Features
+
+- [x] Review a website
+- [x] Take website screenshots
+- [x] Generate report
+- [x] User authentication
+- [ ] Scrape an URL
+- [ ] Crawl an URL and its subpages
+- [ ] Map: output all website's urls
+- [ ] Extract from an URL: using LLM
+- [ ] Extract multiple URLs: using LLM
+- [ ] Ask an URL: using LLM
+- [ ] Ask a website: using LLM
 
 ### APIs
 | Method | Endpoint               | Body Params                                                          | Description             |
