@@ -161,8 +161,8 @@ ${options.jsonTemplate}
         `api-scrape.ts > POST /extract > Found ${internalLinks.length} internal links for ${url}`
       );
 
-      // Process each internal link (limit to 20 to avoid overloading)
-      const linksToProcess = internalLinks.slice(0, 20);
+      // Process each internal link (limit to maxLinks to avoid overloading)
+      const linksToProcess = internalLinks.slice(0, options.maxLinks);
 
       // Process links in parallel with a concurrency limit
       const concurrencyLimit = 5; // Process 5 links at a time
@@ -174,9 +174,23 @@ ${options.jsonTemplate}
       }
 
       // Process each chunk sequentially, but links within a chunk in parallel
+      let shouldStopProcessing = false;
+
       for (const chunk of chunks) {
+        if (shouldStopProcessing) {
+          console.log(
+            `api-scrape.ts > POST /extract > Stopping processing remaining links as valid data was found`
+          );
+          break;
+        }
+
         const chunkResults = await Promise.all(
           chunk.map(async (linkObj) => {
+            // Skip processing if we already found valid data and stopWhenFound is enabled
+            if (shouldStopProcessing) {
+              return null;
+            }
+
             try {
               console.log(
                 `api-scrape.ts > POST /extract > Processing internal link: ${linkObj.link}`
@@ -197,6 +211,19 @@ ${options.jsonTemplate}
                 }
               );
 
+              // Check if we found valid data and should stop processing
+              if (
+                options.stopWhenFound &&
+                internalResult.data &&
+                typeof internalResult.data === "object" &&
+                Object.keys(internalResult.data).length > 0
+              ) {
+                console.log(
+                  `api-scrape.ts > POST /extract > Found valid data, marking to stop processing remaining links`
+                );
+                shouldStopProcessing = true;
+              }
+
               return {
                 url: linkObj.link,
                 data: internalResult.data,
@@ -216,7 +243,9 @@ ${options.jsonTemplate}
           })
         );
 
-        recursiveResults.push(...chunkResults);
+        // Filter out null results (from skipped processing)
+        const validResults = chunkResults.filter((result) => result !== null);
+        recursiveResults.push(...validResults);
       }
     }
 

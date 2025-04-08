@@ -1,10 +1,22 @@
-{
-  "url": "https://digitop.vn/",
-  "options": {
-    "instructions": "extract email addresses",
-    "jsonTemplate": "{ \"type\": \"object\", \"properties\": { \"emails\": { \"type\": \"array\", \"description\": \"List of extracted email addresses\" } } }",
-    "delayAfterLoad": 1000,
-    "recursive": true,
-    "debug": true
+[
+  {
+    "url": "https://digitop.vn/",
+    "options": {
+      "instructions": "extract email addresses",
+      "jsonTemplate": "{ \"type\": \"object\", \"properties\": { \"emails\": { \"type\": \"array\", \"description\": \"List of extracted email addresses\" } } }",
+      "delayAfterLoad": 1000,
+      "recursive": true,
+      "debug": true
+    }
+  },
+  {
+    "url": "https://digitop.vn/",
+    "options": {
+      "instructions": "extract a contact email address",
+      "jsonTemplate": "{ \"type\": \"object\", \"properties\": { \"email\": { \"type\": \"string\", \"description\": \"Extracted email address\" } } }",
+      "delayAfterLoad": 1000,
+      "recursive": true,
+      "debug": true
+    }
   }
-}
+]
