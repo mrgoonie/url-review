@@ -115,7 +115,9 @@ export async function analyzeUrl(input: AnalyzeUrlInput, options?: AnalyzeUrlOpt
   - Explicit or offensive language
   
   ## Here is the website content:
-  ${websiteContent}`;
+  <website_content>
+  ${websiteContent}
+  </website_content>`;
 
   // Fetch AI analysis
   const response = (await fetchAi({
@@ -128,8 +130,11 @@ export async function analyzeUrl(input: AnalyzeUrlInput, options?: AnalyzeUrlOpt
   })) as AskAiResponse;
 
   const responseContent = response.choices[0].message.content;
-  if (!responseContent)
+  if (!responseContent) {
+    console.log(`analyzeUrl.ts > analyzeUrl() > No response content found :>>`, response);
+    console.log(`analyzeUrl.ts > analyzeUrl() > Error :>>`, response.choices[0].message);
     throw new Error(response.choices[0].error?.message ?? "No response content found");
+  }
 
   // Validate and parse JSON response
   const jsonResponse = await validateJson(responseContent, {

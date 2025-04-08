@@ -1,7 +1,7 @@
 import express from "express";
 import { z } from "zod";
 
-import { analyzeUrl } from "@/lib/ai";
+import { analyzeUrl, type AskAiResponse, fetchAi, validateJson } from "@/lib/ai";
 import { validateSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { apiKeyAuth } from "@/middlewares/api_key_auth";
@@ -130,20 +130,18 @@ apiScrapeRouter.post("/", validateSession, apiKeyAuth, async (req, res) => {
  *     security:
  *       - ApiKeyAuth: []
  *       - bearerAuth: []
- *     parameters:
- *       - in: query
- *         name: url
- *         required: true
- *         schema:
- *           type: string
- *           format: url
- *         description: The URL to extract data from
  *     requestBody:
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - url
  *             properties:
+ *               url:
+ *                 type: string
+ *                 format: url
+ *                 description: The URL to extract data from
  *               options:
  *                 type: object
  *                 required:
@@ -162,10 +160,14 @@ apiScrapeRouter.post("/", validateSession, apiKeyAuth, async (req, res) => {
  *                   model:
  *                     type: string
  *                     description: AI model to use for extraction
- *                     default: google/gemini-flash-1.5
+ *                     default: google/gemini-2.0-flash-001
  *                   delayAfterLoad:
  *                     type: number
  *                     description: Optional delay after page load in milliseconds
+ *                   recursive:
+ *                     type: boolean
+ *                     description: If true, recursively scrape all internal URLs and extract data from each
+ *                     default: false
  *                   debug:
  *                     type: boolean
  *                     description: Enable debug mode for detailed logging
@@ -206,7 +208,7 @@ apiScrapeRouter.post("/", validateSession, apiKeyAuth, async (req, res) => {
  */
 apiScrapeRouter.post("/extract", validateSession, apiKeyAuth, async (req, res) => {
   try {
-    const url = req.query["url"]?.toString();
+    const url = req.body.url;
     if (!url) throw new Error("url is required");
 
     // options
@@ -235,18 +237,247 @@ ${options.jsonTemplate}
       },
       {
         jsonResponseFormat: options.jsonTemplate,
-        model: options.model || "google/gemini-flash-1.5",
+        model: options.model,
         delayAfterLoad: options.delayAfterLoad,
         debug: options.debug,
       }
     );
 
-    // Respond with review details
-    res.status(201).json({
+    // If recursive option is enabled, extract data from all internal URLs
+    type RecursiveResult = {
+      url: string;
+      data?: any;
+      error?: string;
+      usage?: { total_tokens: number; prompt_tokens: number; completion_tokens: number };
+      model?: string;
+    };
+    const recursiveResults: RecursiveResult[] = [];
+    if (options.recursive) {
+      console.log(`api-scrape.ts > POST /extract > Recursive extraction enabled for ${url}`);
+
+      // Extract all internal links from the URL
+      const internalLinks = await extractAllLinksFromUrl(url, {
+        // Only get web pages, not assets
+        type: "web",
+        // Don't recursively scrape the internal links again to avoid infinite loops
+        autoScrapeInternalLinks: false,
+        // Don't need status codes
+        getStatusCode: false,
+        // Use the same delay after load
+        delayAfterLoad: options.delayAfterLoad,
+      });
+
+      console.log(
+        `api-scrape.ts > POST /extract > Found ${internalLinks.length} internal links for ${url}`
+      );
+
+      // Process each internal link (limit to 20 to avoid overloading)
+      const linksToProcess = internalLinks.slice(0, 20);
+
+      // Process links in parallel with a concurrency limit
+      const concurrencyLimit = 5; // Process 5 links at a time
+      const chunks: Array<typeof internalLinks> = [];
+
+      // Split links into chunks for controlled concurrency
+      for (let i = 0; i < linksToProcess.length; i += concurrencyLimit) {
+        chunks.push(linksToProcess.slice(i, i + concurrencyLimit));
+      }
+
+      // Process each chunk sequentially, but links within a chunk in parallel
+      for (const chunk of chunks) {
+        const chunkResults = await Promise.all(
+          chunk.map(async (linkObj) => {
+            try {
+              console.log(
+                `api-scrape.ts > POST /extract > Processing internal link: ${linkObj.link}`
+              );
+
+              // Extract data from the internal link
+              const internalResult = await analyzeUrl(
+                {
+                  url: linkObj.link,
+                  systemPrompt: options.systemPrompt || `You are an AI data extraction tool.`,
+                  instructions: options.instructions,
+                },
+                {
+                  jsonResponseFormat: options.jsonTemplate,
+                  model: options.model,
+                  delayAfterLoad: options.delayAfterLoad,
+                  debug: options.debug,
+                }
+              );
+
+              return {
+                url: linkObj.link,
+                data: internalResult.data,
+                usage: internalResult.usage,
+                model: internalResult.model,
+              };
+            } catch (error) {
+              console.error(
+                `api-scrape.ts > POST /extract > Error processing ${linkObj.link}:`,
+                error
+              );
+              return {
+                url: linkObj.link,
+                error: error instanceof Error ? error.message : "Unknown error",
+              };
+            }
+          })
+        );
+
+        recursiveResults.push(...chunkResults);
+      }
+    }
+
+    // Calculate total usage stats if recursive option was enabled
+    const totalUsage = options.recursive
+      ? [...recursiveResults, { usage: result.usage }].reduce(
+          (acc, item) => {
+            if (item.usage) {
+              acc.total_tokens += item.usage.total_tokens || 0;
+              acc.prompt_tokens += item.usage.prompt_tokens || 0;
+              acc.completion_tokens += item.usage.completion_tokens || 0;
+            }
+            return acc;
+          },
+          { total_tokens: 0, prompt_tokens: 0, completion_tokens: 0 }
+        )
+      : result.usage;
+
+    // Normalize the extracted data from all sources
+    const normalizeData = (data: any) => {
+      // If data already has the expected structure with actual values (not schema), return it
+      if (data && typeof data === "object" && !data.type && !data.properties) {
+        return data;
+      }
+
+      // If data is in schema format, return empty object to avoid confusion
+      return {};
+    };
+
+    // Define the response object type with optional properties
+    type ResponseObject = {
+      success: boolean;
+      message: string;
+      url: string;
+      model: string;
+      /**
+       * Main extracted data
+       */
+      data: any;
+      usage: typeof totalUsage;
+      pages?: {
+        count: number;
+        items: Array<{
+          url: string;
+          data: any;
+          usage?: typeof result.usage;
+          error?: string;
+        }>;
+      };
+      errors?: {
+        count: number;
+        items: Array<{
+          url: string;
+          error: string;
+        }>;
+      };
+    };
+
+    // Prepare the main response object
+    const responseObj: ResponseObject = {
       success: true,
       message: "Finished scraping & extracting data from the website url.",
-      ...result,
-    });
+      url,
+      model: result.model,
+      // Main extraction result
+      data: normalizeData(result.data),
+      // Total usage across all extractions
+      usage: totalUsage,
+    };
+
+    // Add recursive results if enabled
+    if (options.recursive && recursiveResults.length > 0) {
+      responseObj.pages = {
+        count: recursiveResults.length,
+        items: recursiveResults
+          .map((item) => ({
+            url: item.url,
+            data: normalizeData(item.data),
+            usage: item.usage,
+            model: item.model,
+            error: item.error,
+          }))
+          .filter((item) => !item.error),
+      };
+
+      // Add errors section if any pages had errors
+      const errorItems = recursiveResults
+        .filter((item): item is RecursiveResult & { error: string } => Boolean(item.error))
+        .map((item) => ({
+          url: item.url,
+          error: item.error,
+        }));
+
+      if (errorItems.length > 0) {
+        responseObj.errors = {
+          count: errorItems.length,
+          items: errorItems,
+        };
+      }
+
+      // Replace response data with the summarized data
+      const res = (await fetchAi({
+        messages: [
+          {
+            role: "system",
+            content: "You are a professional summarizer & extractor tool",
+          },
+          {
+            role: "user",
+            content: `Response the result in structured JSON output based on the following data & schema: 
+            <task>
+            ${options.instructions}
+            </task>
+            
+            <input_data>
+            ${JSON.stringify(recursiveResults.map((item) => item.data))}
+            </input_data>
+            
+            <output_json_schema>
+            ${options.jsonTemplate}
+            </output_json_schema>`,
+          },
+        ],
+      })) as AskAiResponse;
+      const responseContent = res.choices[0].message.content;
+      if (!responseContent) {
+        console.log(`api-scrape.ts > POST /extract > No response content found :>>`, res);
+        console.log(`api-scrape.ts > POST /extract > Error :>>`, res.choices[0].message);
+        throw new Error(res.choices[0].error?.message ?? "No response content found");
+      }
+
+      // Add usage to response object
+      responseObj.usage = [responseObj.usage, res.usage].reduce(
+        (acc, item) => {
+          if (!item) return acc;
+          return {
+            total_tokens: (acc.total_tokens || 0) + (item.total_tokens || 0),
+            prompt_tokens: (acc.prompt_tokens || 0) + (item.prompt_tokens || 0),
+            completion_tokens: (acc.completion_tokens || 0) + (item.completion_tokens || 0),
+          };
+        },
+        {} as { total_tokens: number; prompt_tokens: number; completion_tokens: number }
+      );
+
+      // Validate and parse JSON response
+      const extraction = await validateJson(responseContent, { parse: true });
+      responseObj.data = extraction;
+    }
+
+    // Respond with the formatted results
+    res.status(201).json(responseObj);
   } catch (error) {
     console.error("api-scrape.ts > POST / > Error :>>", error);
 

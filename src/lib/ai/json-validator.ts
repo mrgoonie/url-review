@@ -8,11 +8,18 @@ export const MEDIUM_JSON_VALIDATOR_MODEL: TextModel = "google/gemini-flash-1.5";
 export const HIGH_JSON_VALIDATOR_MODEL: TextModel = "anthropic/claude-3-5-haiku";
 
 export const JsonValidatorOptionsSchema = z.object({
-  parse: z.boolean().optional().describe("Whether to parse the JSON"),
-  model: TextModelSchema.optional().describe("The AI model to use"),
-  attempts: z.number().optional().describe("The number of attempts to fix the JSON"),
-  maxRetries: z.number().optional().describe("The maximum number of retries to fix the JSON"),
-  debug: z.boolean().optional().describe("Whether to log debug information"),
+  parse: z.boolean().default(false).optional().describe("Whether to parse the JSON"),
+  model: TextModelSchema.default(LOW_JSON_VALIDATOR_MODEL)
+    .optional()
+    .describe("The AI model to use"),
+  attempts: z.number().default(0).optional().describe("The number of attempts to fix the JSON"),
+  maxRetries: z
+    .number()
+    .max(5)
+    .default(5)
+    .optional()
+    .describe("The maximum number of retries to fix the JSON"),
+  debug: z.boolean().default(false).optional().describe("Whether to log debug information"),
 });
 
 export type JsonValidatorOptions = z.infer<typeof JsonValidatorOptionsSchema>;
@@ -24,18 +31,11 @@ export class JsonValidatorError extends Error {
 }
 
 export async function jsonValidator(json: string, options?: JsonValidatorOptions) {
-  if (!options) options = {};
-  if (typeof options.model === "undefined") options.model = LOW_JSON_VALIDATOR_MODEL;
-  if (typeof options.attempts === "undefined") options.attempts = 0;
-  if (typeof options.maxRetries === "undefined") options.maxRetries = 5;
-  if (typeof options.parse === "undefined") options.parse = false;
+  const validatedOptions = JsonValidatorOptionsSchema.parse(options);
 
-  // throw error if max retries is greater than 5
-  if (options.maxRetries > 5) throw new Error("Max retries cannot be greater than 5");
-
-  // throw error if attempts reached
-  options.attempts++;
-  if (options.attempts > options.maxRetries)
+  // throw error if max retries reached
+  validatedOptions.attempts = (validatedOptions.attempts || 0) + 1;
+  if (validatedOptions.attempts > (validatedOptions.maxRetries || 5))
     throw new JsonValidatorError({
       message: `Unable to validate & fix this json: Maximum number of attempts reached.`,
       data: { json },
@@ -50,18 +50,19 @@ export async function jsonValidator(json: string, options?: JsonValidatorOptions
     HIGH_JSON_VALIDATOR_MODEL,
     HIGH_JSON_VALIDATOR_MODEL,
   ];
-  options.model = modelSelection[options.attempts - 1] || HIGH_JSON_VALIDATOR_MODEL;
+  validatedOptions.model =
+    modelSelection[validatedOptions.attempts - 1] || HIGH_JSON_VALIDATOR_MODEL;
 
-  if (options.debug)
+  if (validatedOptions.debug)
     console.log(
       chalk.yellow("jsonValidator"),
-      `[${options.attempts}/${options.maxRetries}] Model: ${options.model} :>>`,
+      `[${validatedOptions.attempts}/${validatedOptions.maxRetries}] Model: ${validatedOptions.model} :>>`,
       json
     );
 
   try {
     const parsed = JSON.parse(json);
-    return options.parse ? parsed : json;
+    return validatedOptions.parse ? parsed : json;
   } catch (e: any) {
     const messages: AskAiMessage[] = [
       {
@@ -85,7 +86,7 @@ export async function jsonValidator(json: string, options?: JsonValidatorOptions
             </instructions>`,
       },
     ];
-    const res = (await fetchAi({ model: options.model, messages })) as AskAiResponse;
+    const res = (await fetchAi({ model: validatedOptions.model, messages })) as AskAiResponse;
 
     let snippet = res.choices?.map((choice) => choice.message.content)?.join("\n");
     if (!snippet) {
@@ -96,7 +97,7 @@ export async function jsonValidator(json: string, options?: JsonValidatorOptions
     }
 
     // Recursively validate the snippet
-    return jsonValidator(snippet, options);
+    return jsonValidator(snippet, validatedOptions);
   }
 }
 
