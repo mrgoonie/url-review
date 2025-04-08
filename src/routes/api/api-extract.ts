@@ -152,7 +152,7 @@ ${options.jsonTemplate}
         // Don't recursively scrape the internal links again to avoid infinite loops
         autoScrapeInternalLinks: false,
         // Don't need status codes
-        getStatusCode: false,
+        getStatusCode: true,
         // Use the same delay after load
         delayAfterLoad: options.delayAfterLoad,
       });
@@ -161,8 +161,10 @@ ${options.jsonTemplate}
         `api-scrape.ts > POST /extract > Found ${internalLinks.length} internal links for ${url}`
       );
 
-      // Process each internal link (limit to maxLinks to avoid overloading)
-      const linksToProcess = internalLinks.slice(0, options.maxLinks);
+      // Filter out non-200 status codes and limit to maxLinks
+      const linksToProcess = internalLinks
+        .filter((link) => link.statusCode === 200)
+        .slice(0, options.maxLinks);
 
       // Process links in parallel with a concurrency limit
       const concurrencyLimit = 5; // Process 5 links at a time
