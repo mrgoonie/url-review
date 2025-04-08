@@ -23,10 +23,10 @@
 - [x] Take website screenshots
 - [x] Generate report
 - [x] User authentication
-- [ ] Scrape an URL
-- [ ] Crawl an URL and its subpages
-- [ ] Map: output all website's urls
-- [ ] Extract from an URL: using LLM
+- [x] Scrape an URL
+- [x] Crawl an URL and its subpages
+- [x] Map: output all website's urls
+- [x] Extract from an URL: using LLM
 - [ ] Extract multiple URLs: using LLM
 - [ ] Ask an URL: using LLM
 - [ ] Ask a website: using LLM
@@ -51,6 +51,26 @@
 | POST   | `/api/v1/review/batch` | -                                                                    | Batch review websites   |
 | -      | -                      | `urls`: list of website urls (comma-separated)                       |                         |
 | -      | -                      | `instructions`: review instructions                                  |                         |
+| POST   | `/api/v1/scrape`       | -                                                                    | Scrape a website URL    |
+| -      | -                      | `url` (required): website url to scrape                              |                         |
+| -      | -                      | `options.delayAfterLoad` (optional): delay after page load in ms     |                         |
+| POST   | `/api/v1/scrape/extract` | -                                                                  | Extract data from URL using AI |
+| -      | -                      | `url` (required): website url to extract data from                   |                         |
+| -      | -                      | `options.instructions` (required): instructions for extraction       |                         |
+| -      | -                      | `options.jsonTemplate` (required): JSON template for structured data  |                         |
+| -      | -                      | `options.systemPrompt` (optional): custom system prompt for AI       |                         |
+| -      | -                      | `options.model` (optional): AI model to use (default: gemini-flash-1.5) |                         |
+| -      | -                      | `options.delayAfterLoad` (optional): delay after page load in ms     |                         |
+| -      | -                      | `options.debug` (optional): enable debug mode                        |                         |
+| POST   | `/api/v1/scrape/links-map` | -                                                                | Extract all links from a URL |
+| -      | -                      | `url` (required): website url to extract links from                  |                         |
+| -      | -                      | `includeExternal` (optional): include external links (default: false) |                         |
+| -      | -                      | `includeInternal` (optional): include internal links (default: true)  |                         |
+| -      | -                      | `maxLinks` (optional): maximum number of links to return             |                         |
+| -      | -                      | `delayAfterLoad` (optional): delay in ms after page load            |                         |
+| -      | -                      | `getStatusCode` (optional): get HTTP status codes for links          |                         |
+| -      | -                      | `autoScrapeInternalLinks` (optional): auto-scrape internal links     |                         |
+| -      | -                      | `debug` (optional): enable debug mode                                |                         |
 
 ## Stack
 

@@ -269,7 +269,7 @@ ${options.jsonTemplate}
 
 /**
  * @swagger
- * /api/v1/scrape/links:
+ * /api/v1/scrape/links-map:
  *   post:
  *     summary: Extract all links from a given URL
  *     description: Extracts and returns all valid links found on a webpage. Supports filtering by link type and limiting the number of results.
@@ -375,7 +375,7 @@ ${options.jsonTemplate}
  *                 error:
  *                   type: string
  */
-apiScrapeRouter.post("/links", validateSession, apiKeyAuth, async (req, res) => {
+apiScrapeRouter.post("/links-map", validateSession, apiKeyAuth, async (req, res) => {
   try {
     const url = req.query["url"]?.toString();
     if (!url) throw new Error("url is required");
