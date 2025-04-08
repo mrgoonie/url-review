@@ -1,13 +1,15 @@
+import * as cheerio from "cheerio";
 import { z } from "zod";
 
 import { getHtmlContent } from "@/lib/playwright";
+import { getHtmlWithAxios } from "@/lib/scrape";
 
 import { getHttpStatusCodeAll } from "./check-links-http-status";
 import { assetExtensions } from "./scrape-schemas";
 
 export const ExtractAllLinksFromUrlOptionsSchema = z
   .object({
-    type: z.enum(["web", "image", "file", "all"]).default("all").optional(),
+    type: z.enum(["web", "external", "internal", "image", "file", "all"]).default("all").optional(),
     maxLinks: z.number().default(500).optional(),
     autoScrapeInternalLinks: z.boolean().default(false).optional(),
     getStatusCode: z.boolean().default(false).optional(),
@@ -17,6 +19,8 @@ export const ExtractAllLinksFromUrlOptionsSchema = z
       .max(10 * 60_000) // 10 minutes
       .default(5000) // 5 seconds
       .optional(),
+    debug: z.boolean().default(false).optional(),
+    processedUrls: z.instanceof(Set<string>).optional(), // Track processed URLs for recursion
   })
   .strict();
 export type ExtractAllLinksFromUrlOptions = z.infer<typeof ExtractAllLinksFromUrlOptionsSchema>;
@@ -27,123 +31,153 @@ export async function extractAllLinksFromUrl(
   options?: ExtractAllLinksFromUrlOptions
 ): Promise<{ link: string; statusCode?: number | null }[]> {
   try {
-    const parsedOptions = ExtractAllLinksFromUrlOptionsSchema.parse(options || {});
+    // Initialize processedUrls set if not provided (for the initial call)
+    const processedUrls = options?.processedUrls || new Set<string>();
 
-    const htmlContent = await getHtmlContent(url, {
-      delayAfterLoad: parsedOptions.delayAfterLoad,
-    });
+    // If this URL has already been processed in this chain, stop.
+    if (processedUrls.has(url)) {
+      console.log(`Skipping already processed URL: ${url}`);
+      return [];
+    }
+
+    // Add current URL to the processed set
+    processedUrls.add(url);
+
+    // Parse options *after* handling processedUrls initialization
+    const parsedOptions = ExtractAllLinksFromUrlOptionsSchema.parse({ ...options, processedUrls });
+
+    let htmlContent: string | string[] | undefined;
+    try {
+      htmlContent = await getHtmlContent(url, {
+        delayAfterLoad: parsedOptions.delayAfterLoad,
+        debug: parsedOptions.debug,
+      });
+    } catch (error) {
+      console.error("Error fetching HTML content with Playwright:", error);
+      console.log("Falling back to get HTML content with Axios");
+
+      // use get HTML content with Axios
+      try {
+        htmlContent = await getHtmlWithAxios(url);
+      } catch (error) {
+        console.error("Error fetching HTML content with Axios:", error);
+        return [];
+      }
+    }
     const content = Array.isArray(htmlContent) ? htmlContent.join("\n") : htmlContent;
 
-    // More comprehensive link extraction strategies
-    const linkRegexes = [
-      // Standard http/https URLs
-      /https?:\/\/[a-zA-Z0-9\-._~:/?#[\]@!$&'()*+,;=]+/g,
-
-      // URLs with additional characters like parentheses or brackets
-      /https?:\/\/[^\s'"<>()[\]{}]+/g,
-
-      // Capture all <a> tag href attributes
-      /<a[^>]+href=["']([^"']+)["'][^>]*>/g,
-
-      // Capture links within href attributes (including relative URLs)
-      /href=["']([^"']+)["']/g,
-
-      // Capture links within src attributes (including relative URLs)
-      /src=["']([^"']+)["']/g,
-
-      // Relative URLs starting with / or ./
-      /(?:href|src)=["'](\/[^"']+|\.\/[^"']+)["']/g,
-
-      // Relative URLs without leading slash
-      /(?:href|src)=["'](?!https?:\/\/)(?!\/)[^"'\s]+["']/g,
-
-      // Specific pattern for internal navigation links
-      /href=["']\/?(?:[\w-]+(?:\/[\w-]+)*)\/?["']/g,
-    ];
+    // Load HTML content into cheerio
+    const $ = cheerio.load(content);
 
     const extractedLinks = new Set<string>();
 
-    // Apply multiple regex strategies
-    linkRegexes.forEach((regex) => {
-      const matches = content.match(regex) || [];
-      matches.forEach((match) => {
-        // Clean and validate URLs
-        let cleanedUrl = match
-          .replace(/<a[^>]+href=["']|href=["']|src=["']|["'][^>]*>|["']$/g, "") // Remove all HTML tag wrappers
-          .trim();
+    // Extract links using cheerio
+    $("a").each((_, element) => {
+      const href = $(element).attr("href");
 
-        // Skip empty URLs, javascript: links, and mailto: links
+      if (href) {
+        let cleanedUrl = href.trim();
+
+        // Skip empty URLs, javascript: links, mailto: links, and anchors
         if (
           !cleanedUrl ||
           cleanedUrl.startsWith("javascript:") ||
           cleanedUrl.startsWith("mailto:") ||
-          cleanedUrl === "#"
+          cleanedUrl.startsWith("#") // Skip fragment identifiers
         ) {
           return;
         }
 
         // Handle relative URLs
-        if (!cleanedUrl.startsWith("http")) {
-          try {
-            // Convert relative URLs to absolute using the base URL
-            const baseUrl = new URL(url);
-
-            // Handle different types of relative URLs
-            if (cleanedUrl.startsWith("//")) {
-              // Protocol-relative URLs
-              cleanedUrl = `${baseUrl.protocol}${cleanedUrl}`;
-            } else if (cleanedUrl.startsWith("/")) {
-              // Root-relative URLs
-              cleanedUrl = `${baseUrl.origin}${cleanedUrl}`;
-            } else if (cleanedUrl.startsWith("./")) {
-              // Current directory relative URLs
-              cleanedUrl = new URL(cleanedUrl.slice(2), baseUrl.href).href;
-            } else if (!cleanedUrl.startsWith("http")) {
-              // Other relative URLs
-              cleanedUrl = new URL(cleanedUrl, baseUrl.href).href;
-            }
-          } catch (error) {
-            console.debug(`Failed to process relative URL: ${cleanedUrl}`);
-            return;
-          }
+        try {
+          const absoluteUrl = new URL(cleanedUrl, url).href;
+          cleanedUrl = absoluteUrl;
+        } catch (error) {
+          // Handle invalid URLs gracefully, maybe log them
+          console.debug(
+            `Failed to process relative URL or invalid URL: ${cleanedUrl}, ` + `Base URL: ${url}`
+          );
+          return; // Skip invalid URLs
         }
 
         try {
           const parsedUrl = new URL(cleanedUrl);
-          // Remove trailing slash for consistency
+          // Remove trailing slash for consistency, unless it's just the domain
           let normalizedUrl = parsedUrl.toString();
-          if (normalizedUrl.endsWith("/") && !parsedUrl.pathname.endsWith("//")) {
+          if (normalizedUrl.endsWith("/") && parsedUrl.pathname !== "/") {
             normalizedUrl = normalizedUrl.slice(0, -1);
           }
           extractedLinks.add(normalizedUrl);
         } catch {
-          console.debug(`Invalid URL found: ${cleanedUrl}`);
+          // This catch block might be redundant now due to the earlier try-catch
+          // but kept for safety, e.g., if URL constructor throws for other reasons
+          console.debug(`Invalid URL found after normalization attempt: ${cleanedUrl}`);
         }
-      });
+      }
     });
 
     // Filter links based on type option
-    const filteredLinks = Array.from(extractedLinks)
+    let filteredLinks = Array.from(extractedLinks)
       .filter((link) => {
-        // Default to all if no type specified
         const type = parsedOptions.type || "all";
+
+        // Early exit for 'all' type
+        if (type === "all") return true;
+
+        // Determine if the link is internal or external relative to the base URL
+        let isInternalLink = false;
+        let isExternalLink = false;
+        try {
+          const baseUrl = new URL(url); // Base URL from the function input
+          const currentLinkUrl = new URL(link);
+          if (currentLinkUrl.origin === baseUrl.origin) {
+            isInternalLink = true;
+          } else {
+            isExternalLink = true;
+          }
+        } catch (e) {
+          // If URL parsing fails, treat as neither internal nor external for filtering
+          console.debug(`Could not parse link for internal/external check: ${link}`);
+          return false;
+        }
+
+        // Filter based on type
+        if (type === "internal") return isInternalLink;
+        if (type === "external") return isExternalLink;
+
+        // --- Existing logic for web, image, file types ---
         const fileExtensions = {
           web: [".html", ".htm", ".php", ".asp", ".aspx"],
+          // Note: internal/external keys are kept for structure but filtering is handled above
+          external: [".html", ".htm", ".php", ".asp", ".aspx"],
+          internal: [".html", ".htm", ".php", ".asp", ".aspx"],
           image: [".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg", ".bmp", ".tiff"],
           file: [".pdf", ".doc", ".docx", ".xls", ".xlsx", ".txt", ".csv", ".zip", ".rar"],
-        };
+        } as const; // Use 'as const' for stricter typing
 
-        // Exclude common non-content links
-        const isNonContentLink = link.includes("javascript:") || link.includes("mailto:");
-
-        // Check link type
-        if (type === "all") return !isNonContentLink;
-
-        const hasMatchingExtension = fileExtensions[type].some((ext) =>
-          link.toLowerCase().endsWith(ext)
+        // Check if the link has one of the specified extensions for the type
+        // Or, if type is 'web', also include links without extensions (common for web pages)
+        const hasMatchingExtension = fileExtensions[type as keyof typeof fileExtensions]?.some(
+          (ext) => link.toLowerCase().includes(ext) // Use includes for flexibility (e.g., ignore query params)
         );
 
-        return hasMatchingExtension && !isNonContentLink;
+        // Check if it's likely a web page (no common file extension)
+        const isLikelyWebPage =
+          // Note: flat() requires ES2019 target in tsconfig
+          !Object.values(fileExtensions)
+            .flat()
+            .some((ext) => link.toLowerCase().includes(ext));
+
+        // Final check for web, image, file types
+        if (type === "web") {
+          return hasMatchingExtension || isLikelyWebPage;
+        } else if (type === "image" || type === "file") {
+          // For image/file, only check extensions, not isLikelyWebPage
+          return hasMatchingExtension;
+        }
+
+        // Fallback: should not be reached if type is valid
+        return false;
       })
       .slice(0, parsedOptions.maxLinks);
 
@@ -161,19 +195,44 @@ export async function extractAllLinksFromUrl(
       return isInternal && !isAsset;
     });
 
+    // Process internal links in batches if autoScrapeInternalLinks is enabled
     if (parsedOptions.autoScrapeInternalLinks) {
-      const scrapeResults = await Promise.all(
-        internalLinks.map((link) =>
-          extractAllLinksFromUrl(link, {
-            ...parsedOptions,
-            getStatusCode: false,
-            autoScrapeInternalLinks: false,
-          })
-        )
-      );
-      const _links = scrapeResults.flat();
-      filteredLinks.push(..._links.map((link) => link.link));
+      const batchSize = 10;
+      let allScrapedInternalLinks: { link: string; statusCode?: number | null }[] = [];
+
+      console.log(`Found ${internalLinks.length} internal links to potentially scrape.`);
+
+      for (let i = 0; i < internalLinks.length; i += batchSize) {
+        const batch = internalLinks.slice(i, i + batchSize);
+        console.log(
+          `Scraping batch ${i / batchSize + 1} of internal links (size: ${batch.length})...`
+        );
+
+        const batchResults = await Promise.all(
+          batch.map((link) =>
+            extractAllLinksFromUrl(link, {
+              ...parsedOptions, // Pass down all options including type, maxLinks etc.
+              getStatusCode: false, // No need for status codes in recursive calls
+              processedUrls: processedUrls, // Pass the *same* set down
+              // No longer forcing autoScrapeInternalLinks to false here
+            })
+          )
+        );
+
+        allScrapedInternalLinks = allScrapedInternalLinks.concat(batchResults.flat());
+      }
+
+      // Add the newly scraped links (avoiding duplicates just in case)
+      const uniqueNewLinks = allScrapedInternalLinks
+        .map((result) => result.link)
+        .filter((link) => !filteredLinks.includes(link));
+
+      filteredLinks.push(...uniqueNewLinks);
+      console.log(`Added ${uniqueNewLinks.length} new unique links from internal scraping.`);
     }
+
+    // Remove duplicates
+    filteredLinks = Array.from(new Set(filteredLinks));
 
     // Get status codes if requested
     if (parsedOptions.getStatusCode) {
@@ -187,10 +246,7 @@ export async function extractAllLinksFromUrl(
     console.log(`✅ Extracted ${filteredLinks.length} links from ${url}`);
     return filteredLinks.map((link) => ({ link }));
   } catch (error) {
-    console.error(
-      `review-start.ts > extractLinks() > Failed to extract links from ${url} :>>`,
-      error
-    );
+    console.error("Error extracting links:", error);
     return [];
   }
 }

@@ -1,0 +1,112 @@
+{
+	"code": 200,
+	"message": "success",
+	"data": {
+		"data": [
+			{
+				"website": "https://chatgpt.com?utm_source=toolify",
+				"collected_count": 74,
+				"description": "Engaging AI conversations and task automation.",
+				"handle": "chatgpt-com",
+				"id": 9363,
+				"image": "https://nav-station.oss-accelerate.aliyuncs.com/170350397495108913.jpg",
+				"month_visited_count": 4548614056,
+				"name": "ChatGPT",
+				"user_collected": 0,
+				"what_is_summary": "Engaging AI conversations and task automation.",
+				"traffic": {
+					"top_region": "US",
+					"top_region_value": 0.17922140348862112
+				},
+				"categories": [
+					{
+						"handle": "ai-chatbot",
+						"name": "AI Chatbot",
+						"tool_count": 3380
+					}
+				],
+				"is_recommend_now": 0,
+				"is_noticeable": 2,
+				"advertisement_id": null,
+				"is_ad": false,
+				"website_name": "ChatGPT",
+				"extension": null
+			}
+		],
+		"total": 8146,
+		"category_group_list": [
+			{
+				"handle": "text-writing",
+				"name": "Text&Writing"
+			},
+			{
+				"handle": "image",
+				"name": "Image"
+			},
+			{
+				"handle": "video",
+				"name": "Video"
+			},
+			{
+				"handle": "code-it",
+				"name": "Code&IT"
+			},
+			{
+				"handle": "voice",
+				"name": "Voice"
+			},
+			{
+				"handle": "business",
+				"name": "Business"
+			},
+			{
+				"handle": "marketing",
+				"name": "Marketing"
+			},
+			{
+				"handle": "ai-detector",
+				"name": "AI Detector"
+			},
+			{
+				"handle": "chatbot",
+				"name": "Chatbot"
+			},
+			{
+				"handle": "design-art",
+				"name": "Design&Art"
+			},
+			{
+				"handle": "life-assistant",
+				"name": "Life Assistant"
+			},
+			{
+				"handle": "3d",
+				"name": "3D"
+			},
+			{
+				"handle": "education",
+				"name": "Education"
+			},
+			{
+				"handle": "prompt",
+				"name": "Prompt"
+			},
+			{
+				"handle": "productivity",
+				"name": "Productivity"
+			},
+			{
+				"handle": "other-1",
+				"name": "Other"
+			}
+		],
+		"tool_count": 25330,
+		"category_count": 233,
+		"current_page": 1,
+		"per_page": 10000,
+		"next_page_url": 0,
+		"loading_time": 2898,
+		"is_logged_in": false
+	},
+	"error_code": 0
+}

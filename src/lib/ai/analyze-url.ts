@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { getHtmlContent } from "@/lib/playwright/get-html";
+import { getHtmlContent } from "@/lib/playwright/get-html-content";
 
 import { type AskAiResponse, fetchAi, TextModelSchema } from "./fetch-ai";
 import { validateJson } from "./json-validator";
