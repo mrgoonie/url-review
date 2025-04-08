@@ -1,0 +1,10 @@
+{
+  "url": "https://digitop.vn/",
+  "options": {
+    "instructions": "extract email addresses",
+    "jsonTemplate": "{ \"type\": \"object\", \"properties\": { \"emails\": { \"type\": \"array\", \"description\": \"List of extracted email addresses\" } } }",
+    "delayAfterLoad": 1000,
+    "recursive": true,
+    "debug": true
+  }
+}

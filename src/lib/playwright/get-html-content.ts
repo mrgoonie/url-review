@@ -156,7 +156,7 @@ export async function getHtmlContent(url: string, options: HtmlContentOptions = 
       }
 
       // Check for Cloudflare Bot Shield
-      if (htmlContent.indexOf("cloudflare.com/5xx-error-landing")) {
+      if (htmlContent.indexOf("cloudflare.com/5xx-error-landing") !== -1) {
         throw new Error("Failed to retrieve HTML content due to Cloudflare Bot Shield");
       }
 
