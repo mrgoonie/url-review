@@ -10,7 +10,7 @@
     }
   },
   {
-    "url": "https://digitop.vn/",
+    "url": "https://culturepulse.ai",
     "options": {
       "instructions": "extract a contact email address",
       "jsonTemplate": "{ \"type\": \"object\", \"properties\": { \"email\": { \"type\": \"string\", \"description\": \"Extracted email address\" } } }",

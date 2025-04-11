@@ -147,11 +147,11 @@ ${options.jsonTemplate}
 
       // Extract all internal links from the URL
       const internalLinks = await extractAllLinksFromUrl(url, {
-        // Only get web pages, not assets
-        type: "web",
+        // Only get internal web pages, not assets or external links
+        type: "internal",
         // Don't recursively scrape the internal links again to avoid infinite loops
         autoScrapeInternalLinks: false,
-        // Don't need status codes
+        // Get status codes for the links
         getStatusCode: true,
         // Use the same delay after load
         delayAfterLoad: options.delayAfterLoad,

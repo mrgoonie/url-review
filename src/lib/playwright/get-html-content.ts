@@ -2,6 +2,8 @@ import { env } from "@/env";
 import { wait } from "@/lib/utils/wait";
 
 import { type PlaywightProxy, proxyUrlToPlaywightProxy } from "../proxy";
+import { getHtmlWithAxios } from "../scrape";
+import { getHtmlWithScrapedo } from "../scrape/get-html-with-scrapedo";
 import { browserPool } from "./browser-pool";
 
 interface HtmlContentOptions {
@@ -202,11 +204,24 @@ export async function getHtmlContent(url: string, options: HtmlContentOptions = 
         await wait(2000);
 
         try {
-          // Last attempt: Chromium without proxy
+          // Chromium without proxy
           return await attemptGetHtmlContent("chromium", false);
         } catch (error) {
-          console.error("get-html.ts > getHtmlContent() > All attempts failed");
-          throw new Error("Failed to retrieve HTML content after trying all combinations");
+          // Last attempt 01: try with Axios
+          try {
+            return await getHtmlWithAxios(url);
+          } catch (error) {
+            console.error("Error fetching HTML content with Axios:", error);
+
+            // Last attempt 02: try with Scrapedo
+            try {
+              return await getHtmlWithScrapedo(url);
+            } catch (error) {
+              console.error("Error fetching HTML content with Scrapedo:", error);
+              console.error("❌ get-html.ts > getHtmlContent() > All attempts failed !!!");
+              throw new Error("Failed to retrieve HTML content after trying all combinations");
+            }
+          }
         }
       }
     }

@@ -7,6 +7,37 @@ import { getHtmlWithAxios } from "@/lib/scrape";
 import { getHttpStatusCodeAll } from "./check-links-http-status";
 import { assetExtensions } from "./scrape-schemas";
 
+// Social media and common external service domains to exclude
+// even if they're on the same origin (e.g., through redirects or URL parameters)
+const SOCIAL_MEDIA_DOMAINS = [
+  "facebook.com",
+  "twitter.com",
+  "instagram.com",
+  "linkedin.com",
+  "youtube.com",
+  "tiktok.com",
+  "pinterest.com",
+  "reddit.com",
+  "tumblr.com",
+  "snapchat.com",
+  "whatsapp.com",
+  "telegram.org",
+  "medium.com",
+  "discord.com",
+  "slack.com",
+  "github.com",
+  "t.co",
+  "fb.me",
+  "bit.ly",
+  "goo.gl",
+  "tinyurl.com",
+  "amzn.to",
+  "youtu.be",
+  "wa.me",
+  "mailto:",
+  "tel:",
+];
+
 export const ExtractAllLinksFromUrlOptionsSchema = z
   .object({
     type: z.enum(["web", "external", "internal", "image", "file", "all"]).default("all").optional(),
@@ -130,7 +161,15 @@ export async function extractAllLinksFromUrl(
         try {
           const baseUrl = new URL(url); // Base URL from the function input
           const currentLinkUrl = new URL(link);
-          if (currentLinkUrl.origin === baseUrl.origin) {
+
+          // Check if the URL contains any social media domain
+          const isSocialMedia = SOCIAL_MEDIA_DOMAINS.some(
+            (domain: string) =>
+              currentLinkUrl.hostname.includes(domain) || currentLinkUrl.href.includes(domain)
+          );
+
+          // Check if it's an internal link (same origin and not social media)
+          if (currentLinkUrl.origin === baseUrl.origin && !isSocialMedia) {
             isInternalLink = true;
           } else {
             isExternalLink = true;
@@ -181,18 +220,23 @@ export async function extractAllLinksFromUrl(
       })
       .slice(0, parsedOptions.maxLinks);
 
-    // Detect internal links
+    // Detect internal links - reuse the same social media domains list from above
     let internalLinks = filteredLinks.filter((link) => {
       const baseUrl = new URL(url);
       const linkUrl = new URL(link, baseUrl.href);
 
-      // Check if it's an internal link
+      // Check if it's an internal link (same origin)
       const isInternal = linkUrl.origin === baseUrl.origin;
 
       // Check if it's not an asset file
       const isAsset = assetExtensions.some((ext) => linkUrl.pathname.toLowerCase().endsWith(ext));
 
-      return isInternal && !isAsset;
+      // Check if the URL contains any social media domain using the same logic as above
+      const isSocialMedia = SOCIAL_MEDIA_DOMAINS.some(
+        (domain: string) => linkUrl.hostname.includes(domain) || linkUrl.href.includes(domain)
+      );
+
+      return isInternal && !isAsset && !isSocialMedia;
     });
 
     // Process internal links in batches if autoScrapeInternalLinks is enabled

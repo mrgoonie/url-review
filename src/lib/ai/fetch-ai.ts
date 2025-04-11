@@ -11,7 +11,7 @@ axiosRetry(axios, { retries: 3, retryDelay: axiosRetry.exponentialDelay });
 
 export const OPENROUTER_BASE_API_URL = "https://openrouter.ai/api/v1";
 export const DEFAULT_AI_MODELS = [
-  "openrouter/quasar-alpha",
+  "openrouter/optimus-alpha",
   "minimax/minimax-01",
   "google/gemini-2.0-flash-001",
   "google/gemini-2.0-flash-lite-001",
@@ -254,8 +254,8 @@ export async function fetchAi(params: AskAiParams, options: FetchAiOptions = {})
 
   // if no model or models provided, use default APP_MODELS
   if (!model && !models) data.models = DEFAULT_AI_MODELS.slice(0, 3);
-  if (model && !models) data.model = model;
-  if (models && !model) data.models = models;
+  if (models) data.models = models;
+  if (model) data.models = [model, ...DEFAULT_AI_MODELS.slice(0, 2)];
 
   if (debug) {
     console.log("Fetch AI Request:", { url, headers });

@@ -68,6 +68,7 @@ export async function analyzeUrl(input: AnalyzeUrlInput, options?: AnalyzeUrlOpt
   try {
     const htmlContent = await getHtmlContent(validatedInput.url, {
       delayAfterLoad: validatedOptions?.delayAfterLoad ?? 3000,
+      debug: validatedOptions?.debug,
     });
 
     // If htmlContent is an array, join the contents
