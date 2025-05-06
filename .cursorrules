@@ -1,8 +1,12 @@
-## Project Information
+# Project Information
 
 Main domain: ReviewWeb.site
 
-## Tech stack
+---
+
+## For development
+
+### Tech stack
 - Node.js
 - Express.js
 - Prisma (PostgreSQL)
@@ -10,15 +14,15 @@ Main domain: ReviewWeb.site
 - TailwindCSS
 - Commitlint
 
-## When working with EJS
+### When working with EJS
 always use icons from https://remixicon.com/
 always use tailwindcss for styling
 
-## When working with Tailwind or CSS
+### When working with Tailwind or CSS
 always implement responsive layout with mobile-first approach
 always implement dark mode
 
-## For Express.js project
+### For Express.js project
 always import prisma client with: `import { prisma } from "@/lib/db";`
 always use async/await for better readability and performance
 always use `next()` for error handling of all routers
@@ -27,7 +31,11 @@ always use zod for validation
 always generate swagger docs for all APIs
 always use `bearerAuth` and `ApiKeyAuth` for swagger security
 
-### Project Description
+---
+
+## Project Overview
+
+### Description
 
 ReviewWeb.site is a tool that utilizes AI to helps you to scan through the websites and provide feedbacks based on the content.
 Use case:
@@ -49,13 +57,29 @@ Use case:
 4. "Unveil Your Website's True Potential"
 5. "Transform Clicks into Insights, Websites into Masterpieces"
 
-### Workflow:
+---
+
+## Workflow:
 - A user inputs a website url
 - A user provides prompt instructions for the review
 - After submitting, the system will start the review by crawling the website, analyzing the content, and take screenshots, then generate the report
 - The user can review the result and download the report
 
-### APIs
+## Features
+
+- [x] Review a website
+- [x] Take website screenshots
+- [x] Generate report
+- [x] User authentication
+- [ ] Scrape an URL
+- [ ] Crawl an URL and its subpages
+- [ ] Map: output all website's urls
+- [ ] Extract from an URL: using LLM
+- [ ] Extract multiple URLs: using LLM
+- [ ] Ask an URL: using LLM
+- [ ] Ask a website: using LLM
+
+## APIs
 | Method | Endpoint               | Body Params                                                          | Description             |
 | ------ | ---------------------- | -------------------------------------------------------------------- | ----------------------- |
 | GET    | `/api/v1/healthz`      | -                                                                    | Health check endpoint   |

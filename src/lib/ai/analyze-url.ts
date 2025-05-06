@@ -1,6 +1,7 @@
+/* eslint-disable prettier/prettier */
 import { z } from "zod";
 
-import { getHtmlContent } from "@/lib/playwright/get-html";
+import { getHtmlContent } from "@/lib/playwright/get-html-content";
 
 import { type AskAiResponse, fetchAi, TextModelSchema } from "./fetch-ai";
 import { validateJson } from "./json-validator";
@@ -16,7 +17,10 @@ export type AnalyzeUrlInput = z.infer<typeof AnalyzeUrlSchema>;
 export const AnalyzeUrlOptionsSchema = z
   .object({
     model: TextModelSchema.optional().describe("The AI model to use"),
-    jsonResponseFormat: z.string().optional().describe("A JSON response format for the AI"),
+    jsonResponseFormat: z
+      .union([z.string(), z.any()])
+      .optional()
+      .describe("A JSON response format for the AI"),
     delayAfterLoad: z.number().optional().describe("Delay after loading the website"),
     debug: z.boolean().optional().describe("Print debug logs"),
   })
@@ -68,6 +72,7 @@ export async function analyzeUrl(input: AnalyzeUrlInput, options?: AnalyzeUrlOpt
   try {
     const htmlContent = await getHtmlContent(validatedInput.url, {
       delayAfterLoad: validatedOptions?.delayAfterLoad ?? 3000,
+      debug: validatedOptions?.debug,
     });
 
     // If htmlContent is an array, join the contents
@@ -84,16 +89,31 @@ export async function analyzeUrl(input: AnalyzeUrlInput, options?: AnalyzeUrlOpt
     );
   }
 
+  if (validatedOptions?.debug) {
+    console.log(`analyzeUrl.ts > analyzeUrl() > websiteContent :>>`, websiteContent);
+  }
+
   // Set default prompts for harmful content detection
+  const responseTemplate =
+    typeof validatedOptions?.jsonResponseFormat === "undefined"
+      ? DEFAULT_JSON_RESPONSE_FORMAT
+      : typeof validatedOptions?.jsonResponseFormat === "string"
+      ? validatedOptions?.jsonResponseFormat
+      : JSON.stringify(validatedOptions?.jsonResponseFormat);
+
   const systemPrompt = `You are an AI content safety detector specialized in identifying harmful, inappropriate, or dangerous website content.`;
   const instructions = validatedInput.instructions
     ? `${validatedInput.instructions}
+
   ## JSON Response Format:
-  \`\`\`
-  ${validatedOptions?.jsonResponseFormat ?? DEFAULT_JSON_RESPONSE_FORMAT}
-  \`\`\`
+  <json_response_format>
+  ${responseTemplate}
+  </json_response_format>
+
   ## Here is the website content:
-  ${websiteContent}`
+  <website_content>
+  ${websiteContent}
+  </website_content>`
     : `Carefully analyze the website content and detect any harmful elements:
   
   ## Harmful Content Detection Instructions:
@@ -103,7 +123,7 @@ export async function analyzeUrl(input: AnalyzeUrlInput, options?: AnalyzeUrlOpt
   - Return a structured JSON object based on this format:
   ## JSON Response Format:
   \`\`\`
-  ${validatedOptions?.jsonResponseFormat ?? DEFAULT_JSON_RESPONSE_FORMAT}
+  ${responseTemplate}
   \`\`\`
 
   ## Specific Areas to Evaluate:
@@ -115,7 +135,9 @@ export async function analyzeUrl(input: AnalyzeUrlInput, options?: AnalyzeUrlOpt
   - Explicit or offensive language
   
   ## Here is the website content:
-  ${websiteContent}`;
+  <website_content>
+  ${websiteContent}
+  </website_content>`;
 
   // Fetch AI analysis
   const response = (await fetchAi({
@@ -128,8 +150,11 @@ export async function analyzeUrl(input: AnalyzeUrlInput, options?: AnalyzeUrlOpt
   })) as AskAiResponse;
 
   const responseContent = response.choices[0].message.content;
-  if (!responseContent)
+  if (!responseContent) {
+    console.log(`analyzeUrl.ts > analyzeUrl() > No response content found :>>`, response);
+    console.log(`analyzeUrl.ts > analyzeUrl() > Error :>>`, response.choices[0].message);
     throw new Error(response.choices[0].error?.message ?? "No response content found");
+  }
 
   // Validate and parse JSON response
   const jsonResponse = await validateJson(responseContent, {

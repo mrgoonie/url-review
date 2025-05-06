@@ -1,0 +1,109 @@
+{
+	"website": "https://hemingwayapp.com/?via=toolify",
+	"collected_count": 0,
+	"description": "A tool for improving writing clarity and correctness.",
+	"handle": "hemingway-editor",
+	"id": 26112,
+	"image": "https://nav-station.oss-accelerate.aliyuncs.com/174401768112306165.jpg",
+	"month_visited_count": 752457,
+	"name": "Hemingway Editor",
+	"user_collected": 0,
+	"what_is_summary": "A tool for improving writing clarity and correctness.",
+	"traffic": {
+			"top_region": "US",
+			"top_region_value": 0.3154845691886603
+	},
+	"categories": [
+			{
+					"handle": "ai-grammar-checker",
+					"name": "AI Grammar Checker",
+					"tool_count": 330
+			},
+			{
+					"handle": "ai-tutorial",
+					"name": "AI Tutorial",
+					"tool_count": 474
+			},
+			{
+					"handle": "writing-assistants",
+					"name": "Writing Assistants",
+					"tool_count": 2976
+			},
+			{
+					"handle": "ai-blog-writer",
+					"name": "AI Blog Writer",
+					"tool_count": 533
+			},
+			{
+					"handle": "copywriting",
+					"name": "Copywriting",
+					"tool_count": 911
+			},
+			{
+					"handle": "essay-writer",
+					"name": "Essay Writer",
+					"tool_count": 301
+			},
+			{
+					"handle": "papers",
+					"name": "Papers",
+					"tool_count": 261
+			},
+			{
+					"handle": "letter-writer",
+					"name": "Letter Writer",
+					"tool_count": 178
+			},
+			{
+					"handle": "report-writing",
+					"name": "Report Writing",
+					"tool_count": 290
+			},
+			{
+					"handle": "ai-rewriter",
+					"name": "AI Rewriter",
+					"tool_count": 677
+			},
+			{
+					"handle": "ai-story-writing",
+					"name": "AI Story Writing",
+					"tool_count": 481
+			},
+			{
+					"handle": "ai-book-writing",
+					"name": "AI Book Writing",
+					"tool_count": 239
+			},
+			{
+					"handle": "paraphraser",
+					"name": "Paraphraser",
+					"tool_count": 576
+			},
+			{
+					"handle": "general-writing",
+					"name": "General Writing",
+					"tool_count": 981
+			},
+			{
+					"handle": "ai-creative-writing",
+					"name": "AI Creative Writing",
+					"tool_count": 606
+			},
+			{
+					"handle": "ai-email-writer",
+					"name": "AI Email Writer",
+					"tool_count": 806
+			},
+			{
+					"handle": "ai-novel",
+					"name": "Novel",
+					"tool_count": 102
+			}
+	],
+	"is_recommend_now": 0,
+	"is_noticeable": 2,
+	"advertisement_id": null,
+	"is_ad": false,
+	"website_name": "Hemingway Editor",
+	"extension": null
+}

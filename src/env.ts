@@ -37,6 +37,7 @@ export const envSchema = z.object({
   POLAR_ACCESS_TOKEN: z.string(),
   META_ACCESS_TOKEN: z.string(),
   META_AD_ACCOUNT_ID: z.string(),
+  SCRAPE_DO_API_KEY: z.string(),
 });
 export type Env = z.infer<typeof envSchema>;
 
@@ -77,6 +78,7 @@ export const env: Env = {
   POLAR_SECRET: process.env["POLAR_SECRET"]!,
   META_ACCESS_TOKEN: process.env["META_ACCESS_TOKEN"]!,
   META_AD_ACCOUNT_ID: process.env["META_AD_ACCOUNT_ID"]!,
+  SCRAPE_DO_API_KEY: process.env["SCRAPE_DO_API_KEY"]!,
 };
 
 const {
@@ -101,6 +103,7 @@ const {
   POLAR_SECRET,
   META_ACCESS_TOKEN,
   META_AD_ACCOUNT_ID,
+  SCRAPE_DO_API_KEY,
   ...clientEnv
 } = env;
 

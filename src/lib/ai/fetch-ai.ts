@@ -11,17 +11,25 @@ axiosRetry(axios, { retries: 3, retryDelay: axiosRetry.exponentialDelay });
 
 export const OPENROUTER_BASE_API_URL = "https://openrouter.ai/api/v1";
 export const DEFAULT_AI_MODELS = [
+  "google/gemini-2.5-flash-preview",
+  "openai/gpt-4.1-mini",
+  "google/gemini-2.0-flash-001",
+  "google/gemini-2.0-flash-lite-001",
   "google/gemini-flash-1.5",
   "google/gemini-flash-1.5-8b",
   "google/gemini-pro-1.5",
+  "google/gemini-2.5-pro-preview-03-25",
   "openai/chatgpt-4o-latest",
   "openai/gpt-4o-mini",
   "anthropic/claude-3-5-haiku",
   "anthropic/claude-3.5-sonnet",
+  "meta-llama/llama-4-maverick",
+  "meta-llama/llama-4-scout",
   "meta-llama/llama-3.2-3b-instruct",
   "meta-llama/llama-3.1-70b-instruct:nitro",
   "perplexity/llama-3.1-sonar-large-128k-chat",
   "nvidia/llama-3.1-nemotron-70b-instruct",
+  "qwen/qwen-turbo",
   "qwen/qwen-2.5-coder-32b-instruct",
   "qwen/qwen-2.5-72b-instruct",
   "eva-unit-01/eva-qwen-2.5-32b",
@@ -247,8 +255,8 @@ export async function fetchAi(params: AskAiParams, options: FetchAiOptions = {})
 
   // if no model or models provided, use default APP_MODELS
   if (!model && !models) data.models = DEFAULT_AI_MODELS.slice(0, 3);
-  if (model && !models) data.model = model;
-  if (models && !model) data.models = models;
+  if (models) data.models = models;
+  if (model) data.models = [model, ...DEFAULT_AI_MODELS.slice(0, 2)];
 
   if (debug) {
     console.log("Fetch AI Request:", { url, headers });

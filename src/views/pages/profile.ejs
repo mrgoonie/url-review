@@ -20,7 +20,7 @@
               })
               .then((res) => res.json())
               .then((data) => {
-                if (data.status === 1) {
+                if (data.success) {
                   alert("Create new API key successfully");
                   setTimeout(() => {
                     location.reload();
@@ -40,7 +40,7 @@
               })
               .then((res) => res.json())
               .then((data) => {
-                if (data.status === 1) {
+                if (data.success) {
                   alert("Delete API key successfully");
                   setTimeout(() => {
                     location.reload();

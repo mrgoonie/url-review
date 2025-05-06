@@ -19,12 +19,31 @@ export type ScrapeWebUrl = z.infer<typeof ScrapeWebUrlSchema>;
 
 // extract
 export const ExtractWebUrlOptionsSchema = z.object({
-  instructions: z.string(),
-  systemPrompt: z.string().optional(),
-  jsonTemplate: z.string(),
-  model: TextModelSchema.optional(),
-  delayAfterLoad: z.number().optional(),
   debug: z.boolean().optional(),
+  instructions: z.string().describe("Instructions for the AI to extract data from the website"),
+  systemPrompt: z.string().optional().describe("System prompt for the AI"),
+  jsonTemplate: z.string().describe("JSON schema template for the extracted data output"),
+  model: TextModelSchema.optional().default("openrouter/optimus-alpha"),
+  delayAfterLoad: z.number().optional().describe("Optional delay after page load in milliseconds"),
+  recursive: z
+    .boolean()
+    .optional()
+    .default(false)
+    .describe(
+      "If true, will recursively scrape all internal URLs found on the page and extract data from each of them using the same options"
+    ),
+  maxLinks: z
+    .number()
+    .optional()
+    .default(20)
+    .describe("Maximum number of links to process when recursive is true (default: 20)"),
+  stopWhenFound: z
+    .boolean()
+    .optional()
+    .default(false)
+    .describe(
+      "If true, will stop processing remaining links once valid data is extracted from any link"
+    ),
 });
 export type ExtractWebUrlOptions = z.infer<typeof ExtractWebUrlOptionsSchema>;
 

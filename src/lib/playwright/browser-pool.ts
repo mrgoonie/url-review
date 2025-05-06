@@ -1,5 +1,8 @@
 import type { Browser } from "playwright";
-import { chromium, firefox } from "playwright";
+import { chromium, firefox } from "playwright-extra";
+// import stealth from "puppeteer-extra-plugin-stealth";
+// firefox.use(stealth());
+// chromium.use(stealth());
 
 class BrowserPool {
   private firefoxBrowser: Browser | null = null;

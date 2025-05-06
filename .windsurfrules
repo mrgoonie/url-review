@@ -1,0 +1,102 @@
+# Project Information
+
+Main domain: ReviewWeb.site
+
+---
+
+## For development
+
+### Tech stack
+- Node.js
+- Express.js
+- Prisma (PostgreSQL)
+- EJS
+- TailwindCSS
+- Commitlint
+
+### When working with EJS
+always use icons from https://remixicon.com/
+always use tailwindcss for styling
+
+### When working with Tailwind or CSS
+always implement responsive layout with mobile-first approach
+always implement dark mode
+
+### For Express.js project
+always import prisma client with: `import { prisma } from "@/lib/db";`
+always use async/await for better readability and performance
+always use `next()` for error handling of all routers
+always use try-catch for fallback error handling
+always use zod for validation
+always generate swagger docs for all APIs
+always use `bearerAuth` and `ApiKeyAuth` for swagger security
+
+---
+
+## Project Overview
+
+### Description
+
+ReviewWeb.site is a tool that utilizes AI to helps you to scan through the websites and provide feedbacks based on the content.
+Use case:
+- You have a website and want to know how good it is
+- You want to know how to improve your website
+- You want to know how to market your website
+- You want to know if the website is good for SEO
+- You want to know if the website contains inappropriate content
+- You want to know if the website is mobile-friendly
+- You want to know if the website is secure or contains malware
+  
+### Short description
+- ReviewWeb.site is a tool that utilizes AI to helps you to scan through the websites and provide feedbacks based on the content.
+
+### Slogans
+1. "Your Digital Lens: See Beyond the Surface"
+2. "Decode, Improve, Dominate: Your Digital Success Starts Here"
+3. "Website Insights, Marketing Hindsights"
+4. "Unveil Your Website's True Potential"
+5. "Transform Clicks into Insights, Websites into Masterpieces"
+
+---
+
+## Workflow:
+- A user inputs a website url
+- A user provides prompt instructions for the review
+- After submitting, the system will start the review by crawling the website, analyzing the content, and take screenshots, then generate the report
+- The user can review the result and download the report
+
+## Features
+
+- [x] Review a website
+- [x] Take website screenshots
+- [x] Generate report
+- [x] User authentication
+- [ ] Scrape an URL
+- [ ] Crawl an URL and its subpages
+- [ ] Map: output all website's urls
+- [ ] Extract from an URL: using LLM
+- [ ] Extract multiple URLs: using LLM
+- [ ] Ask an URL: using LLM
+- [ ] Ask a website: using LLM
+
+## APIs
+| Method | Endpoint               | Body Params                                                          | Description             |
+| ------ | ---------------------- | -------------------------------------------------------------------- | ----------------------- |
+| GET    | `/api/v1/healthz`      | -                                                                    | Health check endpoint   |
+| GET    | `/api/v1/api_key`      | -                                                                    | Retrieve API key        |
+| POST   | `/api/v1/upload`       | -                                                                    | Upload endpoint         |
+| GET    | `/api/v1/profile`      | -                                                                    | Get user profile        |
+| POST   | `/api/v1/screenshot`   | -                                                                    | Take website screenshot |
+| -      | -                      | `url` (required): website url to screenshot                          |                         |
+| -      | -                      | `full_page` (optional): full page screenshot (default: `false`)      |                         |
+| -      | -                      | `viewport_width` (optional): screenshot width (default: `1400`)      |                         |
+| -      | -                      | `viewport_height` (optional): screenshot height (default: `800`)     |                         |
+| -      | -                      | `device_scale_factor` (optional): device scale factor (default: `1`) |                         |
+| -      | -                      | `is_mobile` (optional): mobile screenshot (default: `false`)         |                         |
+| POST   | `/api/v1/review`       | -                                                                    | Review a website        |
+| -      | -                      | `url` (required): website url to review                              |                         |
+| -      | -                      | `instructions`: review instructions                                  |                         |
+| POST   | `/api/v1/review/batch` | -                                                                    | Batch review websites   |
+| -      | -                      | `urls`: list of website urls (comma-separated)                       |                         |
+| -      | -                      | `instructions`: review instructions                                  |                         |
+
