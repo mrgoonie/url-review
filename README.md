@@ -26,9 +26,9 @@
 - [x] Scrape an URL
 - [x] Crawl an URL and its subpages
 - [x] Map: output all website's urls
-- [ ] Summarize: an URL using LLM
-- [ ] Summarize: a website using LLM
-- [ ] Summarize: multiple URLs using LLM
+- [x] Summarize: an URL using LLM
+- [x] Summarize: a website using LLM
+- [x] Summarize: multiple URLs using LLM
 - [x] Extract from an URL: using LLM
 - [x] Extract from a website: using LLM
 - [ ] Extract multiple URLs: using LLM
@@ -91,7 +91,35 @@
 | -      | -                          | `options.delayAfterLoad` (optional): delay after page load in ms        |                                   |
 | -      | -                          | `options.maxLinks` (optional): maximum number of URLs to process        |                                   |
 | -      | -                          | `options.debug` (optional): enable debug mode                           |                                   |
-| -      | -                          | `debug` (optional): enable debug mode                                   |                                   |
+| POST   | `/api/v1/summarize/url`    | -                                                                       | Summarize a URL using AI          |
+| -      | -                          | `url` (required): website url to summarize                              |                                   |
+| -      | -                          | `options.instructions` (optional): custom instructions for summarization |                                   |
+| -      | -                          | `options.systemPrompt` (optional): custom system prompt for AI          |                                   |
+| -      | -                          | `options.model` (optional): AI model to use                             |                                   |
+| -      | -                          | `options.delayAfterLoad` (optional): delay after page load in ms        |                                   |
+| -      | -                          | `options.maxLength` (optional): maximum length of summary in words       |                                   |
+| -      | -                          | `options.format` (optional): format of summary (bullet or paragraph)     |                                   |
+| -      | -                          | `options.debug` (optional): enable debug mode                           |                                   |
+| POST   | `/api/v1/summarize/website`| -                                                                       | Summarize a website using AI      |
+| -      | -                          | `url` (required): main website url to summarize                         |                                   |
+| -      | -                          | `options.instructions` (optional): custom instructions for summarization |                                   |
+| -      | -                          | `options.systemPrompt` (optional): custom system prompt for AI          |                                   |
+| -      | -                          | `options.model` (optional): AI model to use                             |                                   |
+| -      | -                          | `options.delayAfterLoad` (optional): delay after page load in ms        |                                   |
+| -      | -                          | `options.maxLinks` (optional): maximum number of pages to process        |                                   |
+| -      | -                          | `options.maxLength` (optional): maximum length of summary in words       |                                   |
+| -      | -                          | `options.format` (optional): format of summary (bullet or paragraph)     |                                   |
+| -      | -                          | `options.debug` (optional): enable debug mode                           |                                   |
+| POST   | `/api/v1/summarize/urls`   | -                                                                       | Summarize multiple URLs using AI  |
+| -      | -                          | `urls` (required): array of website urls to summarize                    |                                   |
+| -      | -                          | `options.instructions` (optional): custom instructions for summarization |                                   |
+| -      | -                          | `options.systemPrompt` (optional): custom system prompt for AI          |                                   |
+| -      | -                          | `options.model` (optional): AI model to use                             |                                   |
+| -      | -                          | `options.delayAfterLoad` (optional): delay after page load in ms        |                                   |
+| -      | -                          | `options.maxLinks` (optional): maximum number of URLs to process        |                                   |
+| -      | -                          | `options.maxLength` (optional): maximum length of summary in words       |                                   |
+| -      | -                          | `options.format` (optional): format of summary (bullet or paragraph)     |                                   |
+| -      | -                          | `options.debug` (optional): enable debug mode                           |                                   |
 
 ## Stack
 
