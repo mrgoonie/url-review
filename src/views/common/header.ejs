@@ -14,6 +14,9 @@
           <li class="<%= path_name === "/" ? "text-blue-600 font-semibold" : "text-gray-600 hover:text-blue-600" %>">
             <a href="/" class="transition-colors duration-300">Home</a>
           </li>
+          <li class="<%= path_name === "/pricing" ? "text-blue-600 font-semibold" : "text-gray-600 hover:text-blue-600" %>">
+            <a href="/pricing" class="transition-colors duration-300">Pricing</a>
+          </li>
           <li class="<%= path_name === "/api-docs" ? "text-blue-600 font-semibold" : "text-gray-600 hover:text-blue-600" %>">
             <a href="/api-docs" class="transition-colors duration-300">API Docs</a>
           </li>
@@ -37,65 +40,15 @@
         <% } else { %>
         <a href="/login" class="rts-btn btn-primary"><i class="ri-login-box-line mr-2"></i>Get Started</a>
         <% } %>
-        <button id="menu-btn" class="md:hidden text-gray-600 dark:text-gray-300">
-          <svg width="24" height="24" viewBox="0 0 20 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-            <rect y="14" width="20" height="2"></rect>
-            <rect y="7" width="20" height="2"></rect>
-            <rect width="20" height="2"></rect>
-          </svg>
+
+        <!-- Mobile menu button -->
+        <button class="md:hidden p-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700" id="mobile-menu-button">
+          <i class="ri-menu-line text-xl"></i>
         </button>
       </div>
     </div>
   </div>
+
+  <%- include('./mobile-menu') %>
 </header>
 <!-- header area end -->
-
-<!-- side bar area  -->
-<div id="side-bar" class="fixed inset-y-0 right-0 z-50 w-64 bg-white dark:bg-gray-900 shadow-lg transform translate-x-full transition-transform duration-300 ease-in-out">
-  <button class="absolute top-4 left-4 text-gray-600 dark:text-gray-300 close-icon-menu">
-    <i class="ri-close-line text-2xl"></i>
-  </button>
-  <!-- mobile menu area start -->
-  <div class="mobile-menu-main p-6 mt-16">
-    <nav class="nav-main mainmenu-nav">
-      <ul class="space-y-4">
-        <li class="<%= path_name === "/" ? "text-blue-600 font-semibold" : "text-gray-600 hover:text-blue-600" %>">
-          <a href="/" class="block py-2">Home</a>
-        </li>
-        <li class="<%= path_name === "/api-docs" ? "text-blue-600 font-semibold" : "text-gray-600 hover:text-blue-600" %>">
-          <a href="/api-docs" class="block py-2">API Docs</a>
-        </li>
-        <li class="">
-          <a href="https://github.com/mrgoonie/url-review" class="block py-2">Contribute</a>
-        </li>
-      </ul>
-    </nav>
-
-    <div class="mt-8 space-y-6">
-      <% if (user) { %>
-      <div class="flex items-center space-x-3">
-        <a href="/logout" class="text-gray-600 hover:text-red-600 dark:text-gray-300 dark:hover:text-red-400 tippy" data-tippy-content="Logout" data-tippy-placement="bottom">
-          <i class="ri-logout-box-line"></i>
-        </a>
-        <span class="text-gray-700 dark:text-gray-300">
-          Hi, <a href="/profile" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 tippy" data-tippy-content="Profile" data-tippy-placement="bottom">
-            <%= user.name %> <i class="ri-user-line ml-1"></i>
-          </a>
-        </span>
-      </div>
-      <a href="/start-review" class="rts-btn btn-primary w-full text-center tippy" data-tippy-content="Start your review now!" data-tippy-placement="bottom">
-        <i class="ri-rocket-2-line mr-2"></i> Start Review
-      </a>
-      <% } else { %>
-      <a href="/login" class="rts-btn btn-primary w-full text-center">Get Started</a>
-      <% } %>
-    </div>
-
-    <ul class="social-area-one flex space-x-4 mt-12 justify-center">
-      <li><a href="https://x.com/goon_nguyen" target="_blank" class="text-gray-600 hover:text-black dark:text-gray-300 dark:hover:text-white"><i class="ri-twitter-x-line text-2xl"></i></a></li>
-      <li><a href="https://fb.com/mrgoonie" target="_blank" class="text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400"><i class="ri-facebook-circle-fill text-2xl"></i></a></li>
-    </ul>
-  </div>
-  <!-- mobile menu area end -->
-</div>
-<!-- side bar area end -->

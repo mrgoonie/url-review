@@ -10,8 +10,12 @@ export const envSchema = z.object({
   PORT: z.number(),
   NODE_ENV: z.string(),
   BASE_URL: z.string(),
-  SITE_NAME: z.string(),
-  SITE_DESCRIPTION: z.string(),
+  SITE_NAME: z.string().default("ReviewWeb.site"),
+  SITE_DESCRIPTION: z
+    .string()
+    .default(
+      "ReviewWeb.site is a tool that uses AI to review and analyze URLs for detecting inappropriate content."
+    ),
   SITE_KEYWORDS: z.string(),
   LOCALE: z.string(),
   TZ: z.string(),
@@ -45,11 +49,11 @@ export const env: Env = {
   DATABASE_URL: process.env["DATABASE_URL"]!,
   PORT: toInt(process.env["PORT"]) || 3000,
   NODE_ENV: process.env["NODE_ENV"] || "development",
-  BASE_URL: process.env["BASE_URL"] || "https://boosttogether.com",
-  SITE_NAME: process.env["SITE_NAME"] || "Boost Together",
+  BASE_URL: process.env["BASE_URL"] || "https://reviewweb.site",
+  SITE_NAME: process.env["SITE_NAME"] || "ReviewWeb.site",
   SITE_DESCRIPTION:
     process.env["SITE_DESCRIPTION"] ||
-    "The Power of WE in Advertising - We help businesses save money by pooling ad budgets together and sharing traffic from paid campaigns.",
+    "ReviewWeb.site is a tool that uses AI to review and analyze URLs for detecting inappropriate content.",
   SITE_KEYWORDS:
     process.env["SITE_KEYWORDS"] ||
     "BoostTogether, advertising cost savings, pooled advertising budgets, group ad campaigns, small business advertising, effective advertising, shared landing page, optimize advertising costs, SMEs, shop owners, startups, indie makers, collective advertising, budget efficiency, marketing collaboration, quảng cáo tiết kiệm chi phí, ngân sách quảng cáo chung, chiến dịch quảng cáo nhóm, quảng cáo cho doanh nghiệp nhỏ, quảng cáo hiệu quả, trang đích chung, tối ưu hóa chi phí quảng cáo, doanh nghiệp vừa và nhỏ, chủ cửa hàng, khởi nghiệp, nhà sáng tạo độc lập, hợp tác tiếp thị.",

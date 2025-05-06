@@ -1,8 +1,90 @@
 <div class="px-6 py-20 flex flex-col items-center justify-center">
-  <div class="w-full h-auto text-center max-w-screen-sm">
+  <div class="w-full h-auto text-center max-w-screen-md">
     <h2 class="text-3xl">Hi, <strong><%- user.name %></strong>!</h2>
     <h1 class="font-bold py-4 text-6xl">Your Profile</h1>
 
+    <!-- PRICING PLANS -->
+    <div class="w-full border border-gray-200 dark:border-gray-700 rounded-2xl p-6 relative mb-8 shadow-lg dark:bg-gray-800 transition-all duration-300">
+      <h3 class="font-bold text-xl mb-6 text-center dark:text-white flex items-center justify-center">
+        <i class="ri-price-tag-3-line mr-2"></i>Plans
+      </h3>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full" id="plan-container">
+        <% locals.plans.forEach((plan, index) => { %>
+        <% const isCurrentPlan = locals.userPlan.planId === plan.id; %>
+        <% 
+          // Define unique styles for each plan to avoid CSS duplication
+          let cardClasses, headerClasses, titleClasses, priceClasses, buttonClasses;
+          
+          if (isCurrentPlan) {
+            cardClasses = "shadow-md border-0 outline outline-2 outline-blue-500 dark:outline-blue-400";
+            headerClasses = "bg-blue-500 dark:bg-blue-600";
+            titleClasses = "text-white";
+            buttonClasses = "bg-green-500 text-white font-medium cursor-default";
+          } else {
+            cardClasses = "hover:shadow-md hover:scale-[1.02] border-0 outline outline-1 outline-gray-200 dark:outline-gray-700";
+            headerClasses = "bg-gray-100 dark:bg-gray-700";
+            titleClasses = "text-gray-800 dark:text-white";
+            buttonClasses = "bg-blue-500 hover:bg-blue-600 text-white font-medium transition-colors duration-300";
+          }
+        %>
+
+        <div class="relative flex flex-col h-full overflow-hidden rounded-2xl transition-all duration-300 <%= cardClasses %>" data-id="<%- plan.id %>">
+
+          <!-- Plan Header -->
+          <div class="p-4 <%= headerClasses %> text-center relative">
+            <h4 class="font-bold text-lg <%= titleClasses %>">
+              <%- plan.name %>
+            </h4>
+
+            <!-- Plan Badge -->
+            <% if(isCurrentPlan) { %>
+            <div class="absolute top-0 right-0 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg shadow-sm">
+              <i class="ri-check-line mr-1"></i>Current
+            </div>
+            <% } %>
+          </div>
+
+          <!-- Plan Content -->
+          <div class="p-6 text-center bg-white dark:bg-gray-800 flex-grow flex flex-col">
+            <!-- Plan Price -->
+            <div class="flex items-center justify-center">
+              <span class="text-3xl font-bold dark:text-white"><%- plan.price / 100 %></span>
+              <span class="text-sm font-normal ml-1 text-gray-700 dark:text-gray-300"><%- plan.currency %></span>
+            </div>
+            <div class="text-sm text-gray-500 dark:text-gray-400 mb-6">per month</div>
+
+            <!-- Plan Description -->
+            <div class="text-xs italic text-gray-600 dark:text-gray-300 mb-6 flex-grow">
+              <%- plan.description %>
+            </div>
+
+            <!-- Benefits -->
+            <div class="text-sm text-gray-600 dark:text-gray-300 mb-6 flex-grow">
+              <ul>
+                <% plan.benefits.forEach((benefit) => { %>
+                <li><%- benefit %></li>
+                <% }) %>
+              </ul>
+            </div>
+
+            <!-- Action Button -->
+            <% if(!isCurrentPlan) { %>
+            <a href="<%- plan.checkoutUrl %>" class="block w-full py-2 px-4 text-center rounded-lg <%= buttonClasses %>" target="_blank">
+              <i class="ri-arrow-up-line mr-1"></i>Upgrade
+            </a>
+            <% } else { %>
+            <div class="block w-full py-2 px-4 text-center rounded-lg <%= buttonClasses %>">
+              <i class="ri-check-double-line mr-1"></i>Active Plan
+            </div>
+            <% } %>
+          </div>
+        </div>
+        <% }); %>
+      </div>
+    </div>
+
+    <!-- API KEY -->
     <div class="w-full border border-gray-100 dark:border-gray-700 rounded-2xl p-4 relative mb-10 shadow-xl dark:bg-gray-800">
       <h3 class="font-bold mb-2">API keys</h3>
       <div class="flex gap-2 w-full" id="api-key-container">

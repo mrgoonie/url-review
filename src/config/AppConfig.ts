@@ -4,10 +4,10 @@ import { env } from "@/env";
 
 const AppConfig = {
   environment: env.NODE_ENV || "development",
-  siteName: env.SITE_NAME || "Boost Together",
+  siteName: env.SITE_NAME || "ReviewWeb.site",
   siteDescription:
     env.SITE_DESCRIPTION ||
-    "The Power of WE in Advertising - We help businesses save money by pooling ad budgets together and sharing traffic from paid campaigns.",
+    "ReviewWeb.site is a tool that uses AI to review and analyze URLs for detecting inappropriate content.",
   locale: env.LOCALE || "en",
   TZ: env.TZ || "Asia/Ho_Chi_Minh",
 

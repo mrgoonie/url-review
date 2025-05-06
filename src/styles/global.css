@@ -1,8 +1,18 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&display=swap");
+
 @tailwind base;
 
 @layer base {
   * {
-    @apply font-sans;
+    @apply font-body;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading;
   }
   h1 {
     @apply text-4xl;

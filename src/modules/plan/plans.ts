@@ -12,107 +12,90 @@ export type LocalPlan = {
   price: number;
   maxRequestPerMinute: number;
   maxRequestPerMonth: number;
-  features: Feature[];
-  polarId: string;
+  benefits: Benefit[];
+  polarProductId: string;
+  polarPriceId: string;
   checkoutUrl?: string;
 };
 
-export const features = [
-  "video",
-  "audio",
-  "video:hd",
-  "audio:hd",
-  "video:4k",
-  "screenshot",
-  "summary",
-  "transcription",
-  "translation",
-  "article",
+export const benefits = [
+  "Analyze & review URLs",
+  "Convert URL to Markdown",
+  "Extract data from URLs",
+  "Capture screenshot",
+  "Summarize URLs",
 ] as const;
-export type Feature = (typeof features)[number];
+export type Benefit = (typeof benefits)[number];
 
 export const initialPlans: LocalPlan[] = [
   {
     name: "Free",
-    description: "Free plan",
+    description: "Max. 5 requests per minute, 100 requests per month",
     type: "FREE",
     price: 0,
     maxRequestPerMinute: 5,
-    maxRequestPerMonth: 1000,
-    features: [
-      //
-      "video",
-      "audio",
-      "video:hd",
-      "audio:hd",
-      "video:4k",
-      "transcription",
-      "screenshot",
+    maxRequestPerMonth: 100,
+    benefits: [
+      "Analyze & review URLs",
+      "Convert URL to Markdown",
+      "Extract data from URLs",
+      "Capture screenshot",
+      "Summarize URLs",
     ],
-    polarId:
+    polarProductId:
       env.NODE_ENV === "production"
-        ? "4883560c-c418-41a8-b5e5-6b09851ac294"
-        : "17c6cd3b-ca4b-49d3-802f-5c143046c7f3",
-    // checkoutUrl:
-    //   env.NODE_ENV === "production"
-    //     ? "https://buy.polar.sh/4883560c-c418-41a8-b5e5-6b09851ac294"
-    //     : "https://sandbox.polar.sh/api/checkout?price=ec416f90-2e98-4890-b140-a16d1b5c5a10",
+        ? "0ee8eac3-0842-42c1-a945-b5c116501b75"
+        : "9a2308ba-3ae9-4732-8676-4d54182cd890",
+    polarPriceId:
+      env.NODE_ENV === "production"
+        ? "aa6c27f5-5893-4aee-b527-a9e589d15dba"
+        : "7bcc60f8-44ca-4891-903b-9a5f7c7029a4",
   },
   {
     name: "Starter",
-    description: "Starter plan",
-    type: "PAID",
+    description: "Max. 25 requests per minute, 5,000 requests per month",
+    type: "MONTHLY",
     price: 1900,
-    maxRequestPerMinute: 50,
-    maxRequestPerMonth: 10_000,
-    features: [
-      "video",
-      "audio",
-      "video:hd",
-      "audio:hd",
-      "video:4k",
-      "screenshot",
-      "summary",
-      "transcription",
-      "translation",
-      "article",
+    maxRequestPerMinute: 25,
+    maxRequestPerMonth: 5_000,
+    benefits: [
+      "Analyze & review URLs",
+      "Convert URL to Markdown",
+      "Extract data from URLs",
+      "Capture screenshot",
+      "Summarize URLs",
     ],
-    polarId:
+    polarProductId:
       env.NODE_ENV === "production"
-        ? "e1c19aff-3ff9-4600-b442-d847f0b863d5"
-        : "225377cc-5490-4ffb-96ee-3e41b2a7ee6a",
-    // checkoutUrl:
-    //   env.NODE_ENV === "production"
-    //     ? "https://buy.polar.sh/e1c19aff-3ff9-4600-b442-d847f0b863d5"
-    //     : "https://sandbox.polar.sh/api/checkout?price=2117f210-2ee0-40ca-bb29-f55ff6ca789c",
+        ? "59eba4d8-52ea-4222-9fa0-1b61af535ea9"
+        : "bf4334ce-8148-485c-b99a-9e35f05e5bd2",
+    polarPriceId:
+      env.NODE_ENV === "production"
+        ? "ce21a8ce-e223-41ec-b6f8-46cf543449f0"
+        : "d2a24b0e-965b-4746-958c-0f287ee3b57c",
   },
   {
     name: "Pro",
-    description: "Pro plan",
-    type: "PAID",
+    description: "Max. 100 requests per minute, 20,000 requests per month",
+    type: "MONTHLY",
     price: 4900,
     maxRequestPerMinute: 100,
-    maxRequestPerMonth: 50_000,
-    features: [
-      "video",
-      "audio",
-      "video:hd",
-      "audio:hd",
-      "video:4k",
-      "screenshot",
-      "summary",
-      "transcription",
-      "translation",
-      "article",
+    maxRequestPerMonth: 20_000,
+    benefits: [
+      "Analyze & review URLs",
+      "Convert URL to Markdown",
+      "Extract data from URLs",
+      "Capture screenshot",
+      "Summarize URLs",
     ],
-    polarId:
+    polarProductId:
       env.NODE_ENV === "production"
-        ? "52cc3ff3-a857-478c-a978-e9d958f0f1fd"
-        : "0a07982f-e50f-4d24-96bb-680617eff0a6",
-    // checkoutUrl:
-    //   env.NODE_ENV === "production"
-    //     ? "https://buy.polar.sh/52cc3ff3-a857-478c-a978-e9d958f0f1fd"
-    //     : "https://sandbox.polar.sh/api/checkout?price=7ab42214-cd01-4112-a3b2-3e8be9571d63",
+        ? "4ae52356-b25b-43e1-a6ea-f9de49bf77cf"
+        : "5673553a-c6b3-4d1b-9677-c953c9d2811f",
+    polarPriceId:
+      env.NODE_ENV === "production"
+        ? "86a21f65-0dd0-42bc-b666-721403867fba"
+        : "49b7f546-a5e7-41d4-bd60-7c77d087f80a",
   },
 ];
 
@@ -127,13 +110,12 @@ export async function createInitialPlans() {
           description: plan.description,
           price: plan.price,
           currency: "USD",
-          interval: "MONTH",
-          intervalCount: 1,
-          type: "PAID",
-          maxRequestPerMinute: plan.maxRequestPerMinute,
-          maxRequestPerMonth: plan.maxRequestPerMonth,
-          features: plan.features,
-          polarId: plan.polarId,
+          type: plan.type,
+          maxRequestsPerMinute: plan.maxRequestPerMinute,
+          maxRequestsPerMonth: plan.maxRequestPerMonth,
+          benefits: plan.benefits,
+          polarProductId: plan.polarProductId,
+          polarPriceId: plan.polarPriceId,
         },
         create: {
           name: plan.name,
@@ -141,19 +123,19 @@ export async function createInitialPlans() {
           description: plan.description,
           price: plan.price,
           currency: "USD",
-          interval: "MONTH",
-          intervalCount: 1,
-          type: "PAID",
-          maxRequestPerMinute: plan.maxRequestPerMinute,
-          maxRequestPerMonth: plan.maxRequestPerMonth,
-          features: plan.features,
-          polarId: plan.polarId,
+          type: plan.type,
+          maxRequestsPerMinute: plan.maxRequestPerMinute,
+          maxRequestsPerMonth: plan.maxRequestPerMonth,
+          benefits: plan.benefits,
+          polarProductId: plan.polarProductId,
+          polarPriceId: plan.polarPriceId,
         },
       });
     })
   );
   // console.log(plans);
-  return plans;
+  console.log(`✅ Polar: Synced ${plans.length} plans`);
+  return plans.sort((a, b) => a.maxRequestsPerMonth - b.maxRequestsPerMonth);
 }
 
 export async function syncPlans() {
@@ -193,4 +175,12 @@ export async function syncPlans() {
   }
   console.log(`[SYNC_PLANS] Updated ${updateCount}/${products.length} plans`);
   return updateCount;
+}
+
+export async function getPlanById(id: string) {
+  return await prisma.plan.findUnique({ where: { id } });
+}
+
+export async function getPlanByPolarProductId(polarProductId: string) {
+  return await prisma.plan.findFirst({ where: { polarProductId } });
 }

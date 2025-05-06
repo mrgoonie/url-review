@@ -1,0 +1,28 @@
+<div class="w-full h-screen flex justify-center items-center">
+  <div class="h-auto text-center flex flex-col items-center">
+    <script>
+      async function checkOrderStatus() {
+        const url = new URL(window.location.href);
+        const checkoutId = url.searchParams.get("checkout_id");
+        const order = await fetch(`/api/v1/order/status/${checkoutId}`).then(res => res.json());
+        if (order.data.status === "PAID" || order.data.status === "CANCELLED") {
+          window.location.href = "/profile";
+        }
+      }
+      setInterval(checkOrderStatus, 10_000);
+      checkOrderStatus();
+    </script>
+
+    <img src="/apple-touch-icon.png" alt="VidCap.xyz" class="size-20" />
+    <h1 class="font-bold">Congratulations!</h1>
+
+    <div class="flex flex-col items-center p-8 bg-white rounded-lg drop-shadow-2xl gap-4 my-4">
+      <p>Thank you for your subscription. We are processing your payment, please wait.</p>
+    </div>
+
+    <p>
+      Copyright <%= new Date().getFullYear() %>.
+      <a href="https://x.com/goon_nguyen">@goon_nguyen</a>
+    </p>
+  </div>
+</div>
