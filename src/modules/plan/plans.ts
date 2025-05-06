@@ -44,11 +44,11 @@ export const initialPlans: LocalPlan[] = [
     ],
     polarProductId:
       env.NODE_ENV === "production"
-        ? "0ee8eac3-0842-42c1-a945-b5c116501b75"
+        ? "b5b16ba8-4eee-4d9f-9ecc-c8d495a311e7"
         : "9a2308ba-3ae9-4732-8676-4d54182cd890",
     polarPriceId:
       env.NODE_ENV === "production"
-        ? "aa6c27f5-5893-4aee-b527-a9e589d15dba"
+        ? "f092333c-e508-4ac0-a787-43e3dc6efd5a"
         : "7bcc60f8-44ca-4891-903b-9a5f7c7029a4",
   },
   {
@@ -67,11 +67,11 @@ export const initialPlans: LocalPlan[] = [
     ],
     polarProductId:
       env.NODE_ENV === "production"
-        ? "59eba4d8-52ea-4222-9fa0-1b61af535ea9"
+        ? "5f86a652-6082-4684-8a09-e1cb7a1e8c9a"
         : "bf4334ce-8148-485c-b99a-9e35f05e5bd2",
     polarPriceId:
       env.NODE_ENV === "production"
-        ? "ce21a8ce-e223-41ec-b6f8-46cf543449f0"
+        ? "eea5ea4f-b298-4d96-aa5f-9a99b888bfe8"
         : "d2a24b0e-965b-4746-958c-0f287ee3b57c",
   },
   {
@@ -90,11 +90,11 @@ export const initialPlans: LocalPlan[] = [
     ],
     polarProductId:
       env.NODE_ENV === "production"
-        ? "4ae52356-b25b-43e1-a6ea-f9de49bf77cf"
+        ? "38d5ef5e-abfb-43e0-b72f-4093871ea47f"
         : "5673553a-c6b3-4d1b-9677-c953c9d2811f",
     polarPriceId:
       env.NODE_ENV === "production"
-        ? "86a21f65-0dd0-42bc-b666-721403867fba"
+        ? "e816e32d-3514-44e0-8904-5d000dfd6c51"
         : "49b7f546-a5e7-41d4-bd60-7c77d087f80a",
   },
 ];
