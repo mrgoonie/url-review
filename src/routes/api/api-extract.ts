@@ -50,7 +50,7 @@ export const apiExtractRouter = express.Router();
  *                   model:
  *                     type: string
  *                     description: AI model to use for extraction
- *                     default: google/gemini-2.0-flash-001
+ *                     default: google/gemini-2.5-flash-preview
  *                   delayAfterLoad:
  *                     type: number
  *                     description: Optional delay after page load in milliseconds
@@ -461,7 +461,7 @@ ${options.jsonTemplate}
  *                   model:
  *                     type: string
  *                     description: AI model to use for extraction
- *                     default: google/gemini-2.0-flash-001
+ *                     default: google/gemini-2.5-flash-preview
  *                   delayAfterLoad:
  *                     type: number
  *                     description: Optional delay after page load in milliseconds

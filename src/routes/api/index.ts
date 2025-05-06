@@ -1,7 +1,7 @@
 import express from "express";
 
 import { apiAiRouter } from "./api-ai";
-import { apiCombinedRouter } from "./api-combined";
+import { apiConvertRouter } from "./api-convert";
 import { apiExtractRouter } from "./api-extract";
 import { apiHealthzRouter } from "./api-healthz";
 import { apiKeyRouter } from "./api-key";
@@ -10,7 +10,6 @@ import { apiProfileRouter } from "./api-profile";
 import { apiReviewRouter } from "./api-review";
 import { apiScrapeRouter } from "./api-scrape";
 import { apiScreenshotRouter } from "./api-screenshot";
-import { apiToolifyRouter } from "./api-toolify";
 import { apiUploadRouter } from "./api-upload";
 
 export const apiRouter = express.Router();
@@ -29,6 +28,8 @@ apiRouter.use("/api/v1/screenshot", apiScreenshotRouter);
 apiRouter.use("/api/v1/review", apiReviewRouter);
 apiRouter.use("/api/v1/scrape", apiScrapeRouter);
 apiRouter.use("/api/v1/extract", apiExtractRouter);
+apiRouter.use("/api/v1/convert", apiConvertRouter);
 apiRouter.use("/api/v1/ai", apiAiRouter);
-apiRouter.use("/api/v1/tool-api", apiToolifyRouter);
-apiRouter.use("/api/v1/tool-api", apiCombinedRouter);
+// apiRouter.use("/api/v1/tool-api", apiToolifyRouter);
+// apiRouter.use("/api/v1/convert", apiConvertRouter);
+// apiRouter.use("/api/v1/tool-api", apiCombinedRouter);

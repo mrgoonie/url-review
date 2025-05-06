@@ -11,8 +11,8 @@ axiosRetry(axios, { retries: 3, retryDelay: axiosRetry.exponentialDelay });
 
 export const OPENROUTER_BASE_API_URL = "https://openrouter.ai/api/v1";
 export const DEFAULT_AI_MODELS = [
-  "openrouter/optimus-alpha",
-  "minimax/minimax-01",
+  "google/gemini-2.5-flash-preview",
+  "openai/gpt-4.1-mini",
   "google/gemini-2.0-flash-001",
   "google/gemini-2.0-flash-lite-001",
   "google/gemini-flash-1.5",
@@ -24,6 +24,7 @@ export const DEFAULT_AI_MODELS = [
   "anthropic/claude-3-5-haiku",
   "anthropic/claude-3.5-sonnet",
   "meta-llama/llama-4-maverick",
+  "meta-llama/llama-4-scout",
   "meta-llama/llama-3.2-3b-instruct",
   "meta-llama/llama-3.1-70b-instruct:nitro",
   "perplexity/llama-3.1-sonar-large-128k-chat",
