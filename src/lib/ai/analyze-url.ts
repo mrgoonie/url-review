@@ -1,4 +1,5 @@
 /* eslint-disable prettier/prettier */
+import axios from "axios";
 import { z } from "zod";
 
 import { getHtmlContent } from "@/lib/playwright/get-html-content";
@@ -66,6 +67,21 @@ export async function analyzeUrl(input: AnalyzeUrlInput, options?: AnalyzeUrlOpt
   // Validate input
   const validatedInput = AnalyzeUrlSchema.parse(input);
   const validatedOptions = AnalyzeUrlOptionsSchema.parse(options);
+
+  // Check http status first (axios)
+  try {
+    const response = await axios.get(validatedInput.url, {
+      timeout: 10_000,
+    });
+    if (response.status !== 200) {
+      throw new Error(`HTTP status ${response.status}`);
+    }
+  } catch (error) {
+    console.error(`analyzeUrl.ts > analyzeUrl() > Error :>>`, error);
+    throw new Error(
+      `Failed to fetch website content: ${error instanceof Error ? error.message : "Unknown error"}`
+    );
+  }
 
   // Fetch website content using Playwright
   let websiteContent = "";
