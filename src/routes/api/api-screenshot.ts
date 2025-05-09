@@ -6,6 +6,7 @@ import { IsDev } from "@/config";
 import { validateSession } from "@/lib/auth";
 import { uploadFileBuffer } from "@/lib/cloud-storage";
 import { screenshot } from "@/lib/playwright";
+import { isUrlAlive } from "@/lib/utils";
 import { apiKeyAuth } from "@/middlewares/api_key_auth";
 import {
   createScreenshot,
@@ -190,6 +191,9 @@ apiScreenshotRouter.post("/", validateSession, apiKeyAuth, async (req, res) => {
     const userId = res.locals["userId"];
     console.log("api-screenshot.ts > POST / > userId :>>", userId);
     const screenshotData = ScreenshotRequestSchema.parse({ ...req.body, userId });
+
+    // check URL is available
+    await isUrlAlive(screenshotData.url);
 
     // take screenshot
     const size =
