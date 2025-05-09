@@ -43,6 +43,7 @@ export const envSchema = z.object({
   META_AD_ACCOUNT_ID: z.string(),
   SCRAPE_DO_API_KEY: z.string(),
   FIRECRAWL_API_KEY: z.string(),
+  RAPID_API_KEY: z.string(),
 });
 export type Env = z.infer<typeof envSchema>;
 
@@ -85,6 +86,7 @@ export const env: Env = {
   META_AD_ACCOUNT_ID: process.env["META_AD_ACCOUNT_ID"]!,
   SCRAPE_DO_API_KEY: process.env["SCRAPE_DO_API_KEY"]!,
   FIRECRAWL_API_KEY: process.env["FIRECRAWL_API_KEY"]!,
+  RAPID_API_KEY: process.env["RAPID_API_KEY"]!,
 };
 
 const {
@@ -111,6 +113,7 @@ const {
   META_AD_ACCOUNT_ID,
   SCRAPE_DO_API_KEY,
   FIRECRAWL_API_KEY,
+  RAPID_API_KEY,
   ...clientEnv
 } = env;
 
