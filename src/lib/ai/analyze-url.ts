@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { getHtmlContent } from "@/lib/playwright/get-html-content";
 
+import { isUrlAlive } from "../utils";
 import { type AskAiResponse, fetchAi, TextModelSchema } from "./fetch-ai";
 import { validateJson } from "./json-validator";
 
@@ -66,6 +67,9 @@ export async function analyzeUrl(input: AnalyzeUrlInput, options?: AnalyzeUrlOpt
   // Validate input
   const validatedInput = AnalyzeUrlSchema.parse(input);
   const validatedOptions = AnalyzeUrlOptionsSchema.parse(options);
+
+  // Make sure the URL is alive
+  await isUrlAlive(validatedInput.url, { timeout: 15_000 });
 
   // Fetch website content using Playwright
   let websiteContent = "";

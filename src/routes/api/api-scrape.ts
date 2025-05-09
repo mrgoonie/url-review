@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { validateSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { isUrlAlive } from "@/lib/utils";
 import { apiKeyAuth } from "@/middlewares/api_key_auth";
 import { scrapeMetadata } from "@/modules/metadata";
 import { extractAllLinksFromUrl, scrapeWebUrl, ScrapeWebUrlOptionsSchema } from "@/modules/scrape";
@@ -79,9 +80,17 @@ apiScrapeRouter.post("/", validateSession, apiKeyAuth, async (req, res) => {
     // Extract options from req.body (if any)
     const options = ScrapeWebUrlOptionsSchema.parse(req.body.options);
 
+    // Check URL is available
+    await isUrlAlive(url);
+
     // Start the review process
-    const html = await scrapeWebUrl(url, options);
-    const metadata = await scrapeMetadata(url);
+    const [html, metadata] = await Promise.all([
+      // Scrape HTML content
+      scrapeWebUrl(url, options),
+      // Scrape metadata
+      scrapeMetadata(url),
+    ]);
+
     const data = {
       url,
       metadata,

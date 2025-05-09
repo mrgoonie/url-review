@@ -1,0 +1,52 @@
+<!-- side bar area  -->
+<div id="mobile-menu" class="md:hidden hidden bg-white dark:bg-gray-900 shadow-md">
+  <!-- mobile menu area start -->
+  <div class="mobile-menu-main p-6 ">
+    <nav class="nav-main mainmenu-nav">
+      <ul class="space-y-4">
+        <li class="<%= path_name === "/" ? "text-blue-600 font-semibold" : "text-gray-600 hover:text-blue-600" %>">
+          <a href="/" class="block py-2 font-heading">Home</a>
+        </li>
+        <li class="<%= path_name === "/pricing" ? "text-blue-600 font-semibold" : "text-gray-600 hover:text-blue-600" %>">
+          <a href="/pricing" class="block py-2 font-heading">Pricing</a>
+        </li>
+        <li class="<%= path_name === "/contribute" ? "text-blue-600 font-semibold" : "text-gray-600 hover:text-blue-600" %>">
+          <a href="https://github.com/mrgoonie/url-review" target="_blank" class="block py-2 font-heading">Contribute</a>
+        </li>
+        <!-- <li class="<%= path_name === "/mcp" ? "text-blue-600 font-semibold" : "text-gray-600 hover:text-blue-600" %>">
+          <a href="https://github.com/mrgoonie/url-review-mcp-server" target="_blank" class="block py-2 font-heading">MCP</a>
+        </li> -->
+        <li class="<%= path_name === "/api-docs" ? "text-blue-600 font-semibold" : "text-gray-600 hover:text-blue-600" %>">
+          <a href="/api-docs" class="block py-2 font-heading">API Docs</a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="mt-8 space-y-6">
+      <% if (user) { %>
+      <div class="flex items-center space-x-3">
+        <a href="/logout" class="text-gray-600 hover:text-red-600 dark:text-gray-300 dark:hover:text-red-400 tippy" data-tippy-content="Logout" data-tippy-placement="bottom">
+          <i class="ri-logout-box-line"></i>
+        </a>
+        <span class="text-gray-700 dark:text-gray-300">
+          Hi, <a href="/profile" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 tippy" data-tippy-content="Profile" data-tippy-placement="bottom">
+            <%= user.name %> <i class="ri-user-line ml-1"></i>
+          </a>
+        </span>
+      </div>
+      <a href="/start-review" class="rts-btn btn-primary w-full text-center tippy" data-tippy-content="Start your review now!" data-tippy-placement="bottom">
+        <i class="ri-rocket-2-line mr-2"></i> Start Review
+      </a>
+      <% } else { %>
+      <a href="/login" class="rts-btn btn-primary w-full text-center">Get Started</a>
+      <% } %>
+    </div>
+
+    <ul class="social-area-one flex space-x-4 mt-12 justify-center">
+      <li><a href="https://x.com/goon_nguyen" target="_blank" class="text-gray-600 hover:text-black dark:text-gray-300 dark:hover:text-white"><i class="ri-twitter-x-line text-2xl"></i></a></li>
+      <li><a href="https://fb.com/mrgoonie" target="_blank" class="text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400"><i class="ri-facebook-circle-fill text-2xl"></i></a></li>
+    </ul>
+  </div>
+  <!-- mobile menu area end -->
+</div>
+<!-- side bar area end -->

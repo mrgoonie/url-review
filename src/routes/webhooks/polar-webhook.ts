@@ -1,22 +1,19 @@
-import type {
-  WebhookOrderCreatedPayload,
-  WebhookSubscriptionCreatedPayload,
-  WebhookSubscriptionUpdatedPayload,
-  WebhookSubscriptionUpdatedPayloadType,
-} from "@polar-sh/sdk/models/components";
-import crypto from "crypto";
+import chalk from "chalk";
 import express from "express";
 import { z } from "zod";
 
 import { env } from "@/env";
-import { prisma } from "@/lib/db";
+import {
+  cancelAllPolarSubscriptions,
+  cancelAllUserPlansByPolarSubscriptionIds,
+  cancelUserPlanByPolarSubscriptionId,
+  createPaymentAndOrder,
+  subscriptionActive,
+  subscriptionCancel,
+} from "@/modules/payment";
+import { addCreditsToUserBalance } from "@/modules/user-balance";
 
 import { Webhook, WebhookVerificationError } from "./standard-webhook";
-
-type PolarWebhookPayload =
-  | WebhookSubscriptionCreatedPayload
-  | WebhookSubscriptionUpdatedPayload
-  | WebhookOrderCreatedPayload;
 
 export const polarWebhookRouter = express.Router();
 
@@ -44,76 +41,72 @@ polarWebhookRouter.all(
       const payloadString = req.body instanceof Buffer ? req.body.toString("utf8") : req.body;
       // console.log("Payload string:", payloadString);
 
-      const payload = wh.verify(payloadString, headers) as any;
-      console.log(`Verified payload :>>`);
-      console.dir(payload, { depth: 10 });
+      const webhookPayload = wh.verify(payloadString, headers) as any;
 
-      // Process the verified payload here
+      // Handle the event
+      switch (webhookPayload.type) {
+        // Checkout has been created
+        case "checkout.created":
+          break;
 
-      if (payload.type === "subscription.updated") {
-        const { id, user_id, product_id, status, amount, currency, metadata } = payload.data;
-        if (status === "active" || status === "completed") {
-          console.log(
-            `User "${user_id}" subscribed to product "${product_id}" with amount "${amount}" (${currency})`
-          );
-          console.log(`Custom metadata:`, metadata);
+        // Checkout has been updated - this will be triggered when checkout status goes from confirmed -> succeeded
+        case "checkout.updated":
+          console.log("Checkout updated :>>", JSON.stringify(webhookPayload.data, null, 2));
+          if (webhookPayload.data.status === "succeeded") {
+            const { order } = await createPaymentAndOrder(webhookPayload.data.id);
 
-          // Add your subscription updated handling logic here...
+            // only if this checkout is for a one-time product -> add credits to user balance
+            if (!webhookPayload.data.product.is_recurring) {
+              // add credits to user balance
+              const userId = order.userId;
+              await addCreditsToUserBalance(userId, order.total / 100);
+
+              // notify user add credits
+              // await notifyUserAddCredits(order);
+
+              // cancel any existing user plan
+              const polarSubscriptionIds = (await cancelAllPolarSubscriptions(userId))
+                .map((subscription) => subscription?.id)
+                .filter((id) => id !== undefined);
+
+              await cancelAllUserPlansByPolarSubscriptionIds(polarSubscriptionIds);
+            }
+          }
+          break;
+
+        // Subscription has been created
+        case "subscription.created":
+          break;
+
+        // A catch-all case to handle all subscription webhook events
+        case "subscription.updated":
+          break;
+
+        // Subscription has been activated
+        case "subscription.active": {
+          console.log("Subscription active :>>", JSON.stringify(webhookPayload.data, null, 2));
+          const polarCheckoutId = webhookPayload.data.checkout_id;
+          const polarSubscriptionId = webhookPayload.data.id;
+          await subscriptionActive(polarCheckoutId, polarSubscriptionId);
+          break;
         }
+
+        // Subscription has been revoked/peroid has ended with no renewal
+        case "subscription.revoked": {
+          const polarSubscriptionId = webhookPayload.data.id;
+          await subscriptionCancel(polarSubscriptionId);
+          break;
+        }
+
+        // Subscription has been explicitly canceled by the user
+        case "subscription.canceled":
+          console.log("Subscription canceled :>>", JSON.stringify(webhookPayload.data, null, 2));
+          await cancelUserPlanByPolarSubscriptionId(webhookPayload.data.id);
+          break;
+
+        default:
+          console.log(`Unhandled event type :>>`, chalk.yellow(webhookPayload.type));
       }
-
-      if (payload.type === "order.created") {
-        const { id, user_id, product_id, status, amount, currency, metadata } = payload.data;
-        console.log(
-          `User "${user_id}" subscribed to product "${product_id}" with amount "${amount}" (${currency})`
-        );
-        console.log(`Custom metadata:`, metadata);
-
-        // Add your order created handling logic here...
-
-        const amountInDollars = amount / 100;
-        const payment = await prisma.payment.create({
-          data: {
-            userId: metadata.user_id,
-            groupAdId: metadata.group_ad_id,
-            amount: amountInDollars,
-            status: "PAID",
-            paymentMethod: "POLAR",
-            transactionId: id,
-          },
-        });
-        console.log(`Payment created:`, payment);
-
-        // update user balance
-        await prisma.user.update({
-          where: { id: metadata.user_id },
-          data: { balance: { increment: amountInDollars } },
-        });
-      }
-      // if (webhook.type === "subscription.created" || webhook.type === "subscription.updated") {
-      //   const { id, userId, productId, status } = webhook.data;
-
-      //   if (status === "active" && id && userId && productId) {
-      //     const user = await prisma.user.findFirst({
-      //       where: { polarId: userId },
-      //     });
-
-      //     if (user) {
-      //       const plan = await prisma.plan.findFirst({
-      //         where: { polarPlanId: productId },
-      //       });
-
-      //       if (plan) {
-      //         await subscribe(user.id, plan.id);
-      //         console.log(`User ${user.id} subscribed to plan ${plan.id}`);
-      //       } else {
-      //         console.error(`Plan not found for Polar plan ID: ${plan_id}`);
-      //       }
-      //     } else {
-      //       console.error(`User not found for Polar customer ID: ${customer_id}`);
-      //     }
-      //   }
-      // }
 
       res.status(200).json({ received: true });
     } catch (error) {

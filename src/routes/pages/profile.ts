@@ -5,6 +5,7 @@ import AppConfig from "@/config/AppConfig";
 import { clientEnv } from "@/env";
 import { validateSession, verifyRequest } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { getAvailablePricingPlans, getUserPlanByUserId } from "@/modules/payment";
 import { getUser, maskUser } from "@/modules/user";
 
 import { pageRouter } from "./router";
@@ -35,6 +36,12 @@ pageRouter.get("/profile", verifyRequest, validateSession, async (_req, res) => 
       return [];
     });
 
+  const plans = await getAvailablePricingPlans();
+  plans.forEach((plan) => {
+    plan.checkoutUrl = `/checkout?productId=${plan.polarProductId}&priceId=${plan.polarPriceId}&userId=${user.id}`;
+  });
+  const userPlan = await getUserPlanByUserId(user.id);
+
   return res.render("master", {
     page: "pages/profile",
     path_name: "/profile",
@@ -43,5 +50,7 @@ pageRouter.get("/profile", verifyRequest, validateSession, async (_req, res) => 
     clientEnv,
     apiKeys,
     user: user ? maskUser(user) : null,
+    userPlan,
+    plans,
   });
 });

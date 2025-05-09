@@ -4,7 +4,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        // sans: ["Space Mono", "sans-serif"],
+        heading: ["Fraunces", "sans-serif"],
+        body: ["Fraunces", "sans-serif"],
       },
       colors: {
         "brand-primary": "#FE8009",

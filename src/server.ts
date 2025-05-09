@@ -38,10 +38,6 @@ declare global {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// sync subscription plans in database with Polar
-createInitialPlans();
-// syncPlans();
-
 const app = express();
 
 // trust cloudflare proxy
@@ -86,6 +82,7 @@ app.use((error: any, _req: express.Request, res: express.Response, _next: expres
 
 // start server
 async function startServer() {
+  await createInitialPlans();
   await initWorkspacePermissions();
   await browserPool.initialize();
   await createInitialCategories();

@@ -83,6 +83,10 @@ model User {
     apiKeys               ApiKey[]
     userPlans             UserPlan[]
     workspacePlans        WorkspacePlan[]
+    orders                Order[]
+    cashTransactions      CashTransaction[]
+    userBalances          UserBalance[]
+    payments              Payment[]
     reviews               Review[]
     webUrls               WebUrl[]
 }
@@ -238,69 +242,6 @@ model WorkspaceRolePermission {
     workspacePermissionId String
 }
 
-enum Currency {
-    USD
-    VND
-    // ...
-}
-
-enum PlanInterval {
-    MONTH
-    YEAR
-}
-
-enum PlanType {
-    FREE
-    PAID
-}
-
-enum PlanStatus {
-    ACTIVE
-    CANCELLED
-    EXPIRED
-}
-
-model Plan {
-    id                  String          @id @default(uuid())
-    slug                String          @unique
-    name                String
-    description         String
-    price               Int
-    currency            Currency
-    interval            PlanInterval
-    intervalCount       Int
-    type                PlanType
-    polarId             String?
-    checkoutUrl         String?
-    // plan info
-    maxRequestPerMinute Int
-    maxRequestPerMonth  Int
-    features            Json
-    // datetime
-    createdAt           DateTime        @default(now())
-    updatedAt           DateTime?       @updatedAt
-    // relations
-    UserPlan            UserPlan[]
-    WorkspacePlan       WorkspacePlan[]
-}
-
-model UserPlan {
-    id               String     @id @default(uuid())
-    status           PlanStatus
-    requestPerMinute Int
-    requestPerMonth  Int
-    polarId          String?
-
-    userId String
-    user   User   @relation(fields: [userId], references: [id])
-    planId String
-    plan   Plan   @relation(fields: [planId], references: [id])
-
-    createdAt DateTime  @default(now())
-    updatedAt DateTime? @updatedAt
-    expiresAt DateTime?
-}
-
 model WorkspacePlan {
     id               String     @id @default(uuid())
     status           PlanStatus
@@ -342,6 +283,183 @@ model ApiKey {
     createdAt DateTime  @default(now())
     updatedAt DateTime? @updatedAt
     expiresAt DateTime?
+}
+
+enum TrackingCodeType {
+    GA
+    GTM
+    FACEBOOK_PIXEL
+}
+
+enum OrderStatus {
+    UNPAID
+    PAID
+    CANCELLED
+}
+
+enum PaymentStatus {
+    PAID
+    CANCELLED
+    FREE
+    PENDING_VERIFICATION
+    REFUNDED
+    EXPIRED
+}
+
+enum PaymentMethod {
+    CREDIT_CARD
+    MOMO
+    BANK_TRANSFER
+    LEMON_SQUEEZY
+    POLAR
+}
+
+enum TransactionType {
+    DEPOSIT
+    REFUND
+    PAYOUT
+}
+
+enum WithdrawalStatus {
+    PENDING
+    COMPLETED
+    FAILED
+}
+
+enum CashType {
+    CREDITS
+}
+
+enum PlanType {
+    FREE
+    MONTHLY
+    YEARLY
+    ONE_TIME
+    ADDITION
+}
+
+enum UserPlanStatus {
+    ACTIVE
+    INACTIVE
+}
+
+enum UserPlanRecurring {
+    MONTHLY
+    YEARLY
+    ONE_TIME
+}
+
+model Order {
+    id                 String      @id @default(uuid())
+    total              Float
+    currency           Currency    @default(VND)
+    status             OrderStatus @default(UNPAID)
+    polarCheckoutId    String?
+    polarProductId     String?
+    polarPriceId       String?
+    polarYearlyPriceId String?
+    userId             String
+    createdAt          DateTime    @default(now())
+    updatedAt          DateTime?   @updatedAt
+    expiresAt          DateTime?
+    user               User        @relation(fields: [userId], references: [id])
+    payments           Payment[]
+}
+
+model Payment {
+    id                 String        @id @default(uuid())
+    userId             String
+    amount             Float
+    currency           Currency      @default(VND)
+    status             PaymentStatus @default(PENDING_VERIFICATION)
+    method             PaymentMethod
+    transactionId      String?
+    transactionDetails Json?
+    createdAt          DateTime      @default(now())
+    updatedAt          DateTime?     @updatedAt
+    expiresAt          DateTime?
+    orderId            String
+    order              Order         @relation(fields: [orderId], references: [id])
+    user               User          @relation(fields: [userId], references: [id])
+}
+
+model CashTransaction {
+    id              String          @id @default(uuid())
+    userId          String
+    cashType        CashType        @default(CREDITS)
+    amount          Float
+    transactionType TransactionType
+    description     String?
+    createdAt       DateTime        @default(now())
+    updatedAt       DateTime        @updatedAt
+    user            User            @relation(fields: [userId], references: [id])
+}
+
+model UserBalance {
+    id        String    @id @default(uuid())
+    cashType  CashType  @default(CREDITS)
+    balance   Float     @default(0)
+    userId    String
+    createdAt DateTime  @default(now())
+    updatedAt DateTime? @updatedAt
+    user      User      @relation(fields: [userId], references: [id])
+
+    @@unique([userId, cashType])
+}
+
+enum Currency {
+    USD
+    VND
+    // ...
+}
+
+enum PlanInterval {
+    MONTH
+    YEAR
+}
+
+enum PlanStatus {
+    ACTIVE
+    ARCHIVED
+}
+
+model Plan {
+    id                   String          @id @default(uuid())
+    slug                 String          @unique
+    status               PlanStatus      @default(ACTIVE)
+    name                 String
+    description          String?
+    type                 PlanType        @default(FREE)
+    benefits             String[]
+    price                Int
+    currency             Currency
+    checkoutUrl          String?
+    polarProductId       String?
+    polarPriceId         String?
+    polarYearlyPriceId   String?
+    // plan info
+    maxRequestsPerMinute Int             @default(0)
+    maxRequestsPerMonth  Int             @default(0)
+    userPlans            UserPlan[]
+    workspacePlans       WorkspacePlan[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model UserPlan {
+    id                   String            @id @default(uuid())
+    status               UserPlanStatus    @default(ACTIVE)
+    userId               String
+    planId               String?
+    polarSubscriptionId  String?
+    recurring            UserPlanRecurring @default(MONTHLY)
+    maxRequestsPerMinute Int               @default(0)
+    maxRequestsPerMonth  Int               @default(0)
+    createdAt            DateTime          @default(now())
+    updatedAt            DateTime          @updatedAt
+    Plan                 Plan?             @relation(fields: [planId], references: [id])
+    user                 User              @relation(fields: [userId], references: [id])
 }
 
 // ------------------ APP SPECIFIC SCHEMAS ------------------

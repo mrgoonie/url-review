@@ -10,8 +10,12 @@ export const envSchema = z.object({
   PORT: z.number(),
   NODE_ENV: z.string(),
   BASE_URL: z.string(),
-  SITE_NAME: z.string(),
-  SITE_DESCRIPTION: z.string(),
+  SITE_NAME: z.string().default("ReviewWeb.site"),
+  SITE_DESCRIPTION: z
+    .string()
+    .default(
+      "ReviewWeb.site is a tool that uses AI to review and analyze URLs for detecting inappropriate content."
+    ),
   SITE_KEYWORDS: z.string(),
   LOCALE: z.string(),
   TZ: z.string(),
@@ -38,6 +42,8 @@ export const envSchema = z.object({
   META_ACCESS_TOKEN: z.string(),
   META_AD_ACCOUNT_ID: z.string(),
   SCRAPE_DO_API_KEY: z.string(),
+  FIRECRAWL_API_KEY: z.string(),
+  RAPID_API_KEY: z.string(),
 });
 export type Env = z.infer<typeof envSchema>;
 
@@ -45,11 +51,11 @@ export const env: Env = {
   DATABASE_URL: process.env["DATABASE_URL"]!,
   PORT: toInt(process.env["PORT"]) || 3000,
   NODE_ENV: process.env["NODE_ENV"] || "development",
-  BASE_URL: process.env["BASE_URL"] || "https://boosttogether.com",
-  SITE_NAME: process.env["SITE_NAME"] || "Boost Together",
+  BASE_URL: process.env["BASE_URL"] || "https://reviewweb.site",
+  SITE_NAME: process.env["SITE_NAME"] || "ReviewWeb.site",
   SITE_DESCRIPTION:
     process.env["SITE_DESCRIPTION"] ||
-    "The Power of WE in Advertising - We help businesses save money by pooling ad budgets together and sharing traffic from paid campaigns.",
+    "ReviewWeb.site is a tool that uses AI to review and analyze URLs for detecting inappropriate content.",
   SITE_KEYWORDS:
     process.env["SITE_KEYWORDS"] ||
     "BoostTogether, advertising cost savings, pooled advertising budgets, group ad campaigns, small business advertising, effective advertising, shared landing page, optimize advertising costs, SMEs, shop owners, startups, indie makers, collective advertising, budget efficiency, marketing collaboration, quảng cáo tiết kiệm chi phí, ngân sách quảng cáo chung, chiến dịch quảng cáo nhóm, quảng cáo cho doanh nghiệp nhỏ, quảng cáo hiệu quả, trang đích chung, tối ưu hóa chi phí quảng cáo, doanh nghiệp vừa và nhỏ, chủ cửa hàng, khởi nghiệp, nhà sáng tạo độc lập, hợp tác tiếp thị.",
@@ -79,6 +85,8 @@ export const env: Env = {
   META_ACCESS_TOKEN: process.env["META_ACCESS_TOKEN"]!,
   META_AD_ACCOUNT_ID: process.env["META_AD_ACCOUNT_ID"]!,
   SCRAPE_DO_API_KEY: process.env["SCRAPE_DO_API_KEY"]!,
+  FIRECRAWL_API_KEY: process.env["FIRECRAWL_API_KEY"]!,
+  RAPID_API_KEY: process.env["RAPID_API_KEY"]!,
 };
 
 const {
@@ -104,6 +112,8 @@ const {
   META_ACCESS_TOKEN,
   META_AD_ACCOUNT_ID,
   SCRAPE_DO_API_KEY,
+  FIRECRAWL_API_KEY,
+  RAPID_API_KEY,
   ...clientEnv
 } = env;
 

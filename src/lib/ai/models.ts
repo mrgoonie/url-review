@@ -3,7 +3,7 @@ import axiosRetry from "axios-retry";
 import { toFloat } from "diginext-utils/dist/object";
 import { z } from "zod";
 
-import { redis } from "@/lib/cache";
+import { redis } from "@/lib/redis";
 
 import { sortToFirst } from "../utils/array";
 
