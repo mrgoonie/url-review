@@ -2,7 +2,7 @@ import express from "express";
 import { z } from "zod";
 
 import { validateSession } from "@/lib/auth";
-import { isUrlAlive } from "@/lib/utils/url";
+import { getUrlAfterRedirects, isUrlAlive } from "@/lib/utils/url";
 import { apiKeyAuth } from "@/middlewares/api_key_auth";
 
 // URL API Router
@@ -14,6 +14,10 @@ const UrlAliveRequestSchema = z.object({
   url: z.string().url(),
   timeout: z.number().int().min(1000).max(60000).optional(),
   proxyUrl: z.string().url().optional(),
+});
+
+const UrlAfterRedirectsRequestSchema = z.object({
+  url: z.string().url(),
 });
 
 /**
@@ -169,6 +173,67 @@ apiUrlRouter.get("/is-alive", validateSession, apiKeyAuth, async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Failed to check if URL is alive",
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+});
+
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     UrlAfterRedirectsRequest:
+ *       type: object
+ *       properties:
+ *         url:
+ *           type: string
+ *           format: url
+ *           description: URL to get after redirects
+ *           example: https://example.com
+ *       required:
+ *         - url
+ *
+ *     UrlAfterRedirectsResponse:
+ *       type: object
+ *       properties:
+ *         success:
+ *           type: boolean
+ *           example: true
+ *         message:
+ *           type: string
+ *           example: URL after redirects successful
+ *         data:
+ *           type: string
+ *           description: URL after redirects
+ *           example: https://example.com
+ */
+apiUrlRouter.get("/get-url-after-redirects", validateSession, apiKeyAuth, async (req, res) => {
+  try {
+    const { url } = UrlAfterRedirectsRequestSchema.parse({
+      url: req.query.url,
+    });
+
+    const result = await getUrlAfterRedirects(url);
+
+    res.status(200).json({
+      success: true,
+      message: "URL after redirects successful",
+      data: result,
+    });
+  } catch (error) {
+    console.error("api-url.ts > GET /get-url-after-redirects > Error :>>", error);
+
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid URL or parameters",
+        errors: error.errors.map((e) => e.message),
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to get URL after redirects",
       error: error instanceof Error ? error.message : "Unknown error",
     });
   }
