@@ -110,12 +110,12 @@ export async function getHtmlWithFallbacks(
   // Try firecrawl last (external service)
   try {
     if (debug) console.log(`get-html-with-fallbacks.ts > Trying firecrawl for ${url}`);
-    const html = await getHtmlWithFirecrawl(url, { debug });
-    if (html && typeof html === "string" && html.length > 0) {
+    const response = await getHtmlWithFirecrawl(url, { debug });
+    if (response.success && response.data.html) {
       if (debug)
         console.log(`get-html-with-fallbacks.ts > Successfully fetched HTML with firecrawl`);
 
-      return html;
+      return response.data.html;
     }
   } catch (error) {
     console.error(
