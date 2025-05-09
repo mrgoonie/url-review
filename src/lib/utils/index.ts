@@ -13,4 +13,5 @@ export * from "./string";
 export * from "./time";
 export * from "./tz-names";
 export * from "./upload";
+export * from "./url";
 export * from "./wait";

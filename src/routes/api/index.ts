@@ -12,6 +12,7 @@ import { apiScrapeRouter } from "./api-scrape";
 import { apiScreenshotRouter } from "./api-screenshot";
 import { apiSummarizeRouter } from "./api-summarize";
 import { apiUploadRouter } from "./api-upload";
+import { apiUrlRouter } from "./api-url";
 
 export const apiRouter = express.Router();
 
@@ -32,6 +33,7 @@ apiRouter.use("/api/v1/extract", apiExtractRouter);
 apiRouter.use("/api/v1/convert", apiConvertRouter);
 apiRouter.use("/api/v1/summarize", apiSummarizeRouter);
 apiRouter.use("/api/v1/ai", apiAiRouter);
+apiRouter.use("/api/v1/url", apiUrlRouter);
 // apiRouter.use("/api/v1/tool-api", apiToolifyRouter);
 // apiRouter.use("/api/v1/convert", apiConvertRouter);
 // apiRouter.use("/api/v1/tool-api", apiCombinedRouter);

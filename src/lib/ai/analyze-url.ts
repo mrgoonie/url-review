@@ -1,9 +1,9 @@
 /* eslint-disable prettier/prettier */
-import axios from "axios";
 import { z } from "zod";
 
 import { getHtmlContent } from "@/lib/playwright/get-html-content";
 
+import { isUrlAlive } from "../utils";
 import { type AskAiResponse, fetchAi, TextModelSchema } from "./fetch-ai";
 import { validateJson } from "./json-validator";
 
@@ -68,20 +68,8 @@ export async function analyzeUrl(input: AnalyzeUrlInput, options?: AnalyzeUrlOpt
   const validatedInput = AnalyzeUrlSchema.parse(input);
   const validatedOptions = AnalyzeUrlOptionsSchema.parse(options);
 
-  // Check http status first (axios)
-  try {
-    const response = await axios.get(validatedInput.url, {
-      timeout: 10_000,
-    });
-    if (response.status !== 200) {
-      throw new Error(`HTTP status ${response.status}`);
-    }
-  } catch (error) {
-    console.error(`analyzeUrl.ts > analyzeUrl() > Error :>>`, error);
-    throw new Error(
-      `Failed to fetch website content: ${error instanceof Error ? error.message : "Unknown error"}`
-    );
-  }
+  // Make sure the URL is alive
+  await isUrlAlive(validatedInput.url, { timeout: 15_000 });
 
   // Fetch website content using Playwright
   let websiteContent = "";

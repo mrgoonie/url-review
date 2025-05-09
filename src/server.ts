@@ -20,6 +20,7 @@ import { pageRouter } from "@/routes/pages";
 
 import { swaggerOptions } from "./config";
 import { fetchListAIModels } from "./lib/ai/models";
+import { isUrlAlive } from "./lib/utils";
 import { createInitialCategories } from "./modules/category";
 import { polarWebhookRouter } from "./routes/webhooks/polar-webhook";
 
@@ -87,6 +88,9 @@ async function startServer() {
   await browserPool.initialize();
   await createInitialCategories();
   await fetchListAIModels({ debug: true });
+
+  // test
+  await isUrlAlive("https://shop.app", { proxyUrl: env.PROXY_URL });
 
   app.listen(env.PORT, () => {
     console.log(chalk.green(`🚀 Server running on port ${env.PORT}`));
