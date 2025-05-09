@@ -69,7 +69,10 @@ export async function analyzeUrl(input: AnalyzeUrlInput, options?: AnalyzeUrlOpt
   const validatedOptions = AnalyzeUrlOptionsSchema.parse(options);
 
   // Make sure the URL is alive
-  await isUrlAlive(validatedInput.url, { timeout: 15_000 });
+  const { alive } = await isUrlAlive(validatedInput.url, { timeout: 15_000 });
+  if (!alive) {
+    throw new Error(`URL ${validatedInput.url} is not alive`);
+  }
 
   // Fetch website content using Playwright
   let websiteContent = "";

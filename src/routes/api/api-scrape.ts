@@ -81,7 +81,8 @@ apiScrapeRouter.post("/", validateSession, apiKeyAuth, async (req, res) => {
     const options = ScrapeWebUrlOptionsSchema.parse(req.body.options);
 
     // Check URL is available
-    await isUrlAlive(url);
+    const { alive } = await isUrlAlive(url);
+    if (!alive) throw new Error(`URL ${url} is not alive`);
 
     // Start the review process
     const [html, metadata] = await Promise.all([

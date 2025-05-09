@@ -88,6 +88,9 @@ async function startServer() {
   await createInitialCategories();
   await fetchListAIModels({ debug: true });
 
+  // test
+  // console.log(await isUrlAlive("https://corp.commissaries.com/shopping/click-2-go"));
+
   app.listen(env.PORT, () => {
     console.log(chalk.green(`🚀 Server running on port ${env.PORT}`));
   });
