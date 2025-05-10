@@ -193,7 +193,8 @@ apiScreenshotRouter.post("/", validateSession, apiKeyAuth, async (req, res) => {
     const screenshotData = ScreenshotRequestSchema.parse({ ...req.body, userId });
 
     // check URL is available
-    await isUrlAlive(screenshotData.url);
+    const { alive } = await isUrlAlive(screenshotData.url);
+    if (!alive) throw new Error(`URL ${screenshotData.url} is not alive`);
 
     // take screenshot
     const size =

@@ -1,8 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { z } from "zod";
 
-import { getHtmlContent } from "@/lib/playwright/get-html-content";
-
+import { getHtmlWithFallbacks } from "../scrape";
 import { isUrlAlive } from "../utils";
 import { type AskAiResponse, fetchAi, TextModelSchema } from "./fetch-ai";
 import { validateJson } from "./json-validator";
@@ -69,21 +68,21 @@ export async function analyzeUrl(input: AnalyzeUrlInput, options?: AnalyzeUrlOpt
   const validatedOptions = AnalyzeUrlOptionsSchema.parse(options);
 
   // Make sure the URL is alive
-  await isUrlAlive(validatedInput.url, { timeout: 15_000 });
+  const { alive } = await isUrlAlive(validatedInput.url, { timeout: 15_000 });
+  if (!alive) {
+    throw new Error(`URL ${validatedInput.url} is not alive`);
+  }
 
   // Fetch website content using Playwright
   let websiteContent = "";
   try {
-    const htmlContent = await getHtmlContent(validatedInput.url, {
+    const htmlContent = await getHtmlWithFallbacks(validatedInput.url, {
       delayAfterLoad: validatedOptions?.delayAfterLoad ?? 3000,
       debug: validatedOptions?.debug,
     });
 
-    // If htmlContent is an array, join the contents
-    websiteContent = Array.isArray(htmlContent) ? htmlContent.join("\n") : htmlContent;
-
     // Remove HTML tags and trim
-    websiteContent = websiteContent.replace(/<[^>]*>/g, "").trim();
+    websiteContent = htmlContent.replace(/<[^>]*>/g, "").trim();
 
     // Limit content length to prevent excessive token usage
     // websiteContent = websiteContent.slice(0, 15000);
