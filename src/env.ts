@@ -44,6 +44,8 @@ export const envSchema = z.object({
   SCRAPE_DO_API_KEY: z.string(),
   FIRECRAWL_API_KEY: z.string(),
   RAPID_API_KEY: z.string(),
+  ELASTIC_EMAIL_APIKEY: z.string(),
+  ELASTIC_EMAIL_FROM: z.string(),
 });
 export type Env = z.infer<typeof envSchema>;
 
@@ -87,6 +89,8 @@ export const env: Env = {
   SCRAPE_DO_API_KEY: process.env["SCRAPE_DO_API_KEY"]!,
   FIRECRAWL_API_KEY: process.env["FIRECRAWL_API_KEY"]!,
   RAPID_API_KEY: process.env["RAPID_API_KEY"]!,
+  ELASTIC_EMAIL_APIKEY: process.env["ELASTIC_EMAIL_APIKEY"]!,
+  ELASTIC_EMAIL_FROM: process.env["ELASTIC_EMAIL_FROM"]!,
 };
 
 const {
@@ -114,6 +118,8 @@ const {
   SCRAPE_DO_API_KEY,
   FIRECRAWL_API_KEY,
   RAPID_API_KEY,
+  ELASTIC_EMAIL_APIKEY,
+  ELASTIC_EMAIL_FROM,
   ...clientEnv
 } = env;
 
