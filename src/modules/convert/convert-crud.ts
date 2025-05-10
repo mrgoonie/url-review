@@ -71,7 +71,7 @@ export async function convertMultipleUrlsToMarkdown(
   const urlsToProcess = urls.slice(0, MAX_URLS);
 
   // Process URLs with controlled concurrency
-  const concurrencyLimit = 3; // Process 3 URLs at a time
+  const concurrencyLimit = 5; // Process 5 URLs at a time
   const chunks: string[][] = [];
 
   // Split URLs into chunks for controlled concurrency
