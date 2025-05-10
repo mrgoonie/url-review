@@ -20,10 +20,10 @@ export async function getHtmlWithFallbacks(
   url: string,
   options?: {
     delayBetweenRetries?: number;
+    delayAfterLoad?: number;
     timeout?: number;
     headers?: Record<string, string>;
     proxyUrl?: string;
-    delayAfterLoad?: number;
     debug?: boolean;
     selectors?: string[];
     selectorMode?: "first" | "all";
@@ -71,7 +71,7 @@ export async function getHtmlWithFallbacks(
           `get-html-with-fallbacks.ts > STEP 2: Successfully fetched HTML with playwright`
         );
 
-      return html;
+      return typeof html === "string" ? html : html.join("\n");
     }
   } catch (error) {
     console.error(
