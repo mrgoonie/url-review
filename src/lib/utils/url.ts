@@ -27,7 +27,7 @@ export async function isUrlAlive(
       method: "ping",
     };
   } catch (error) {
-    console.error(`isUrlAlive.ts > isUrlAlive() > Error :>>`, error);
+    console.error(`isUrlAlive.ts > isUrlAlive() > Error > ${url} :>> ${error}`);
     return { alive: false };
   }
 }
@@ -53,7 +53,7 @@ export async function isUrlAliveWithAxios(
 
     return true;
   } catch (error) {
-    console.error(`isUrlAlive.ts > isUrlAlive() > Error :>>`, error);
+    console.error(`isUrlAlive.ts > isUrlAliveWithAxios() > Error > ${url} :>> ${error}`);
     return false;
   }
 }
