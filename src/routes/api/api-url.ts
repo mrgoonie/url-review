@@ -180,32 +180,73 @@ apiUrlRouter.get("/is-alive", validateSession, apiKeyAuth, async (req, res) => {
 
 /**
  * @openapi
- * components:
- *   schemas:
- *     UrlAfterRedirectsRequest:
- *       type: object
- *       properties:
- *         url:
+ * /api/v1/url/get-url-after-redirects:
+ *   get:
+ *     summary: Get URL after redirects
+ *     description: Gets the URL after redirects
+ *     tags:
+ *       - URL
+ *     security:
+ *       - ApiKeyAuth: []
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: url
+ *         required: true
+ *         schema:
  *           type: string
  *           format: url
- *           description: URL to get after redirects
- *           example: https://example.com
- *       required:
- *         - url
- *
- *     UrlAfterRedirectsResponse:
- *       type: object
- *       properties:
- *         success:
- *           type: boolean
- *           example: true
- *         message:
- *           type: string
- *           example: URL after redirects successful
- *         data:
- *           type: string
- *           description: URL after redirects
- *           example: https://example.com
+ *         description: URL to get after redirects
+ *     responses:
+ *       200:
+ *         description: URL after redirects successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: URL after redirects successful
+ *                 data:
+ *                   type: string
+ *                   description: URL after redirects
+ *                   example: https://example.com
+ *       400:
+ *         description: Invalid URL or parameters
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Invalid URL or parameters
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *       500:
+ *         description: Failed to get URL after redirects
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Failed to get URL after redirects
+ *                 error:
+ *                   type: string
  */
 apiUrlRouter.get("/get-url-after-redirects", validateSession, apiKeyAuth, async (req, res) => {
   try {

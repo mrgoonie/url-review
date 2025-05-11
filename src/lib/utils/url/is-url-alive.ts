@@ -2,7 +2,7 @@ import axios from "axios";
 import { exec } from "child_process";
 import { URL } from "url";
 
-import { proxyUrlToAxiosProxy } from "../proxy";
+import { proxyUrlToAxiosProxy } from "../../proxy";
 
 export async function isUrlAlive(
   url: string,
@@ -97,15 +97,5 @@ export async function isUrlAliveWithPingCommand(
   } catch (error) {
     console.error(`isUrlAlive.ts > isUrlAliveWithPingCommand() > Error :>>`, error);
     return { alive: false };
-  }
-}
-
-export async function getUrlAfterRedirects(url: string) {
-  try {
-    const response = await axios.head(url);
-    return response.request.res.responseUrl;
-  } catch (error) {
-    console.error(`getUrlAfterRedirects.ts > getUrlAfterRedirects() > Error :>>`, error);
-    return url;
   }
 }
