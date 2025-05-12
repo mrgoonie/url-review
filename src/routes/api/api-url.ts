@@ -156,7 +156,7 @@ apiUrlRouter.get("/is-alive", validateSession, apiKeyAuth, async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "URL alive check successful",
+      message: result.message || "URL alive check successful",
       data: result,
     });
   } catch (error) {

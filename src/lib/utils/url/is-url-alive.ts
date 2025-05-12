@@ -10,13 +10,22 @@ export async function isUrlAlive(
     timeout?: number;
     proxyUrl?: string;
   }
-): Promise<{ alive: boolean; avgResponseTime?: number; method?: "axios" | "ping" }> {
+): Promise<{
+  alive: boolean;
+  avgResponseTime?: number;
+  method?: "axios" | "ping";
+  message?: string;
+}> {
   try {
     // 1st attempt: try with axios
     const isAliveWithAxios = await isUrlAliveWithAxios(url, options);
 
-    if (isAliveWithAxios) {
-      return { alive: true, method: "axios" };
+    if (isAliveWithAxios.alive) {
+      return { alive: true, method: "axios", message: isAliveWithAxios.message };
+    } else {
+      if (isAliveWithAxios.message.indexOf("certificate has expired") !== -1) {
+        return { alive: false, method: "axios", message: isAliveWithAxios.message };
+      }
     }
 
     // 2nd attempt: fallback to ping if axios fails
@@ -25,10 +34,11 @@ export async function isUrlAlive(
     return {
       ...pingResult,
       method: "ping",
+      message: pingResult.message,
     };
   } catch (error) {
     console.error(`isUrlAlive.ts > isUrlAlive() > Error > ${url} :>> ${error}`);
-    return { alive: false };
+    return { alive: false, message: `${error}` };
   }
 }
 
@@ -39,6 +49,7 @@ export async function isUrlAliveWithAxios(
     proxyUrl?: string;
   }
 ) {
+  const startTime = Date.now();
   try {
     const proxy = options?.proxyUrl ? proxyUrlToAxiosProxy(options.proxyUrl) : undefined;
 
@@ -51,16 +62,26 @@ export async function isUrlAliveWithAxios(
       throw new Error(`HTTP status ${response.status}`);
     }
 
-    return true;
+    return {
+      alive: true,
+      method: "axios",
+      avgResponseTime: Date.now() - startTime,
+      message: "URL is alive",
+    };
   } catch (error) {
     console.error(`isUrlAlive.ts > isUrlAliveWithAxios() > Error > ${url} :>> ${error}`);
-    return false;
+    return {
+      alive: false,
+      method: "axios",
+      message: `${error}`,
+      avgResponseTime: Date.now() - startTime,
+    };
   }
 }
 
 export async function isUrlAliveWithPingCommand(
   url: string
-): Promise<{ alive: boolean; avgResponseTime?: number }> {
+): Promise<{ alive: boolean; avgResponseTime?: number; message?: string }> {
   try {
     // Extract hostname from URL
     const hostname = new URL(url).hostname;
@@ -91,11 +112,12 @@ export async function isUrlAliveWithPingCommand(
         resolve({
           alive,
           avgResponseTime: alive ? avgResponseTime : undefined,
+          message: "URL is alive",
         });
       });
     });
   } catch (error) {
     console.error(`isUrlAlive.ts > isUrlAliveWithPingCommand() > Error :>>`, error);
-    return { alive: false };
+    return { alive: false, message: `${error}` };
   }
 }
