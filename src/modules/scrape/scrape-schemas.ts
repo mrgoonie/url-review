@@ -5,7 +5,15 @@ import { TextModelSchema } from "@/lib/ai";
 // scrape
 export const ScrapeWebUrlOptionsSchema = z
   .object({
+    delayBetweenRetries: z.number().optional(),
     delayAfterLoad: z.number().optional(),
+    timeout: z.number().optional(),
+    headers: z.record(z.string(), z.string()).optional(),
+    proxyUrl: z.string().optional(),
+    debug: z.boolean().optional(),
+    selectors: z.array(z.string()).optional(),
+    selectorMode: z.enum(["first", "all"]).optional(),
+    simpleHtml: z.boolean().optional(),
   })
   .optional();
 

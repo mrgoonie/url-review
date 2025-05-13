@@ -12,10 +12,7 @@ export async function scrapeWebUrl(url: string, options?: ScrapeWebUrlOptions) {
   try {
     console.log(`scrape-crud.ts > scrapeWebUrl() > Scraping URL: ${url}`);
 
-    const htmlContent = await getHtmlWithFallbacks(url, {
-      delayAfterLoad: options?.delayAfterLoad ?? 2000,
-      debug: true, // Enable debug logging for better troubleshooting
-    });
+    const htmlContent = await getHtmlWithFallbacks(url, options);
 
     console.log(`scrape-crud.ts > scrapeWebUrl() > Successfully scraped URL: ${url}`);
     return htmlContent;
