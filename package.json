@@ -14,7 +14,8 @@
     "format": "eslint . --fix --quiet && prettier . --write",
     "check-secret": "node .husky/check-secret.js",
     "check-types": "tsc --project cypress --noEmit --pretty",
-    "commit": "git add . && cz && git push origin"
+    "commit": "git add . && cz && git push origin",
+    "dev:test-seo": "tsx src/test-seo-insights.ts"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.5.0",

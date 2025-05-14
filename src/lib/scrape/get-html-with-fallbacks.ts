@@ -1,3 +1,6 @@
+/* eslint-disable no-unused-vars */
+import * as cheerio from "cheerio";
+
 import { env } from "@/env";
 import { wait } from "@/lib/utils/wait";
 
@@ -6,6 +9,90 @@ import { getHtmlWithFirecrawl } from "./get-html-with-firecrawl";
 import { getHtmlContent } from "./get-html-with-playwright";
 import { getHtmlWithScrapedo } from "./get-html-with-scrapedo";
 import { getHtmlWithScrappey } from "./get-html-with-scrappey";
+
+/**
+ * Simplify HTML content by removing unnecessary elements to reduce token count for LLMs
+ * @param html - The HTML content to simplify
+ * @returns Simplified HTML content
+ */
+function simplifyHtml(html: string): string {
+  try {
+    const $ = cheerio.load(html);
+
+    // Remove scripts, styles, and other non-essential elements
+    $("script").remove();
+    $("style").remove();
+    $('link[rel="stylesheet"]').remove();
+    $("meta").remove();
+    $("svg").remove();
+    $("iframe").remove();
+    $("noscript").remove();
+    $("head").remove();
+    $("[style]").removeAttr("style");
+    $("*")
+      .removeAttr("class")
+      .removeAttr("id")
+      .removeAttr("onclick")
+      .removeAttr("data-*")
+      .removeAttr("aria-*")
+      .removeAttr("role")
+      .removeAttr("tabindex")
+      .removeAttr("target")
+      .removeAttr("rel")
+      .removeAttr("srcset")
+      .removeAttr("sizes")
+      .removeAttr("loading")
+      .removeAttr("crossorigin")
+      .removeAttr("integrity");
+
+    // Remove comments
+    $("*")
+      .contents()
+      .each(function (this: any) {
+        if (this.type === "comment") {
+          $(this).remove();
+        }
+      });
+
+    // Remove empty elements (except for some structural elements)
+    const keepElements = [
+      "html",
+      "body",
+      "div",
+      "span",
+      "p",
+      "h1",
+      "h2",
+      "h3",
+      "h4",
+      "h5",
+      "h6",
+      "ul",
+      "ol",
+      "li",
+      "table",
+      "tr",
+      "td",
+      "th",
+    ];
+    $("*").each(function (this: any) {
+      const el = $(this);
+      if (
+        el.children().length === 0 &&
+        !el.text().trim() &&
+        !keepElements.includes(el.prop("tagName").toLowerCase())
+      ) {
+        el.remove();
+      }
+    });
+
+    // Get the simplified HTML
+    return $.html();
+  } catch (error) {
+    console.error("Error simplifying HTML:", error);
+    return html; // Return original HTML if simplification fails
+  }
+}
 
 /**
  * Get HTML content of a URL using multiple methods with fallbacks
@@ -27,6 +114,7 @@ export async function getHtmlWithFallbacks(
     debug?: boolean;
     selectors?: string[];
     selectorMode?: "first" | "all";
+    simpleHtml?: boolean;
   }
 ) {
   const debug = options?.debug ?? false;
@@ -43,7 +131,7 @@ export async function getHtmlWithFallbacks(
     if (html && typeof html === "string" && html.length > 0) {
       if (debug)
         console.log(`get-html-with-fallbacks.ts > STEP 1: Successfully fetched HTML with axios`);
-      return html;
+      return options?.simpleHtml ? simplifyHtml(html) : html;
     }
   } catch (error) {
     console.error(
@@ -71,7 +159,8 @@ export async function getHtmlWithFallbacks(
           `get-html-with-fallbacks.ts > STEP 2: Successfully fetched HTML with playwright`
         );
 
-      return typeof html === "string" ? html : html.join("\n");
+      const htmlContent = typeof html === "string" ? html : html.join("\n");
+      return options?.simpleHtml ? simplifyHtml(htmlContent) : htmlContent;
     }
   } catch (error) {
     console.error(
@@ -98,7 +187,7 @@ export async function getHtmlWithFallbacks(
             `get-html-with-fallbacks.ts > STEP 3: Successfully fetched HTML with scrapedo`
           );
 
-        return html;
+        return options?.simpleHtml ? simplifyHtml(html) : html;
       }
     } catch (error) {
       console.error(
@@ -127,7 +216,7 @@ export async function getHtmlWithFallbacks(
             `get-html-with-fallbacks.ts > STEP 4: Successfully fetched HTML with scrappey`
           );
 
-        return html;
+        return options?.simpleHtml ? simplifyHtml(html) : html;
       }
     } catch (error) {
       console.error(
@@ -152,7 +241,7 @@ export async function getHtmlWithFallbacks(
           `get-html-with-fallbacks.ts > STEP 5: Successfully fetched HTML with firecrawl`
         );
 
-      return response.data.html;
+      return options?.simpleHtml ? simplifyHtml(response.data.html) : response.data.html;
     }
   } catch (error) {
     console.error(
