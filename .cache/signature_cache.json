@@ -11,5 +11,18 @@
       "dofollowRefdomains": 73
     },
     "timestamp": 1747211574.094
+  },
+  "toolify.ai": {
+    "signature": "a00617c77db955f2fd868e990d9f89d6988845b7cc82f80430b2ba4285b696f9",
+    "validUntil": "2025-05-14T21:46:33Z",
+    "overviewData": {
+      "domainRating": 70,
+      "urlRating": 17,
+      "backlinks": 85835,
+      "refdomains": 3584,
+      "dofollowBacklinks": 88,
+      "dofollowRefdomains": 58
+    },
+    "timestamp": 1747215994.115
   }
 }

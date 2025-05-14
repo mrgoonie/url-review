@@ -7,14 +7,14 @@ import {
   getBacklinks,
   getKeywordIdeas,
   getKeywordDifficulty,
-  checkTraffic
+  checkTraffic,
 } from "./seo-insights-service";
 
 import type {
   BacklinksRequest,
   KeywordIdeasRequest,
   KeywordDifficultyRequest,
-  TrafficCheckRequest
+  TrafficCheckRequest,
 } from "./seo-insights-schemas";
 
 /**
@@ -24,20 +24,35 @@ import type {
  */
 export async function getBacklinksForDomain(params: BacklinksRequest) {
   try {
-    console.log(`seo-insights-crud.ts > getBacklinksForDomain() > Getting backlinks for domain: ${params.domain}`);
-    
+    console.log(
+      `seo-insights-crud.ts > getBacklinksForDomain() > Getting backlinks for domain: ${params.domain}`
+    );
+
     // Extract domain from URL
-    const url = new URL(params.domain);
+    // Ensure the domain has a protocol prefix
+    const domainWithProtocol =
+      params.domain.startsWith("http://") || params.domain.startsWith("https://")
+        ? params.domain
+        : `https://${params.domain}`;
+
+    const url = new URL(domainWithProtocol);
     const domain = url.hostname;
-    
+
     const backlinksData = await getBacklinks(domain);
-    
-    console.log(`seo-insights-crud.ts > getBacklinksForDomain() > Successfully got backlinks for domain: ${domain}`);
+
+    console.log(
+      `seo-insights-crud.ts > getBacklinksForDomain() > Successfully got backlinks for domain: ${domain}`
+    );
     return backlinksData;
   } catch (error) {
-    console.error(`seo-insights-crud.ts > getBacklinksForDomain() > Error getting backlinks for domain: ${params.domain}`, error);
+    console.error(
+      `seo-insights-crud.ts > getBacklinksForDomain() > Error getting backlinks for domain: ${params.domain}`,
+      error
+    );
     throw new Error(
-      `Failed to get backlinks for domain: ${params.domain} - ${error instanceof Error ? error.message : String(error)}`
+      `Failed to get backlinks for domain: ${params.domain} - ${
+        error instanceof Error ? error.message : String(error)
+      }`
     );
   }
 }
@@ -49,20 +64,29 @@ export async function getBacklinksForDomain(params: BacklinksRequest) {
  */
 export async function getKeywordIdeasForKeyword(params: KeywordIdeasRequest) {
   try {
-    console.log(`seo-insights-crud.ts > getKeywordIdeasForKeyword() > Getting keyword ideas for keyword: ${params.keyword}`);
-    
+    console.log(
+      `seo-insights-crud.ts > getKeywordIdeasForKeyword() > Getting keyword ideas for keyword: ${params.keyword}`
+    );
+
     const keywordIdeasData = await getKeywordIdeas(
       params.keyword,
       params.country,
       params.searchEngine
     );
-    
-    console.log(`seo-insights-crud.ts > getKeywordIdeasForKeyword() > Successfully got keyword ideas for keyword: ${params.keyword}`);
+
+    console.log(
+      `seo-insights-crud.ts > getKeywordIdeasForKeyword() > Successfully got keyword ideas for keyword: ${params.keyword}`
+    );
     return keywordIdeasData;
   } catch (error) {
-    console.error(`seo-insights-crud.ts > getKeywordIdeasForKeyword() > Error getting keyword ideas for keyword: ${params.keyword}`, error);
+    console.error(
+      `seo-insights-crud.ts > getKeywordIdeasForKeyword() > Error getting keyword ideas for keyword: ${params.keyword}`,
+      error
+    );
     throw new Error(
-      `Failed to get keyword ideas for keyword: ${params.keyword} - ${error instanceof Error ? error.message : String(error)}`
+      `Failed to get keyword ideas for keyword: ${params.keyword} - ${
+        error instanceof Error ? error.message : String(error)
+      }`
     );
   }
 }
@@ -74,19 +98,25 @@ export async function getKeywordIdeasForKeyword(params: KeywordIdeasRequest) {
  */
 export async function getKeywordDifficultyForKeyword(params: KeywordDifficultyRequest) {
   try {
-    console.log(`seo-insights-crud.ts > getKeywordDifficultyForKeyword() > Getting keyword difficulty for keyword: ${params.keyword}`);
-    
-    const keywordDifficultyData = await getKeywordDifficulty(
-      params.keyword,
-      params.country
+    console.log(
+      `seo-insights-crud.ts > getKeywordDifficultyForKeyword() > Getting keyword difficulty for keyword: ${params.keyword}`
     );
-    
-    console.log(`seo-insights-crud.ts > getKeywordDifficultyForKeyword() > Successfully got keyword difficulty for keyword: ${params.keyword}`);
+
+    const keywordDifficultyData = await getKeywordDifficulty(params.keyword, params.country);
+
+    console.log(
+      `seo-insights-crud.ts > getKeywordDifficultyForKeyword() > Successfully got keyword difficulty for keyword: ${params.keyword}`
+    );
     return keywordDifficultyData;
   } catch (error) {
-    console.error(`seo-insights-crud.ts > getKeywordDifficultyForKeyword() > Error getting keyword difficulty for keyword: ${params.keyword}`, error);
+    console.error(
+      `seo-insights-crud.ts > getKeywordDifficultyForKeyword() > Error getting keyword difficulty for keyword: ${params.keyword}`,
+      error
+    );
     throw new Error(
-      `Failed to get keyword difficulty for keyword: ${params.keyword} - ${error instanceof Error ? error.message : String(error)}`
+      `Failed to get keyword difficulty for keyword: ${params.keyword} - ${
+        error instanceof Error ? error.message : String(error)
+      }`
     );
   }
 }
@@ -98,24 +128,29 @@ export async function getKeywordDifficultyForKeyword(params: KeywordDifficultyRe
  */
 export async function checkTrafficForDomain(params: TrafficCheckRequest) {
   try {
-    console.log(`seo-insights-crud.ts > checkTrafficForDomain() > Checking traffic for domain: ${params.domainOrUrl}`);
-    
+    console.log(
+      `seo-insights-crud.ts > checkTrafficForDomain() > Checking traffic for domain: ${params.domainOrUrl}`
+    );
+
     // Extract domain from URL
     const url = new URL(params.domainOrUrl);
     const domain = url.hostname;
-    
-    const trafficData = await checkTraffic(
-      domain,
-      params.mode,
-      params.country
+
+    const trafficData = await checkTraffic(domain, params.mode, params.country);
+
+    console.log(
+      `seo-insights-crud.ts > checkTrafficForDomain() > Successfully checked traffic for domain: ${domain}`
     );
-    
-    console.log(`seo-insights-crud.ts > checkTrafficForDomain() > Successfully checked traffic for domain: ${domain}`);
     return trafficData;
   } catch (error) {
-    console.error(`seo-insights-crud.ts > checkTrafficForDomain() > Error checking traffic for domain: ${params.domainOrUrl}`, error);
+    console.error(
+      `seo-insights-crud.ts > checkTrafficForDomain() > Error checking traffic for domain: ${params.domainOrUrl}`,
+      error
+    );
     throw new Error(
-      `Failed to check traffic for domain: ${params.domainOrUrl} - ${error instanceof Error ? error.message : String(error)}`
+      `Failed to check traffic for domain: ${params.domainOrUrl} - ${
+        error instanceof Error ? error.message : String(error)
+      }`
     );
   }
 }
