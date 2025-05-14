@@ -46,6 +46,7 @@ export const envSchema = z.object({
   RAPID_API_KEY: z.string(),
   ELASTIC_EMAIL_APIKEY: z.string(),
   ELASTIC_EMAIL_FROM: z.string(),
+  CAPSOLVER_API_KEY: z.string(),
 });
 export type Env = z.infer<typeof envSchema>;
 
@@ -91,6 +92,7 @@ export const env: Env = {
   RAPID_API_KEY: process.env["RAPID_API_KEY"]!,
   ELASTIC_EMAIL_APIKEY: process.env["ELASTIC_EMAIL_APIKEY"]!,
   ELASTIC_EMAIL_FROM: process.env["ELASTIC_EMAIL_FROM"]!,
+  CAPSOLVER_API_KEY: process.env["CAPSOLVER_API_KEY"]!,
 };
 
 const {
@@ -120,6 +122,7 @@ const {
   RAPID_API_KEY,
   ELASTIC_EMAIL_APIKEY,
   ELASTIC_EMAIL_FROM,
+  CAPSOLVER_API_KEY,
   ...clientEnv
 } = env;
 

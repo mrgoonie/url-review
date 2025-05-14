@@ -1,0 +1,15 @@
+{
+  "example.com": {
+    "signature": "461570a97d0295f3a256f9756799f15c5e561c428bc34fd2cc3e119a19511c30",
+    "validUntil": "2025-05-14T20:32:47Z",
+    "overviewData": {
+      "domainRating": 93,
+      "urlRating": 73,
+      "backlinks": 60518032,
+      "refdomains": 294413,
+      "dofollowBacklinks": 95,
+      "dofollowRefdomains": 73
+    },
+    "timestamp": 1747211574.094
+  }
+}
