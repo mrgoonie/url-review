@@ -3,19 +3,18 @@
  * @description CRUD operations for SEO insights module
  */
 
-import {
-  getBacklinks,
-  getKeywordIdeas,
-  getKeywordDifficulty,
-  checkTraffic,
-} from "./seo-insights-service";
-
 import type {
   BacklinksRequest,
-  KeywordIdeasRequest,
   KeywordDifficultyRequest,
+  KeywordIdeasRequest,
   TrafficCheckRequest,
 } from "./seo-insights-schemas";
+import {
+  checkTraffic,
+  getBacklinks,
+  getKeywordDifficulty,
+  getKeywordIdeas,
+} from "./seo-insights-service";
 
 /**
  * Get backlinks for a domain

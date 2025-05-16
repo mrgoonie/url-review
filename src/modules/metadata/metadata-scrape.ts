@@ -1,10 +1,8 @@
 import axios from "axios";
 import { JSDOM } from "jsdom";
 
-export async function scrapeMetadata(inputUrl: string) {
-  const response = await axios.get(inputUrl);
-  const data = response.data;
-  const dom = new JSDOM(data);
+export function scrapeMetadataFromHtmlContent(htmlContent: string) {
+  const dom = new JSDOM(htmlContent);
   const document = dom.window.document;
 
   const title = document.querySelector("title")?.textContent;
@@ -82,4 +80,11 @@ export async function scrapeMetadata(inputUrl: string) {
     twitterImage,
     twitterUrl,
   };
+}
+
+export async function scrapeMetadata(inputUrl: string) {
+  const response = await axios.get(inputUrl);
+  const data = response.data;
+
+  return scrapeMetadataFromHtmlContent(data);
 }
