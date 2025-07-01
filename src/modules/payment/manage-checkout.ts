@@ -41,13 +41,13 @@ export async function createPaymentAndOrder(polarCheckoutId: string) {
       content: `
         <p>Hi <strong>${updatedOrder.user.name}</strong>,</p>
         <p>Thank you for your payment of <strong>$${
-          payment.amount
+          payment.amount / 100
         }</strong> for your order <strong>"${order.id}"</strong></p>
         <p>Here are the details of your order:</p>
         <ul>
           <li><strong>Order ID:</strong> ${order.id}</li>
           <li><strong>Order Date:</strong> ${dayjs(payment.createdAt).format("lll")}</li>
-          <li><strong>Order Total:</strong> $${payment.amount}</li>
+          <li><strong>Order Total:</strong> $${payment.amount / 100}</li>
           <li><strong>Order Status:</strong> ${payment.status}</li>
         </ul>
         <p>Thanks for using ReviewWeb.site!</p>
