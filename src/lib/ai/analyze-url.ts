@@ -14,6 +14,12 @@ export const AnalyzeUrlSchema = z.object({
 
 export type AnalyzeUrlInput = z.infer<typeof AnalyzeUrlSchema>;
 
+export const AnalyzeHtmlInputSchema = AnalyzeUrlSchema.omit({ url: true }).extend({
+  websiteContent: z.string().describe("The website content to analyze"),
+});
+
+export type AnalyzeHtmlInput = z.infer<typeof AnalyzeHtmlInputSchema>;
+
 export const AnalyzeUrlOptionsSchema = z
   .object({
     model: TextModelSchema.optional().describe("The AI model to use"),
@@ -62,6 +68,84 @@ export const DEFAULT_JSON_RESPONSE_FORMAT = JSON.stringify({
   },
 });
 
+export async function analyzeHtml(input: AnalyzeHtmlInput, options?: AnalyzeUrlOptions) {
+  // Validate input
+  const validatedInput = AnalyzeHtmlInputSchema.parse(input);
+  const validatedOptions = AnalyzeUrlOptionsSchema.parse(options);
+
+  // Set default prompts for harmful content detection
+  const responseTemplate =
+    typeof validatedOptions?.jsonResponseFormat === "undefined"
+      ? DEFAULT_JSON_RESPONSE_FORMAT
+      : typeof validatedOptions?.jsonResponseFormat === "string"
+      ? validatedOptions?.jsonResponseFormat
+      : JSON.stringify(validatedOptions?.jsonResponseFormat);
+
+  const systemPrompt = `You are an AI content safety detector specialized in identifying harmful, inappropriate, or dangerous website content.`;
+  const instructions = validatedInput.instructions
+    ? `${validatedInput.instructions}
+
+  ## JSON Response Format:
+  <json_response_format>
+  ${responseTemplate}
+  </json_response_format>
+
+  ## Here is the website content:
+  <website_content>
+  ${validatedInput.websiteContent}
+  </website_content>`
+    : `Carefully analyze the website content and detect any harmful elements:
+  
+  ## Harmful Content Detection Instructions:
+  - Thoroughly scan the content for potentially harmful material
+  - Identify specific types of harmful content
+  - Provide a comprehensive safety assessment
+  - Return a structured JSON object based on this format:
+  ## JSON Response Format:
+  \`\`\`
+  ${responseTemplate}
+  \`\`\`
+
+  ## Specific Areas to Evaluate:
+  - Sexual or explicit content
+  - Hate speech or discriminatory language
+  - Violent or graphic descriptions
+  - Political extremism
+  - Misinformation or dangerous propaganda
+  - Explicit or offensive language
+  
+  ## Here is the website content:
+  <website_content>
+  ${validatedInput.websiteContent}
+  </website_content>`;
+
+  // Fetch AI analysis
+  const response = (await fetchAi({
+    stream: false,
+    model: validatedOptions?.model,
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: instructions },
+    ],
+  })) as AskAiResponse;
+
+  const responseContent = response.choices[0].message.content;
+  if (!responseContent) {
+    console.log(`analyzeUrl.ts > analyzeUrl() > No response content found :>>`, response);
+    console.log(`analyzeUrl.ts > analyzeUrl() > Error :>>`, response.choices[0].message);
+    throw new Error(response.choices[0].error?.message ?? "No response content found");
+  }
+
+  // Validate and parse JSON response
+  const jsonResponse = await validateJson(responseContent, {
+    model: "google/gemini-flash-1.5-8b",
+    maxRetries: 5,
+    parse: true,
+  });
+
+  return { data: jsonResponse, usage: response.usage, model: response.model };
+}
+
 export async function analyzeUrl(input: AnalyzeUrlInput, options?: AnalyzeUrlOptions) {
   // Validate input
   const validatedInput = AnalyzeUrlSchema.parse(input);
@@ -96,75 +180,12 @@ export async function analyzeUrl(input: AnalyzeUrlInput, options?: AnalyzeUrlOpt
     console.log(`analyzeUrl.ts > analyzeUrl() > websiteContent :>>`, websiteContent);
   }
 
-  // Set default prompts for harmful content detection
-  const responseTemplate =
-    typeof validatedOptions?.jsonResponseFormat === "undefined"
-      ? DEFAULT_JSON_RESPONSE_FORMAT
-      : typeof validatedOptions?.jsonResponseFormat === "string"
-      ? validatedOptions?.jsonResponseFormat
-      : JSON.stringify(validatedOptions?.jsonResponseFormat);
-
-  const systemPrompt = `You are an AI content safety detector specialized in identifying harmful, inappropriate, or dangerous website content.`;
-  const instructions = validatedInput.instructions
-    ? `${validatedInput.instructions}
-
-  ## JSON Response Format:
-  <json_response_format>
-  ${responseTemplate}
-  </json_response_format>
-
-  ## Here is the website content:
-  <website_content>
-  ${websiteContent}
-  </website_content>`
-    : `Carefully analyze the website content and detect any harmful elements:
-  
-  ## Harmful Content Detection Instructions:
-  - Thoroughly scan the content for potentially harmful material
-  - Identify specific types of harmful content
-  - Provide a comprehensive safety assessment
-  - Return a structured JSON object based on this format:
-  ## JSON Response Format:
-  \`\`\`
-  ${responseTemplate}
-  \`\`\`
-
-  ## Specific Areas to Evaluate:
-  - Sexual or explicit content
-  - Hate speech or discriminatory language
-  - Violent or graphic descriptions
-  - Political extremism
-  - Misinformation or dangerous propaganda
-  - Explicit or offensive language
-  
-  ## Here is the website content:
-  <website_content>
-  ${websiteContent}
-  </website_content>`;
-
-  // Fetch AI analysis
-  const response = (await fetchAi({
-    stream: false,
-    model: validatedOptions?.model,
-    messages: [
-      { role: "system", content: systemPrompt },
-      { role: "user", content: instructions },
-    ],
-  })) as AskAiResponse;
-
-  const responseContent = response.choices[0].message.content;
-  if (!responseContent) {
-    console.log(`analyzeUrl.ts > analyzeUrl() > No response content found :>>`, response);
-    console.log(`analyzeUrl.ts > analyzeUrl() > Error :>>`, response.choices[0].message);
-    throw new Error(response.choices[0].error?.message ?? "No response content found");
-  }
-
-  // Validate and parse JSON response
-  const jsonResponse = await validateJson(responseContent, {
-    model: "google/gemini-flash-1.5-8b",
-    maxRetries: 5,
-    parse: true,
-  });
-
-  return { data: jsonResponse, usage: response.usage, model: response.model };
+  return await analyzeHtml(
+    {
+      websiteContent,
+      systemPrompt: validatedInput.systemPrompt,
+      instructions: validatedInput.instructions,
+    },
+    validatedOptions
+  );
 }

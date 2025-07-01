@@ -5,10 +5,11 @@ import { z } from "zod";
 import { IsDev } from "@/config";
 import { TextModelSchema, VisionModelSchema } from "@/lib/ai";
 import { analyzeImageBase64 } from "@/lib/ai/analyze-image";
-import { analyzeUrl } from "@/lib/ai/analyze-url";
+import { analyzeHtml, analyzeUrl } from "@/lib/ai/analyze-url";
 import { getAllImages } from "@/lib/playwright/get-images";
+import { getHtmlWithFallbacks } from "@/lib/scrape";
 import { imageUrlToBase64 } from "@/lib/utils";
-import { scrapeMetadata } from "@/modules/metadata/metadata-scrape";
+import { scrapeMetadataFromHtmlContent } from "@/modules/metadata/metadata-scrape";
 
 import { extractAllLinksFromUrl } from "../scrape";
 import type { ReviewCreateData } from "./review-crud";
@@ -117,15 +118,20 @@ export async function startReview(input: ReviewCreateData, options?: ReviewStart
           })
     ).map(({ link }) => link);
 
+    // 4. Scrape web content
+    const webContent = await getHtmlWithFallbacks(validatedInput.url, {
+      delayAfterLoad: validatedOptions?.delayAfterLoad || 3000,
+    });
+
     // 4. Scrape metadata
-    const metadata = await scrapeMetadata(validatedInput.url);
+    const metadata = await scrapeMetadataFromHtmlContent(webContent);
 
     // 6. Run AI analysis on HTML content
-    const htmlAnalysis = await analyzeUrl(
+    const htmlAnalysis = await analyzeHtml(
       {
         systemPrompt: `Analyze the website content for safety, quality, and potential improvements.`,
         instructions: validatedInput.instructions,
-        url: validatedInput.url,
+        websiteContent: webContent,
       },
       { model: validatedOptions?.textModel, debug: validatedOptions.debug }
     );
