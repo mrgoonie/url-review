@@ -128,7 +128,13 @@ export async function getHtmlWithFallbacks(
       headers: options?.headers,
       proxyUrl: options?.proxyUrl,
     });
-    if (html && typeof html === "string" && html.length > 0) {
+
+    if (
+      html &&
+      typeof html === "string" &&
+      html.length > 0 &&
+      !html.includes("To help us keep this website secure")
+    ) {
       if (debug)
         console.log(`get-html-with-fallbacks.ts > STEP 1: Successfully fetched HTML with axios`);
       return options?.simpleHtml ? simplifyHtml(html) : html;
@@ -153,6 +159,7 @@ export async function getHtmlWithFallbacks(
       selectorMode: options?.selectorMode,
       debug,
     });
+
     if (html && (typeof html === "string" || (Array.isArray(html) && html.length > 0))) {
       if (debug)
         console.log(
@@ -160,6 +167,11 @@ export async function getHtmlWithFallbacks(
         );
 
       const htmlContent = typeof html === "string" ? html : html.join("\n");
+
+      if (htmlContent.includes("To help us keep this website secure")) {
+        throw new Error("Website is blocked");
+      }
+
       return options?.simpleHtml ? simplifyHtml(htmlContent) : htmlContent;
     }
   } catch (error) {
