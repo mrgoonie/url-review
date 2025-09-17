@@ -133,7 +133,8 @@ export async function getHtmlWithFallbacks(
       html &&
       typeof html === "string" &&
       html.length > 0 &&
-      !html.includes("To help us keep this website secure")
+      !html.includes("To help us keep this website secure") &&
+      !html.includes("You've been blocked")
     ) {
       if (debug)
         console.log(`get-html-with-fallbacks.ts > STEP 1: Successfully fetched HTML with axios`);
@@ -168,7 +169,10 @@ export async function getHtmlWithFallbacks(
 
       const htmlContent = typeof html === "string" ? html : html.join("\n");
 
-      if (htmlContent.includes("To help us keep this website secure")) {
+      if (
+        htmlContent.includes("To help us keep this website secure") ||
+        htmlContent.includes("You've been blocked")
+      ) {
         throw new Error("Website is blocked");
       }
 
@@ -199,6 +203,13 @@ export async function getHtmlWithFallbacks(
             `get-html-with-fallbacks.ts > STEP 3: Successfully fetched HTML with scrapedo`
           );
 
+        if (
+          html.includes("To help us keep this website secure") ||
+          html.includes("You've been blocked")
+        ) {
+          throw new Error("Website is blocked");
+        }
+
         return options?.simpleHtml ? simplifyHtml(html) : html;
       }
     } catch (error) {
@@ -228,6 +239,13 @@ export async function getHtmlWithFallbacks(
             `get-html-with-fallbacks.ts > STEP 4: Successfully fetched HTML with scrappey`
           );
 
+        if (
+          html.includes("To help us keep this website secure") ||
+          html.includes("You've been blocked")
+        ) {
+          throw new Error("Website is blocked");
+        }
+
         return options?.simpleHtml ? simplifyHtml(html) : html;
       }
     } catch (error) {
@@ -252,6 +270,13 @@ export async function getHtmlWithFallbacks(
         console.log(
           `get-html-with-fallbacks.ts > STEP 5: Successfully fetched HTML with firecrawl`
         );
+
+      if (
+        response.data.html.includes("To help us keep this website secure") ||
+        response.data.html.includes("You've been blocked")
+      ) {
+        throw new Error("Website is blocked");
+      }
 
       return options?.simpleHtml ? simplifyHtml(response.data.html) : response.data.html;
     }
