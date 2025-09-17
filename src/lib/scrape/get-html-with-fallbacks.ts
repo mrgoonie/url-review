@@ -187,7 +187,7 @@ export async function getHtmlWithFallbacks(
   // 3. Try scrapedo third (external service)
   if (env.SCRAPE_DO_API_KEY) {
     try {
-      if (debug) console.log(`get-html-with-fallbacks.ts > Trying scrapedo for ${url}`);
+      if (debug) console.log(`get-html-with-fallbacks.ts > STEP 3: Trying scrapedo for ${url}`);
       const html = await getHtmlWithScrapedo(url, {
         timeout,
         headers: options?.headers,
