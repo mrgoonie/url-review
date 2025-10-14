@@ -14,7 +14,11 @@ export const swaggerOptions = (options?: Options) => ({
       version: options?.version || pkg.version,
       description:
         options?.description ||
-        "This is a simple CRUD API application made with Express and documented with Swagger",
+        `This is a simple CRUD API application made with Express and documented with Swagger.
+
+ReviewWeb.site provides AI-powered tooling for auditing websites, extracting structured data, summarizing pages, capturing screenshots, and gathering SEO insights. The API is organized under the \`/api/v1\` prefix.
+
+- [llms.txt](${options?.server?.url || env.BASE_URL || "http://localhost:3000"}/llms.txt)`,
       license: {
         name: "MIT",
         url: "https://spdx.org/licenses/MIT.html",
