@@ -59,7 +59,7 @@ export const randomUserAgent = () => userAgents[Math.floor(Math.random() * userA
  * @returns A promise that resolves to the HTML content.
  */
 export async function getHtmlContent(url: string, options: HtmlContentOptions = {}) {
-  console.log("get-html.ts > getHtmlContent() > Fetching HTML content :>>", url);
+  console.log("get-html.ts (Playwright) > getHtmlContent() > Fetching HTML content :>>", url);
 
   async function attemptGetHtmlContent(
     browserType: "firefox" | "chromium",

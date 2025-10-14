@@ -85,6 +85,7 @@ apiConvertRouter.post("/markdown", validateSession, apiKeyAuth, async (req, res)
 
     // Parse options
     const options = ConvertWebUrlOptionsSchema.parse(req.body.options || {});
+    console.log("api-convert.ts > POST / > options :>>", options);
 
     // Convert URL to Markdown
     const result = await convertUrlToMarkdown(url, options);

@@ -18,6 +18,7 @@ export async function convertUrlToMarkdown(url: string, options?: ConvertWebUrlO
     - Create a clean, readable Markdown document
     - Preserve the document structure (headings, paragraphs, lists, etc.)
     - Include links, images, and tables
+    - Images should be in the format of ![alt text](image-url)
     - Format code blocks appropriately
     - Remove unnecessary elements like ads, navigation menus, footers
     - Focus on the main content of the page

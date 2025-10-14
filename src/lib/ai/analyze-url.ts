@@ -3,7 +3,7 @@ import { z } from "zod";
 
 import { getHtmlWithFallbacks } from "../scrape";
 import { isUrlAlive } from "../utils";
-import { type AskAiResponse, fetchAi, TextModelSchema } from "./fetch-ai";
+import { type AskAiParams, type AskAiResponse, fetchAi, TextModelSchema } from "./fetch-ai";
 import { validateJson } from "./json-validator";
 
 export const AnalyzeUrlSchema = z.object({
@@ -81,7 +81,9 @@ export async function analyzeHtml(input: AnalyzeHtmlInput, options?: AnalyzeUrlO
       ? validatedOptions?.jsonResponseFormat
       : JSON.stringify(validatedOptions?.jsonResponseFormat);
 
-  const systemPrompt = `You are an AI content safety detector specialized in identifying harmful, inappropriate, or dangerous website content.`;
+  const systemPrompt =
+    validatedInput.systemPrompt ||
+    `You are an AI content safety detector specialized in identifying harmful, inappropriate, or dangerous website content.`;
   const instructions = validatedInput.instructions
     ? `${validatedInput.instructions}
 
@@ -120,14 +122,15 @@ export async function analyzeHtml(input: AnalyzeHtmlInput, options?: AnalyzeUrlO
   </website_content>`;
 
   // Fetch AI analysis
-  const response = (await fetchAi({
+  const params: AskAiParams = {
     stream: false,
     model: validatedOptions?.model,
     messages: [
       { role: "system", content: systemPrompt },
       { role: "user", content: instructions },
     ],
-  })) as AskAiResponse;
+  };
+  const response = (await fetchAi(params, { debug: validatedOptions?.debug })) as AskAiResponse;
 
   const responseContent = response.choices[0].message.content;
   if (!responseContent) {
@@ -157,7 +160,7 @@ export async function analyzeUrl(input: AnalyzeUrlInput, options?: AnalyzeUrlOpt
     throw new Error(`URL ${validatedInput.url} is not alive`);
   }
 
-  // Fetch website content using Playwright
+  // Fetch website content
   let websiteContent = "";
   try {
     const htmlContent = await getHtmlWithFallbacks(validatedInput.url, {
@@ -176,9 +179,9 @@ export async function analyzeUrl(input: AnalyzeUrlInput, options?: AnalyzeUrlOpt
     );
   }
 
-  if (validatedOptions?.debug) {
-    console.log(`analyzeUrl.ts > analyzeUrl() > websiteContent :>>`, websiteContent);
-  }
+  // if (validatedOptions?.debug) {
+  //   console.log(`analyzeUrl.ts > analyzeUrl() > websiteContent :>>`, websiteContent);
+  // }
 
   return await analyzeHtml(
     {
