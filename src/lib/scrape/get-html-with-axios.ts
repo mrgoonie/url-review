@@ -38,6 +38,8 @@ export async function getHtmlWithAxios(
       responseType: "text",
     });
 
+    console.log(`get-html-with-axios.ts > Fetched HTML content from ${url}\n`, response.data);
+
     return response.data;
   } catch (error) {
     // try with proxy (if any)

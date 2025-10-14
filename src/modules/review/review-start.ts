@@ -157,7 +157,7 @@ export async function startReview(input: ReviewCreateData, options?: ReviewStart
               base64,
               instructions: "Analyze the image for content, safety, and potential issues",
             },
-            { model: validatedOptions?.visionModel || "google/gemini-flash-1.5-8b" }
+            { model: validatedOptions?.visionModel || "google/gemini-2.5-flash-lite" }
           );
         } catch (error) {
           console.error(`Image analysis failed for ${imageUrl}:`, error);

@@ -18,7 +18,7 @@ export const SummarizeWebUrlOptionsSchema = z.object({
 
   /**
    * AI model to use for summarization
-   * @default "google/gemini-2.5-flash-preview"
+   * @default "google/gemini-2.5-flash"
    */
   model: TextModelSchema.optional(),
 

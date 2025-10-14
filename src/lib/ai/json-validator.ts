@@ -3,7 +3,7 @@ import { z } from "zod";
 
 import { type AskAiMessage, type AskAiResponse, fetchAi, type TextModel, TextModelSchema } from ".";
 
-export const LOW_JSON_VALIDATOR_MODEL: TextModel = "google/gemini-flash-1.5-8b";
+export const LOW_JSON_VALIDATOR_MODEL: TextModel = "google/gemini-2.5-flash-lite";
 export const MEDIUM_JSON_VALIDATOR_MODEL: TextModel = "google/gemini-flash-1.5";
 export const HIGH_JSON_VALIDATOR_MODEL: TextModel = "anthropic/claude-3-5-haiku";
 

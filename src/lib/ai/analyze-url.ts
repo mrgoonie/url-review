@@ -138,7 +138,7 @@ export async function analyzeHtml(input: AnalyzeHtmlInput, options?: AnalyzeUrlO
 
   // Validate and parse JSON response
   const jsonResponse = await validateJson(responseContent, {
-    model: "google/gemini-flash-1.5-8b",
+    model: "google/gemini-2.5-flash-lite",
     maxRetries: 5,
     parse: true,
   });

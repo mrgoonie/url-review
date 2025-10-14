@@ -137,7 +137,10 @@ export async function getHtmlWithFallbacks(
       !html.includes("You've been blocked")
     ) {
       if (debug)
-        console.log(`get-html-with-fallbacks.ts > STEP 1: Successfully fetched HTML with axios`);
+        console.log(
+          `get-html-with-fallbacks.ts > STEP 1: Successfully fetched HTML with axios:\n`,
+          html
+        );
       return options?.simpleHtml ? simplifyHtml(html) : html;
     }
   } catch (error) {
