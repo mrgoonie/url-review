@@ -132,7 +132,13 @@ export async function checkTrafficForDomain(params: TrafficCheckRequest) {
     );
 
     // Extract domain from URL
-    const url = new URL(params.domainOrUrl);
+    // Ensure the domain has a protocol prefix
+    const domainWithProtocol =
+      params.domainOrUrl.startsWith("http://") || params.domainOrUrl.startsWith("https://")
+        ? params.domainOrUrl
+        : `https://${params.domainOrUrl}`;
+
+    const url = new URL(domainWithProtocol);
     const domain = url.hostname;
 
     const trafficData = await checkTraffic(domain, params.mode, params.country);
