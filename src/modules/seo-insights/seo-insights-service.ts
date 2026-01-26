@@ -236,9 +236,10 @@ function formatBacklinks(backlinksData: any): any[] {
     backlinksData &&
     Array.isArray(backlinksData) &&
     backlinksData.length > 1 &&
-    backlinksData[1]?.topBacklinks?.backlinks
+    backlinksData[1]?.backlinks
   ) {
-    const backlinks = backlinksData[1].topBacklinks.backlinks;
+    // Response format: ["TopBacklinks", {"backlinks": [...]}]
+    const backlinks = backlinksData[1].backlinks;
 
     // Only keep necessary fields
     const simplifiedBacklinks = backlinks.map((backlink: any) => ({
@@ -292,7 +293,7 @@ export async function getBacklinks(domain: string): Promise<any> {
     // Step 3: Get backlinks list
     const url = "https://ahrefs.com/v4/stGetFreeBacklinksList";
     const payload = {
-      reportType: "TopBacklinks",
+      reportType: ["TopBacklinks"], // Ahrefs expects array format
       signedInput: {
         signature,
         input: {
