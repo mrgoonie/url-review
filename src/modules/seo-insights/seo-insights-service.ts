@@ -418,9 +418,9 @@ export async function getKeywordIdeas(
     const payload = {
       withQuestionIdeas: true,
       captcha: token,
-      searchEngine,
+      searchEngine: [searchEngine], // Ahrefs expects array format like ["Google"]
       country,
-      keyword: ["Some", keyword],
+      keyword, // Ahrefs expects plain string, not ["Some", keyword]
     };
     console.debug(`Using payload: ${JSON.stringify(payload)}`);
 
@@ -592,11 +592,12 @@ export async function checkTraffic(
     const url = "https://ahrefs.com/v4/stGetFreeTrafficOverview";
 
     // Convert parameters to JSON string, then pass as a single input parameter
+    // Note: country and protocol must be null (not string "None") for Ahrefs API
     const params = {
       input: JSON.stringify({
         captcha: token,
-        country,
-        protocol: "None",
+        country: country === "None" ? null : country,
+        protocol: null,
         mode,
         url: domainOrUrl,
       }),
