@@ -1,189 +1,258 @@
-# ReviewWeb.site
+# ReviewWeb.site - AI-Powered Website Analysis Platform
 
-[ReviewWeb.site](https://reviewweb.site) is a tool that utilizes AI to helps you to scan through the websites and provide feedbacks based on the content.
+[ReviewWeb.site](https://reviewweb.site) is an intelligent platform that uses AI to analyze websites, extract content, and generate comprehensive reports.
 
-## Use cases:
-- You have a website and want to know how good it is
-- You want to know how to improve your website
-- You want to know how to market your website
-- You want to know if the website is good for SEO
-- You want to know if the website contains inappropriate content
-- You want to know if the website is mobile-friendly
-- You want to know if the website is secure or contains malware
+## Key Features
 
-## Workflow:
-- A user inputs a website url
-- A user provides prompt instructions for the review
-- After submitting, the system will start the review by crawling the website, analyzing the content, and take screenshots, then generate the report
-- The user can review the result and download the report
+**Analysis & Review**
+- 10-step automated website analysis workflow
+- AI-powered content summarization
+- Screenshot capture (multiple viewports)
+- Link extraction and status validation
+- Metadata extraction (Open Graph, Twitter, SEO)
 
-## Features
+**Content Processing**
+- HTML-to-Markdown conversion
+- Intelligent data extraction with JSON templates
+- Batch processing (10+ URLs/minute)
+- Multi-language support
 
-- [x] Review a website
-- [x] Take website screenshots
-- [x] Generate report
-- [x] User authentication
-- [x] Scrape an URL
-- [x] Crawl an URL and its subpages
-- [x] Map: output all website's urls
-- [x] Summarize: an URL using LLM
-- [x] Summarize: a website using LLM
-- [x] Summarize: multiple URLs using LLM
-- [x] Extract from an URL: using LLM
-- [x] Extract from a website: using LLM
-- [ ] Extract multiple URLs: using LLM
-- [x] Convert URL to Markdown
-- [x] Convert multiple URLs to Markdown
-- [ ] Ask an URL: using LLM
-- [ ] Ask a website: using LLM
+**Developer Tools**
+- RESTful API with consistent response format
+- API key management and OAuth2 (GitHub, Google)
+- Webhook support for webhooks
+- Token usage tracking and cost calculation
 
-### APIs
-| Method | Endpoint                   | Body Params                                                             | Description                       |
-| ------ | -------------------------- | ----------------------------------------------------------------------- | --------------------------------- |
-| GET    | `/api/v1/healthz`          | -                                                                       | Health check endpoint             |
-| GET    | `/api/v1/api_key`          | -                                                                       | Retrieve API key                  |
-| POST   | `/api/v1/upload`           | -                                                                       | Upload endpoint                   |
-| GET    | `/api/v1/profile`          | -                                                                       | Get user profile                  |
-| POST   | `/api/v1/screenshot`       | -                                                                       | Take website screenshot           |
-| -      | -                          | `url` (required): website url to screenshot                             |                                   |
-| -      | -                          | `full_page` (optional): full page screenshot (default: `false`)         |                                   |
-| -      | -                          | `viewport_width` (optional): screenshot width (default: `1400`)         |                                   |
-| -      | -                          | `viewport_height` (optional): screenshot height (default: `800`)        |                                   |
-| -      | -                          | `device_scale_factor` (optional): device scale factor (default: `1`)    |                                   |
-| -      | -                          | `is_mobile` (optional): mobile screenshot (default: `false`)            |                                   |
-| POST   | `/api/v1/review`           | -                                                                       | Review a website                  |
-| -      | -                          | `url` (required): website url to review                                 |                                   |
-| -      | -                          | `instructions`: review instructions                                     |                                   |
-| POST   | `/api/v1/review/batch`     | -                                                                       | Batch review websites             |
-| -      | -                          | `urls`: list of website urls (comma-separated)                          |                                   |
-| -      | -                          | `instructions`: review instructions                                     |                                   |
-| POST   | `/api/v1/scrape`           | -                                                                       | Scrape a website URL              |
-| -      | -                          | `url` (required): website url to scrape                                 |                                   |
-| -      | -                          | `options.delayAfterLoad` (optional): delay after page load in ms        |                                   |
-| POST   | `/api/v1/scrape/extract`   | -                                                                       | Extract data from URL using AI    |
-| -      | -                          | `url` (required): website url to extract data from                      |                                   |
-| -      | -                          | `options.instructions` (required): instructions for extraction          |                                   |
-| -      | -                          | `options.jsonTemplate` (required): JSON template for structured data    |                                   |
-| -      | -                          | `options.systemPrompt` (optional): custom system prompt for AI          |                                   |
-| -      | -                          | `options.model` (optional): AI model to use (default: gemini-flash-1.5) |                                   |
-| -      | -                          | `options.delayAfterLoad` (optional): delay after page load in ms        |                                   |
-| -      | -                          | `options.debug` (optional): enable debug mode                           |                                   |
-| POST   | `/api/v1/scrape/links-map` | -                                                                       | Extract all links from a URL      |
-| -      | -                          | `url` (required): website url to extract links from                     |                                   |
-| -      | -                          | `includeExternal` (optional): include external links (default: false)   |                                   |
-| -      | -                          | `includeInternal` (optional): include internal links (default: true)    |                                   |
-| -      | -                          | `maxLinks` (optional): maximum number of links to return                |                                   |
-| -      | -                          | `delayAfterLoad` (optional): delay in ms after page load                |                                   |
-| -      | -                          | `getStatusCode` (optional): get HTTP status codes for links             |                                   |
-| -      | -                          | `autoScrapeInternalLinks` (optional): auto-scrape internal links        |                                   |
-| POST   | `/api/v1/convert`          | -                                                                       | Convert URL to Markdown           |
-| -      | -                          | `url` (required): website url to convert                                |                                   |
-| -      | -                          | `options.instructions` (optional): instructions for conversion          |                                   |
-| -      | -                          | `options.systemPrompt` (optional): custom system prompt for AI          |                                   |
-| -      | -                          | `options.model` (optional): AI model to use                             |                                   |
-| -      | -                          | `options.delayAfterLoad` (optional): delay after page load in ms        |                                   |
-| -      | -                          | `options.debug` (optional): enable debug mode                           |                                   |
-| POST   | `/api/v1/convert/urls`     | -                                                                       | Convert multiple URLs to Markdown |
-| -      | -                          | `urls` (required): array of website urls to convert                     |                                   |
-| -      | -                          | `options.instructions` (optional): instructions for conversion          |                                   |
-| -      | -                          | `options.systemPrompt` (optional): custom system prompt for AI          |                                   |
-| -      | -                          | `options.model` (optional): AI model to use                             |                                   |
-| -      | -                          | `options.delayAfterLoad` (optional): delay after page load in ms        |                                   |
-| -      | -                          | `options.maxLinks` (optional): maximum number of URLs to process        |                                   |
-| -      | -                          | `options.debug` (optional): enable debug mode                           |                                   |
-| POST   | `/api/v1/summarize/url`    | -                                                                       | Summarize a URL using AI          |
-| -      | -                          | `url` (required): website url to summarize                              |                                   |
-| -      | -                          | `options.instructions` (optional): custom instructions for summarization |                                   |
-| -      | -                          | `options.systemPrompt` (optional): custom system prompt for AI          |                                   |
-| -      | -                          | `options.model` (optional): AI model to use                             |                                   |
-| -      | -                          | `options.delayAfterLoad` (optional): delay after page load in ms        |                                   |
-| -      | -                          | `options.maxLength` (optional): maximum length of summary in words       |                                   |
-| -      | -                          | `options.format` (optional): format of summary (bullet or paragraph)     |                                   |
-| -      | -                          | `options.debug` (optional): enable debug mode                           |                                   |
-| POST   | `/api/v1/summarize/website`| -                                                                       | Summarize a website using AI      |
-| -      | -                          | `url` (required): main website url to summarize                         |                                   |
-| -      | -                          | `options.instructions` (optional): custom instructions for summarization |                                   |
-| -      | -                          | `options.systemPrompt` (optional): custom system prompt for AI          |                                   |
-| -      | -                          | `options.model` (optional): AI model to use                             |                                   |
-| -      | -                          | `options.delayAfterLoad` (optional): delay after page load in ms        |                                   |
-| -      | -                          | `options.maxLinks` (optional): maximum number of pages to process        |                                   |
-| -      | -                          | `options.maxLength` (optional): maximum length of summary in words       |                                   |
-| -      | -                          | `options.format` (optional): format of summary (bullet or paragraph)     |                                   |
-| -      | -                          | `options.debug` (optional): enable debug mode                           |                                   |
-| POST   | `/api/v1/summarize/urls`   | -                                                                       | Summarize multiple URLs using AI  |
-| -      | -                          | `urls` (required): array of website urls to summarize                    |                                   |
-| -      | -                          | `options.instructions` (optional): custom instructions for summarization |                                   |
-| -      | -                          | `options.systemPrompt` (optional): custom system prompt for AI          |                                   |
-| -      | -                          | `options.model` (optional): AI model to use                             |                                   |
-| -      | -                          | `options.delayAfterLoad` (optional): delay after page load in ms        |                                   |
-| -      | -                          | `options.maxLinks` (optional): maximum number of URLs to process        |                                   |
-| -      | -                          | `options.maxLength` (optional): maximum length of summary in words       |                                   |
-| -      | -                          | `options.format` (optional): format of summary (bullet or paragraph)     |                                   |
-| -      | -                          | `options.debug` (optional): enable debug mode                           |                                   |
+**Subscription & Billing**
+- Tiered pricing plans (Free, Pro, Enterprise)
+- Per-minute and per-month rate limiting
+- Credit-based token tracking
+- Payment integration (Polar, SePay, LemonSqueezy)
 
-## Stack
+## Tech Stack
 
-- [x] Node.js (TypeScript)
-- [x] Express.js
-- [x] Prisma (PostgreSQL)
-- [x] Auth (Lucia)
-- [x] Zod
-- [x] Template Engine (EJS)
-- [x] Styling with TailwindCSS
-- [x] Commitlint
-- [x] Swagger UI
+- **Runtime:** Node.js v20+ with TypeScript
+- **Framework:** Express.js with EJS templates
+- **Database:** PostgreSQL with Prisma ORM
+- **Cache:** Redis (pub/sub, caching, sessions)
+- **Auth:** Lucia (session-based with OAuth2)
+- **Validation:** Zod schemas
+- **Styling:** TailwindCSS
+- **Scraping:** Playwright + 5-method fallback chain
+- **AI:** OpenRouter (25+ LLM providers)
 
-Uses **PostgreSQL** database.
+## Quick Start
 
-## Development
+### Prerequisites
+- Node.js v20+, PostgreSQL 12+, Redis 6+
+- Bun (recommended) or npm/yarn
 
-Create `.env` from `.example.env`
-
-Then:
+### Local Development
 
 ```bash
+# Clone repository
+git clone git@github.com:mrgoonie/url-review.git
+cd url-review
+
+# Setup environment
+cp .env.example .env
+# Edit .env with your credentials
+
+# Install dependencies
 bun i
+
+# Setup database
+bun run db:push
+
+# Start development server
 bun dev
+# Available at http://localhost:3000
 ```
 
-## Docker
+### Docker
 
 ```bash
-docker build -t local/bun-express-starter -f Dockerfile .
-docker run -p 3000:3000 local/bun-express-starter
-# OR
+# Local stack (db + redis)
 docker compose up
+
+# Production build
+docker build -t reviewweb-site .
+docker run -p 3000:3000 reviewweb-site
 ```
 
-## Deploy with [DXUP](https://dxup.dev)
+## API Overview
+
+### Core Endpoints
+
+| Method | Endpoint | Purpose |
+|--------|----------|---------|
+| POST | `/api/v1/review` | Analyze a website (10-step workflow) |
+| POST | `/api/v1/scrape` | Extract HTML content |
+| POST | `/api/v1/scrape/extract` | Extract data with JSON template |
+| POST | `/api/v1/screenshot` | Capture webpage screenshot |
+| POST | `/api/v1/convert` | Convert URL to Markdown |
+| POST | `/api/v1/summarize/url` | Summarize single URL |
+| POST | `/api/v1/summarize/website` | Summarize full website |
+| GET | `/api/v1/profile` | Get user profile |
+| GET | `/api/v1/api_key` | Manage API keys |
+
+### Authentication
+
+**Option 1: API Key**
+```bash
+curl -H "x-api-key: your-api-key" \
+  https://api.reviewweb.site/api/v1/profile
+```
+
+**Option 2: Bearer Token**
+```bash
+curl -H "Authorization: Bearer your-api-key" \
+  https://api.reviewweb.site/api/v1/profile
+```
+
+### Response Format
+
+All API responses follow this standard:
+
+```json
+{
+  "status": 200,
+  "data": { ... },
+  "messages": ["optional", "messages"]
+}
+```
+
+## Architecture
+
+ReviewWeb.site uses a layered architecture:
+
+1. **Middleware Layer:** CSRF protection, API authentication, rate limiting
+2. **API Layer:** RESTful endpoints (/api/v1/*)
+3. **Business Logic:** 18 focused modules (review, scrape, summarize, etc.)
+4. **Library Layer:** 97 utility files (AI, scraping, auth, payment, etc.)
+5. **Data Layer:** PostgreSQL + Redis
+
+See `/docs/system-architecture.md` for detailed architecture diagrams.
+
+## Project Documentation
+
+- **[Project Overview & PDR](/docs/project-overview-pdr.md)** - Vision, goals, requirements, roadmap
+- **[Codebase Summary](/docs/codebase-summary.md)** - Directory structure, modules, libraries, database
+- **[Code Standards](/docs/code-standards.md)** - Coding conventions, patterns, best practices
+- **[System Architecture](/docs/system-architecture.md)** - Architecture diagrams, data flows, integrations
+
+## Deployment
+
+### Production (DXUP)
 
 ```bash
+# Deploy to production
+dx up --prod
+
+# Deploy to preview (on PR)
 dx up
-# dx up --prod
 ```
 
-## CI/CD
+GitHub Actions automatically deploys on:
+- PR merge to `main` → production
+- PR creation → preview environment
 
-- [x] Github Actions: Create Pull Request to `main` branch will trigger a build and push to `preview` environment
-- [x] Github Actions: Merge Pull Request to `main` branch will trigger a build and push to `production` environment
+### Configuration
 
-## Author
+- **Environment Variables:** See `.env.example`
+- **Database:** PostgreSQL connection pooling (5-20 connections)
+- **Cache:** Redis with configurable TTL
+- **Monitoring:** Comprehensive logging and error tracking
 
-Please feel free to contribute to this project!
+## Development Workflow
 
-- X: [Goon Nguyen](https://x.com/goon_nguyen)
-- CTO at [TOP GROUP](https://wearetopgroup.com), [DIGITOP](https://digitop.vn) & [XinChao Live Music](https://xinchao.world)
+### Code Standards
 
-## Check out my other products
+All code must follow:
+- TypeScript strict mode
+- Zod validation on inputs
+- Error handling with context
+- Modular structure (one module per directory)
+- Conventional commit messages
 
-- [IndieBoosting.com](https://indieboosting.com) - Indie Makers Unite: Feature, Support, Succeed
-- [DigiCord AI](https://digicord.site) - The Most Useful AI Chatbot on Discord
-- [BoostTogether.com](https://boosttogether.com) - The Power of WE in Advertising
-- [TopRanking.ai](https://topranking.ai) - AI Directory, listing AI products
-- [ZII.ONE](https://zii.one) - Personalized Link Shortener
-- [VidCap.xyz](https://vidcap.xyz) - Extract Youtube caption, download videos, capture screenshot, summarize,…
-- [ReadTube.me](https://readtube.me) - Write blog articles based on Youtube videos
-- [AIVN.Site](https://aivn.site) - Face Swap, Remove BG, Photo Editor,…
-- [GetViral.Now](https://getviral.now) - KOL booking better together!
+### Running Tests
 
-Thank you!
+```bash
+bun run test
+bun run lint
+bun run lint:fix
+```
+
+### Database Migrations
+
+```bash
+# Create migration
+bun run db:create
+
+# Apply migrations
+bun run db:push
+
+# Prisma Studio (visual editor)
+bun run db:studio
+```
+
+## Contributing
+
+We welcome contributions! Please:
+1. Follow the code standards in `/docs/code-standards.md`
+2. Create a feature branch from `main`
+3. Make focused commits with conventional message format
+4. Submit a PR with description of changes
+
+## Performance
+
+- API response time: <5s (p95) for single URL analysis
+- Batch processing: 10+ URLs/minute
+- Screenshot capture: <10s per page
+- 99.5% uptime SLA
+- Horizontal scaling support
+
+## Security
+
+- HTTPS-only (TLS 1.2+)
+- CSRF protection (double tokens)
+- API key authentication
+- Rate limiting (per-minute and per-month)
+- SQL injection prevention (Prisma ORM)
+- XSS protection (template escaping)
+- Session management (HttpOnly cookies)
+
+## Rate Limiting
+
+All endpoints enforce rate limits based on subscription plan:
+
+- **Free:** 10 requests/minute, 1,000/month
+- **Pro:** 100 requests/minute, 10,000/month
+- **Enterprise:** Custom limits
+
+Returns HTTP 429 when exceeded.
+
+## Support & Community
+
+- **Author:** Goon Nguyen ([@goon_nguyen](https://x.com/goon_nguyen))
+- **Organization:** TOP GROUP, DIGITOP, XinChao Live Music
+- **Issues:** GitHub Issues
+- **Discussions:** GitHub Discussions
+
+## Related Projects
+
+- [IndieBoosting.com](https://indieboosting.com) - Feature your indie product
+- [DigiCord AI](https://digicord.site) - AI chatbot for Discord
+- [TopRanking.ai](https://topranking.ai) - AI product directory
+- [ZII.ONE](https://zii.one) - Link shortener
+- [VidCap.xyz](https://vidcap.xyz) - YouTube tools
+
+## License
+
+See LICENSE file for details.
+
+---
+
+**Last Updated:** 2025-12-10
+**Repository:** git@github.com:mrgoonie/url-review.git
+**Demo:** https://reviewweb.site

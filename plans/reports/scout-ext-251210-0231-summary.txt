@@ -1,0 +1,245 @@
+================================================================================
+REVIEWWEB.SITE - CODEBASE SCOUT SUMMARY
+================================================================================
+Date: 2025-12-10 02:31 UTC
+Project: ReviewWeb.site (AI-powered website analysis tool)
+Scope: src/routes, src/config, src/views, prisma/
+
+================================================================================
+KEY FINDINGS
+================================================================================
+
+PROJECT TYPE: Node.js REST API + Server-Rendered Frontend
+FRAMEWORK: Express.js with TypeScript
+DATABASE: PostgreSQL + Prisma ORM
+TEMPLATING: EJS (server-side)
+AUTHENTICATION: Lucia (sessions) + OAuth (GitHub/Google) + API Keys
+
+================================================================================
+DIRECTORY BREAKDOWN
+================================================================================
+
+src/routes/
+  ├── api/            - 16+ API endpoint modules (review, scrape, extract, etc)
+  ├── auth/           - 6 authentication route modules (login, OAuth)
+  ├── pages/          - 9+ server-rendered page routes
+  ├── webhooks/       - 2 webhook handlers (Polar payments)
+  └── main.ts         - Main router (empty placeholder)
+
+src/config/
+  ├── AppConfig.ts    - App configuration singleton
+  ├── constants.ts    - Enums & constants (roles, permissions, breakpoints)
+  ├── swagger.ts      - OpenAPI 3.1.0 configuration
+  ├── environment.ts  - Environment variable definitions
+  └── index.ts        - Central export hub
+
+src/views/
+  ├── master*.ejs     - 3 layout templates (public, dashboard)
+  ├── pages/          - 12 page templates (home, login, review, pricing, etc)
+  ├── common/         - 20 reusable components (header, forms, UI widgets)
+  └── templates/      - 2 share/export templates
+
+prisma/
+  ├── schema.prisma   - 40+ database models (624 lines)
+  ├── migrations/     - 2+ migration files
+  └── seed.mjs        - Database seeding script
+
+================================================================================
+API ENDPOINTS (16 MODULES)
+================================================================================
+
+CORE FEATURES:
+  POST   /api/v1/review              - Create website review
+  GET    /api/v1/review              - List reviews (paginated)
+  GET    /api/v1/review/{reviewId}   - Get single review
+  PATCH  /api/v1/review/{reviewId}   - Update review
+  DELETE /api/v1/review/{reviewId}   - Delete review
+
+  POST   /api/v1/scrape              - Scrape single URL
+  POST   /api/v1/scrape/urls         - Batch scrape (max 10 URLs)
+  POST   /api/v1/scrape/links-map    - Extract & analyze links
+
+  POST   /api/v1/extract             - AI-powered data extraction
+  GET    /api/v1/ai/models           - Get available AI models
+
+  POST   /api/v1/screenshot          - Capture screenshots
+  GET    /api/v1/seo-insights        - SEO analysis
+  POST   /api/v1/summarize           - Content summarization
+  POST   /api/v1/convert             - URL conversion
+
+USER & ACCOUNT:
+  GET    /api/v1/profile             - Get user profile
+  GET    /api/v1/api_key             - List API keys
+  POST   /api/v1/api_key             - Create API key
+  DELETE /api/v1/api_key/{id}        - Delete API key
+
+BILLING:
+  POST   /api/v1/payments            - Process payment
+  POST   /api/v1/order               - Create order
+
+SYSTEM:
+  GET    /api/v1/healthz             - Health check
+  POST   /api/v1/upload              - File upload
+
+WEBHOOKS:
+  /webhooks/polar                    - Polar payment webhooks
+  /webhooks/standard                 - Generic webhooks
+
+================================================================================
+DATABASE MODELS (40+)
+================================================================================
+
+AUTH & SECURITY (7):
+  Key, Session, Account, User, PasswordResetToken
+  EmailVerificationCode, EmailVerificationToken
+
+RBAC (8):
+  Role, Permission, UserRole, RolePermission
+  WorkspaceRole, WorkspaceUserRole, WorkspacePermission, WorkspaceRolePermission
+
+MULTI-TENANCY (1):
+  Workspace
+
+BILLING (6):
+  Plan, UserPlan, WorkspacePlan, Order, Payment, CashTransaction, UserBalance
+
+CORE APP (8):
+  Review, Screenshot, Category, WebUrl, ReviewCategory, WebUrlCategory
+  BrokenLink, ScanLinkResult
+
+USER MANAGEMENT (2):
+  ApiKey, MetaFile
+
+SUPPORTING (1):
+  Proxy
+
+ENUMS (12 types):
+  ReviewStatus, ScreenshotDevice, Currency, PaymentStatus, PaymentMethod
+  TransactionType, PlanType, PlanStatus, UserPlanStatus, UserPlanRecurring
+  ScanLinkStatus, TrackingCodeType
+
+================================================================================
+KEY CONFIGURATION
+================================================================================
+
+AppConfig:
+  - siteName: "ReviewWeb.site"
+  - environment: NODE_ENV
+  - locale: "en"
+  - timezone: "Asia/Ho_Chi_Minh"
+  - Methods: getBaseUrl(), getAuthCallbackUrl(), getCloudflareCDNUrl()
+
+Constants:
+  - AppRoleDefault: ADMIN, VIEWER, PRO
+  - WorkspaceRoleDefault: ADMIN, EDITOR, INVITER, VIEWER
+  - BREAKPOINTS: mobile (0), tablet (768), desktop (1280)
+
+Swagger/OpenAPI:
+  - Version: 3.1.0
+  - Auth: JWT Bearer + API Key (X-API-Key header)
+  - Contact: Goon Nguyen (goon@wearetopgroup.com)
+
+================================================================================
+VIEW TEMPLATES (34+ TOTAL)
+================================================================================
+
+LAYOUTS (3):
+  master.ejs, master-dashboard.ejs, master-template.ejs
+
+PAGES (12):
+  home, login, review, scan, profile, pricing, checkout, payment-success
+  checkout-confirmation, checkout-success, workspace-select, 404, privacy
+
+COMPONENTS (20):
+  header, header-dashboard, footer, mobile-menu, head
+  input-tags, input-upload, create-link-form, product-create-form, button
+  logo-horizontal, logo-verticle, link-copy, drawers
+  thumb-twitter, thumb-facebook
+  group-ad-section, group-ad-item, group-ad-preview
+
+FEATURES:
+  - Dark mode support (localStorage persistence)
+  - Responsive Tailwind CSS
+  - Mobile-first design
+  - Loader/preloader
+  - Progress indicator
+  - Modal/drawer system
+
+================================================================================
+TECHNOLOGY STACK
+================================================================================
+
+BACKEND:
+  - Node.js + Express.js
+  - TypeScript
+  - Zod (request validation)
+  - Lucia (session auth)
+  - Prisma ORM
+
+DATABASE:
+  - PostgreSQL
+  - Binary targets: native, linux-musl-openssl-3.0.x
+
+FRONTEND:
+  - EJS (server-side templating)
+  - Tailwind CSS (styling)
+  - Day.js (date/time)
+  - jQuery (DOM)
+  - Highlight.js (code syntax)
+  - Slick carousel (images)
+
+EXTERNAL SERVICES:
+  - Polar (subscription/payments)
+  - Cloudflare (CDN)
+  - Google Gemini (AI models)
+
+DOCUMENTATION:
+  - Swagger/OpenAPI 3.1.0
+
+PACKAGE MANAGER:
+  - Bun
+
+================================================================================
+ARCHITECTURE PATTERNS
+================================================================================
+
+1. MULTI-TENANT: Workspace model for org-level isolation
+2. SUBSCRIPTION: Full billing stack with Polar integration
+3. RBAC: Role-based access control (system + workspace level)
+4. AI-POWERED: Vision & text models for content analysis
+5. WEB SCRAPING: Comprehensive HTML extraction & link analysis
+6. API-FIRST: RESTful with OpenAPI documentation
+7. DUAL AUTH: Sessions + API keys for different client types
+8. SCALABLE: Pagination, batch processing, parallel operations
+
+================================================================================
+REPORT LOCATIONS
+================================================================================
+
+1. scout-ext-251210-0231-url-review.md     (Main documentation - 19 KB)
+2. scout-ext-251210-0231-file-inventory.md (Detailed file listing - 13 KB)
+3. scout-ext-251210-0231-summary.txt       (This summary - quick reference)
+
+================================================================================
+NEXT STEPS / RECOMMENDATIONS
+================================================================================
+
+For deeper analysis, explore:
+  - src/modules/  (business logic layer)
+  - src/lib/      (utility functions and helpers)
+  - src/middlewares/ (custom middleware implementations)
+  - Package.json  (full dependency list)
+  - .env.example  (environment configuration)
+
+For API usage:
+  - Review /api/v1 endpoints in reports
+  - Check Swagger UI at /api-docs or /swagger
+  - Use X-API-Key header for API key auth
+  - Use Bearer token for session auth
+
+For database operations:
+  - Review prisma/schema.prisma for full model documentation
+  - Run: npx prisma studio (for data browser)
+  - Run: npx prisma migrate status (for migration status)
+
+================================================================================
