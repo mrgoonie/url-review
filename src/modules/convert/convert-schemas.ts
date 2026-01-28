@@ -8,7 +8,7 @@ import { TextModelSchema } from "@/lib/ai";
 export const ConvertWebUrlOptionsSchema = z.object({
   /**
    * AI model to use for conversion
-   * @default "google/gemini-2.5-flash"
+   * @default "google/gemini-3-flash-preview"
    */
   model: TextModelSchema.optional(),
 

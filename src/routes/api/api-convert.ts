@@ -41,7 +41,7 @@ export const apiConvertRouter = express.Router();
  *                   model:
  *                     type: string
  *                     description: AI model to use for conversion
- *                     default: google/gemini-2.5-flash
+ *                     default: google/gemini-3-flash-preview
  *                   instructions:
  *                     type: string
  *                     description: Instructions for the AI to follow
@@ -149,7 +149,7 @@ apiConvertRouter.post("/markdown", validateSession, apiKeyAuth, async (req, res)
  *                   model:
  *                     type: string
  *                     description: AI model to use for conversion
- *                     default: google/gemini-2.5-flash
+ *                     default: google/gemini-3-flash-preview
  *                   delayAfterLoad:
  *                     type: number
  *                     description: Optional delay after page load in milliseconds

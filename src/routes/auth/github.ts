@@ -64,6 +64,13 @@ githubLoginRouter.get("/api/auth/callback/github", async (req, res) => {
       },
     });
 
+    // check for API errors (rate limit, auth failures, etc.)
+    if (!githubUserResponse.ok) {
+      const errorData = await githubUserResponse.json();
+      console.error(`[GitHub Auth] API error:`, errorData);
+      return res.status(503).send(`GitHub API error: ${errorData.message || "Unknown error"}`);
+    }
+
     // get Github user info
     const githubUser = (await githubUserResponse.json()) as GitHubUser;
 
@@ -103,9 +110,9 @@ githubLoginRouter.get("/api/auth/callback/github", async (req, res) => {
         .redirect(redirectUri || "/");
     }
 
-    // create new user
+    // create new user (use login as fallback if name is not set)
     const user = await createNewUser({
-      name: githubUser.name,
+      name: githubUser.name || githubUser.login,
       email: githubUser.email,
     } as ICreateNewUserByAccount);
 
