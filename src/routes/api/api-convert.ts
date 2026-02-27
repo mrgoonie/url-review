@@ -41,7 +41,10 @@ export const apiConvertRouter = express.Router();
  *                   model:
  *                     type: string
  *                     description: AI model to use for conversion
- *                     default: google/gemini-2.5-flash-preview
+ *                     default: google/gemini-3-flash-preview
+ *                   instructions:
+ *                     type: string
+ *                     description: Instructions for the AI to follow
  *                   delayAfterLoad:
  *                     type: number
  *                     description: Optional delay after page load in milliseconds
@@ -82,6 +85,7 @@ apiConvertRouter.post("/markdown", validateSession, apiKeyAuth, async (req, res)
 
     // Parse options
     const options = ConvertWebUrlOptionsSchema.parse(req.body.options || {});
+    console.log("api-convert.ts > POST / > options :>>", options);
 
     // Convert URL to Markdown
     const result = await convertUrlToMarkdown(url, options);
@@ -145,7 +149,7 @@ apiConvertRouter.post("/markdown", validateSession, apiKeyAuth, async (req, res)
  *                   model:
  *                     type: string
  *                     description: AI model to use for conversion
- *                     default: google/gemini-2.5-flash-preview
+ *                     default: google/gemini-3-flash-preview
  *                   delayAfterLoad:
  *                     type: number
  *                     description: Optional delay after page load in milliseconds

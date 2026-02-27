@@ -1,0 +1,403 @@
+# ReviewWeb.site API Documentation
+
+## Overview
+ReviewWeb.site provides AI-powered tooling for auditing websites, extracting structured data, summarizing pages, capturing screenshots, and gathering SEO insights. The API is organized under the `/api/v1` prefix.
+
+- **Default base URL**: `https://reviewweb.site`
+- **Content type**: All request and response bodies are JSON unless otherwise noted.
+- **Error format**: Errors follow `{ success: false, message: string, error?: string, errors?: string[] }`.
+
+## Authentication & Security
+Most routes enforce both of the following schemes:
+
+- **Bearer token** through the `Authorization: Bearer <JWT>` header (session established via `validateSession`).
+- **API key** through the `X-API-Key: <key>` header (enforced by `apiKeyAuth`).
+
+Endpoints that require authentication are noted below. Routes without explicit guards can be accessed without credentials but may still rely on upstream protections.
+
+## Tags & Endpoints
+
+### Health
+- **GET** `/api/v1/healthz`
+  - **Auth**: None.
+  - **Summary**: Service heartbeat check.
+  - **Responses**:
+    - `200`: `{ success: true, message: "Service is healthy", data: { status: "OK" } }`
+
+### Profile
+- **GET** `/api/v1/profile`
+  - **Auth**: Bearer + API key + active user session.
+  - **Summary**: Retrieve the authenticated user profile with sensitive fields masked.
+  - **Responses**:
+    - `200`: `{ success: true, message: "User profile retrieved successfully", data: { ...maskedUser } }`
+    - `401`: Missing session or API key.
+    - `404`: User not found.
+
+### Upload
+- **POST** `/api/v1/upload`
+  - **Auth**: Bearer + API key + active user session.
+  - **Summary**: Upload an image file to Cloudflare R2 storage.
+  - **Body**: `multipart/form-data` with `image` file part (JPEG/PNG/GIF/WEBP, ≤5 MB).
+  - **Responses**:
+    - `200`: `{ success: true, message: "Image uploaded successfully", data: { publicUrl, path } }`
+    - `400`: Missing file or validation errors (mime type/size).
+    - `401`: Unauthorized.
+
+### API Keys
+- **GET** `/api/v1/api_key`
+  - **Auth**: Signed request (`verifyRequest`), bearer token, API key, session.
+  - **Summary**: List all API keys for the authenticated account.
+
+- **POST** `/api/v1/api_key`
+  - **Auth**: Same as GET.
+  - **Body**: JSON `{ name?: string, expiresAt?: string (ISO 8601) }`.
+  - **Summary**: Create a new API key with optional display name and expiry.
+  - **Responses**: `201` with created key metadata.
+
+- **DELETE** `/api/v1/api_key/{id}`
+  - **Auth**: Same as GET.
+  - **Summary**: Delete the specified API key (must belong to user).
+  - **Responses**: `200` on success, `400`/`404` for invalid input or missing key.
+
+### Payments
+- **POST** `/api/v1/payments/topup`
+  - **Auth**: None enforced in router (ensure deployment protects this route).
+  - **Body**: `{ userId: string (UUID), amount: number (>0) }`.
+  - **Summary**: Increment the user balance by the specified amount.
+  - **Responses**: `201` with `{ userId, newBalance }`, `400` for validation errors.
+
+### Screenshot
+- **POST** `/api/v1/screenshot`
+  - **Auth**: Bearer + API key + session.
+  - **Body**: JSON matching `ScreenshotRequestSchema`:
+    - `url` *(required)* – target page.
+    - `fullPage`, `deviceType` (`DESKTOP|MOBILE|TABLET`), `viewportWidth`, `viewportHeight`, `viewportScale`, `initialDelay`, `reviewId`, `userId`.
+  - **Summary**: Capture a screenshot via Playwright, upload to storage, and persist metadata.
+  - **Responses**: `201` with screenshot record; `400` for validation errors; `500` if capture/upload fails.
+
+- **GET** `/api/v1/screenshot`
+  - **Auth**: Bearer + API key + session.
+  - **Query**: `reviewId?`, `page?=number`, `limit?=number`.
+  - **Summary**: Paginated list of screenshots filtered by review ID (optional).
+
+- **GET** `/api/v1/screenshot/{id}`
+  - **Auth**: Bearer + API key + session.
+  - **Summary**: Fetch a single screenshot by UUID.
+  - **Responses**: `200` with record; `404` when missing.
+
+- **PUT** `/api/v1/screenshot/{id}`
+  - **Auth**: Bearer + API key + session.
+  - **Body**: Partial `ScreenshotRequestSchema` fields to update.
+  - **Summary**: Update existing screenshot metadata.
+
+- **DELETE** `/api/v1/screenshot/{id}`
+  - **Auth**: Bearer + API key + session.
+  - **Summary**: Remove screenshot record (and associated storage metadata where applicable).
+
+### Review
+- **POST** `/api/v1/review`
+  - **Auth**: Bearer + API key + session.
+  - **Body**: `{ url: string, instructions?: string, options?: ReviewStartOptions }` where options include toggles for image/link extraction, model overrides, and extraction caps.
+  - **Summary**: Start an AI-powered website review job.
+  - **Responses**: `201` with review metadata; `400` for invalid payload.
+
+- **GET** `/api/v1/review`
+  - **Auth**: Bearer + API key + session.
+  - **Query**: `page?`, `limit?` for pagination.
+  - **Summary**: List reviews belonging to the authenticated user.
+
+- **GET** `/api/v1/review/{reviewId}`
+  - **Auth**: Bearer + API key + session.
+  - **Summary**: Retrieve details for a specific review.
+  - **Responses**: `200` with review; `404` if not found.
+
+- **PATCH** `/api/v1/review/{reviewId}`
+  - **Auth**: Bearer + API key + session.
+  - **Body**: Partial review fields (`url`, `instructions`, etc.).
+  - **Summary**: Update review metadata.
+
+- **DELETE** `/api/v1/review/{reviewId}`
+  - **Auth**: Bearer + API key + session.
+  - **Summary**: Delete review record.
+
+### Scrape
+- **POST** `/api/v1/scrape`
+  - **Auth**: Bearer + API key + session.
+  - **Query**: `url` *(required)*.
+  - **Body**: `options` derived from `ScrapeWebUrlOptionsSchema` (timeouts, retries, headers, proxy, selectors, simpleHtml etc.).
+  - **Summary**: Scrape HTML and metadata for a single URL after verifying availability.
+  - **Responses**: `201` with `{ url, metadata, html }`.
+
+- **POST** `/api/v1/scrape/urls`
+  - **Auth**: Bearer + API key + session.
+  - **Body**: `{ urls: string[] (1–10), options: ScrapeWebUrlOptions }`.
+  - **Summary**: Bulk scrape multiple URLs with concurrency control and aggregated results.
+
+- **POST** `/api/v1/scrape/links-map`
+  - **Auth**: Bearer + API key + session.
+  - **Query**: `url` *(required)*.
+  - **Body**: Options controlling inclusion of external links, status code fetch, delays, etc.
+  - **Summary**: Extract link graph, persist to `scanLinkResult`, return counts of healthy vs broken links.
+
+### Extract
+- **POST** `/api/v1/extract`
+  - **Auth**: Bearer + API key + session.
+  - **Body**: `{ url: string, options: ExtractWebUrlOptions }` where options include `instructions`, `jsonTemplate`, `systemPrompt`, `model`, `delayAfterLoad`, `recursive`, `maxLinks`, `stopWhenFound`, `debug`.
+  - **Summary**: Use AI to extract structured data from a page, optionally recursing through internal links and consolidating results.
+  - **Responses**: `201` with normalized data, usage statistics, and optional per-page breakdown.
+
+- **POST** `/api/v1/extract/urls`
+  - **Auth**: Bearer + API key + session.
+  - **Body**: `{ urls: string[], options: ExtractWebUrlOptions }`.
+  - **Summary**: Extract structured data across multiple URLs with usage aggregation.
+
+### Convert
+- **POST** `/api/v1/convert/markdown`
+  - **Auth**: Bearer + API key + session.
+  - **Body**: `{ url: string, options?: ConvertWebUrlOptions }`.
+  - **Summary**: Convert a single web page into Markdown via AI.
+  - **Responses**: `201` with `{ url, markdown, model, usage }`.
+
+- **POST** `/api/v1/convert/markdown/urls`
+  - **Auth**: Bearer + API key + session.
+  - **Body**: `{ urls: string[], options?: ConvertWebUrlOptions }` (supports `maxLinks`, `model`, `delayAfterLoad`, `debug`).
+  - **Summary**: Batch conversion of multiple URLs to Markdown with per-URL results and usage totals.
+
+### Summarize
+- **POST** `/api/v1/summarize/url`
+  - **Auth**: Bearer + API key + session.
+  - **Body**: `{ url: string, options?: SummarizeWebUrlOptions }` (`instructions`, `systemPrompt`, `model`, `delayAfterLoad`, `maxLength`, `format`, `debug`).
+  - **Summary**: Produce an AI summary for a single URL with optional formatting controls.
+
+- **POST** `/api/v1/summarize/website`
+  - **Auth**: Bearer + API key + session.
+  - **Body**: Same shape as single URL but treats the target as a site, crawling up to `maxLinks` pages.
+  - **Summary**: Generate aggregated website summary plus per-page breakdowns.
+
+- **POST** `/api/v1/summarize/urls`
+  - **Auth**: Bearer + API key + session.
+  - **Body**: `{ urls: string[], options?: SummarizeWebUrlOptions }`.
+  - **Summary**: Summarize multiple URLs, returning individual summaries plus a combined overview.
+
+### AI Models
+- **GET** `/api/v1/ai/models`
+  - **Auth**: None.
+  - **Summary**: List supported text and vision model identifiers.
+  - **Responses**: `200` with `{ textModels: string[], visionModels: string[] }`.
+
+### URL Utilities
+- **GET** `/api/v1/url/is-alive`
+  - **Auth**: Bearer + API key + session.
+  - **Query**: `url` *(required)*, `timeout?`, `proxyUrl?`.
+  - **Summary**: Check availability of a URL via HTTP/ping, returning method used and average response time (when applicable).
+
+- **GET** `/api/v1/url/get-url-after-redirects`
+  - **Auth**: Bearer + API key + session.
+  - **Query**: `url` *(required)*.
+  - **Summary**: Resolve the final destination after following redirects.
+
+### SEO Insights
+- **POST** `/api/v1/seo-insights/backlinks`
+  - **Auth**: Bearer + API key + session.
+  - **Body**: `{ domain: string }`.
+  - **Summary**: Retrieve backlink overview and lists for a domain.
+
+- **POST** `/api/v1/seo-insights/keyword-ideas`
+  - **Auth**: Bearer + API key + session.
+  - **Body**: `{ keyword: string, country?: string, searchEngine?: string }`.
+  - **Summary**: Generate keyword ideas for SEO research.
+
+- **POST** `/api/v1/seo-insights/keyword-difficulty`
+  - **Auth**: Bearer + API key + session.
+  - **Body**: `{ keyword: string, country?: string }`.
+  - **Summary**: Return difficulty metrics and SERP insights for a keyword.
+
+- **POST** `/api/v1/seo-insights/traffic`
+  - **Auth**: Bearer + API key + session.
+  - **Body**: `{ domainOrUrl: string, mode?: "subdomains"|"exact", country?: string }`.
+  - **Summary**: Retrieve traffic history, top pages, countries, and keywords for a domain/URL.
+
+## Schema Reference
+
+### ScreenshotRequestSchema
+- **url**: Required string. Must be a valid URL; identifies the page to capture.
+- **fullPage**: Optional boolean (default `false`). Capture the full scrollable page when true.
+- **deviceType**: Optional enum (`"DESKTOP" | "MOBILE" | "TABLET"`, default `"DESKTOP"`). Controls viewport presets.
+- **viewportWidth**: Optional integer (100–3840, default `1400`). Effective only when `deviceType` is `DESKTOP` or custom sizing is needed.
+- **viewportHeight**: Optional integer (100–2160, default `800`).
+- **viewportScale**: Optional number (0.1–3, default `1`). Page scale factor.
+- **initialDelay**: Optional number in milliseconds (default `0`). Wait time after navigation before screenshot.
+- **reviewId**: Optional UUID string. Associates the screenshot with an existing review.
+- **userId**: Required UUID string but auto-injected from the authenticated session; clients do not need to send it explicitly.
+
+### ReviewCreateDataSchema
+- **url**: Required string URL of the website under review.
+- **textModel**: Optional string. AI text model identifier.
+- **visionModel**: Optional string. AI vision model identifier.
+- **instructions**: Optional string. Custom analysis instructions.
+- **metadata**: Optional object of arbitrary key/value metadata.
+- **status**: Optional enum derived from Prisma `ReviewStatus`.
+- **errorMessage**: Optional string providing failure details.
+- **userId**: Required string (UUID). Autopopulated from the session.
+- **workspaceId**: Optional string linking the review to a workspace.
+- **categories**: Optional array of category IDs.
+- **aiAnalysis**: Optional object storing AI outputs.
+- **seoScore**, **securityScore**: Optional numbers summarizing scores.
+- **securityRisk**, **mobileFriendly**, **adultContent**, **gambling**: Optional booleans for compliance tagging.
+
+### ReviewStartOptionsSchema
+- **debug**: Optional boolean (default `false`). Enables verbose logging.
+- **skipImageExtraction**: Optional boolean (default `true`). Skip screenshot image harvesting when true.
+- **maxExtractedImages**: Optional integer (1–100, default `50`). Maximum number of images to analyze.
+- **skipLinkExtraction**: Optional boolean (default `true`). Skip outbound link harvesting when true.
+- **maxExtractedLinks**: Optional integer (1–100, default `50`). Limit for extracted links.
+- **textModel**: Optional AI text model override.
+- **visionModel**: Optional AI vision model override for image analysis.
+- **delayAfterLoad**: Optional number (0–60000, default `3000`). Wait time before crawling content.
+- **excludeImageSelectors**: Optional array of CSS selectors excluded from image extraction.
+- **continueOnImageAnalysisError**: Optional boolean (default `true`). Continue process if image analysis fails.
+- **continueOnLinkAnalysisError**: Optional boolean (default `true`). Continue process if link analysis fails.
+
+### ConvertWebUrlOptionsSchema
+- **model**: Optional AI model identifier (default `"google/gemini-2.5-flash"`).
+- **instructions**: Optional string with conversion guidance for the model.
+- **delayAfterLoad**: Optional number (0–10000). Delay in milliseconds after page load prior to conversion (default `3000`).
+- **debug**: Optional boolean (default `false`). Enables verbose logging.
+- **maxLinks**: Optional integer (1–100, default `20`). Applies to batch conversions.
+
+### SummarizeWebUrlOptionsSchema
+- **systemPrompt**: Optional string to prime the AI.
+- **instructions**: Optional string with summarization directives.
+- **model**: Optional AI model identifier (default `"google/gemini-2.5-flash"`).
+- **delayAfterLoad**: Optional number (0–10000, default `3000`).
+- **debug**: Optional boolean (default `false`).
+- **maxLinks**: Optional integer (1–100, default `20`) when summarizing multiple URLs.
+- **maxLength**: Optional integer (50–2000, default `500`). Maximum word count per summary.
+- **format**: Optional enum (`"bullet" | "paragraph"`, default `"paragraph"`).
+
+### ScrapeWebUrlOptionsSchema
+- **delayBetweenRetries**: Optional number of milliseconds between retry attempts.
+- **delayAfterLoad**: Optional number of milliseconds to wait after page load.
+- **timeout**: Optional number specifying request timeout (milliseconds, default `30000` when omitted by the service).
+- **headers**: Optional object of header key/value pairs.
+- **proxyUrl**: Optional string URL of a proxy server.
+- **debug**: Optional boolean enabling verbose logs.
+- **selectors**: Optional array of CSS selectors to extract.
+- **selectorMode**: Optional enum (`"first" | "all"`). Determines whether to return the first or all matches.
+- **simpleHtml**: Optional boolean to strip scripts/styles from the HTML payload.
+
+### ScrapeMultipleUrlsPayload
+- **urls**: Required array of 1–10 valid URLs.
+- **options**: Optional object matching `ScrapeWebUrlOptionsSchema`.
+
+### ExtractWebUrlOptionsSchema
+- **debug**: Optional boolean (default `false`).
+- **instructions**: Required string telling the AI what to extract.
+- **systemPrompt**: Optional string to guide the AI.
+- **jsonTemplate**: Required string representing the JSON schema to enforce in the response.
+- **model**: Optional AI model identifier (default `"google/gemini-2.5-flash"`).
+- **delayAfterLoad**: Optional number of milliseconds to wait after page load.
+- **recursive**: Optional boolean (default `false`). When true, scrapes internal links as well.
+- **maxLinks**: Optional integer (default `20`). Maximum number of additional internal links to process during recursion.
+- **stopWhenFound**: Optional boolean (default `false`). Stop recursion once valid data is found.
+
+### ExtractMultipleUrlsPayload
+- **urls**: Required array of URLs (up to 20 processed per request).
+- **options**: Required object matching `ExtractWebUrlOptionsSchema`.
+
+### SummarizeMultipleUrlsPayload
+- **urls**: Required array of URLs to summarize.
+- **options**: Optional object matching `SummarizeWebUrlOptionsSchema`.
+
+### ConvertMultipleUrlsPayload
+- **urls**: Required array of URLs to convert.
+- **options**: Optional object matching `ConvertWebUrlOptionsSchema`.
+
+### UrlAliveRequestSchema
+- **url**: Required string URL to test.
+- **timeout**: Optional integer (1000–60000, default `10000`). Overrides request timeout.
+- **proxyUrl**: Optional string URL for proxying the request.
+
+### UrlAfterRedirectsRequestSchema
+- **url**: Required string URL whose final destination should be resolved.
+
+### FileUploadSchema
+- **fieldname**: Required string (should be `"image"`).
+- **originalname**: Required string. Original filename.
+- **mimetype**: Required string. Must be one of `image/jpeg`, `image/png`, `image/gif`, or `image/webp`.
+- **size**: Required number ≤ `5_242_880` (5 MB).
+
+### ApiKeyCreateSchema
+- **name**: Optional string. Display label (defaults to `"Untitled"`).
+- **expiresAt**: Optional ISO 8601 datetime string defining expiration.
+
+### PaymentTopupSchema
+- **userId**: Required UUID string identifying the account to credit.
+- **amount**: Required positive number representing the credit amount.
+
+### BacklinksRequestSchema
+- **domain**: Required string. Accepts full URLs or bare domains; validation removes invalid formats.
+
+### KeywordIdeasRequestSchema
+- **keyword**: Required non-empty string.
+- **country**: Optional string ISO country code (default `"us"`).
+- **searchEngine**: Optional string naming the search engine (default `"Google"`).
+
+### KeywordDifficultyRequestSchema
+- **keyword**: Required non-empty string.
+- **country**: Optional ISO country code (default `"us"`).
+
+### TrafficCheckRequestSchema
+- **domainOrUrl**: Required string. Accepts URL or bare domain.
+- **mode**: Optional enum (`"subdomains" | "exact"`, default `"subdomains"`).
+- **country**: Optional string (default `"None"`).
+
+## CLI Tool (reviewweb-cli)
+
+ReviewWeb.site also provides an official CLI tool for terminal-based access to all API features.
+
+### Install
+```bash
+npm install -g reviewweb-cli
+```
+
+### Authentication
+The CLI resolves API keys in order: `--api-key` flag → `RWEB_API_KEY` env var → config file (`rws config set api-key <key>`).
+
+### Commands
+
+| Command | Description |
+|---------|-------------|
+| `rws review create --url <url>` | Start AI-powered website review |
+| `rws review get <id>` | Get review by ID |
+| `rws review list` | List all reviews |
+| `rws convert markdown --url <url>` | Convert URL to Markdown |
+| `rws convert markdown-batch --urls <url1,url2>` | Batch convert URLs |
+| `rws extract data --url <url> --instructions <text> --template <json>` | Extract structured data |
+| `rws scrape url --url <url>` | Scrape URL content |
+| `rws scrape extract --url <url>` | Extract links from URL |
+| `rws summarize url --url <url>` | Summarize single URL |
+| `rws summarize website --url <url>` | Summarize entire website |
+| `rws seo backlinks --domain <domain>` | Get backlink data |
+| `rws seo keyword-ideas --keyword <kw>` | Get keyword ideas |
+| `rws seo keyword-difficulty --keyword <kw>` | Check keyword difficulty |
+| `rws seo traffic --domain <domain>` | Get traffic analysis |
+| `rws screenshot --url <url>` | Capture screenshot |
+| `rws url-check --url <url>` | Check if URL is alive |
+| `rws api-key create --name <name>` | Create API key |
+| `rws api-key list` | List API keys |
+| `rws health` | Check API status |
+| `rws profile` | View current user profile |
+| `rws config set <key> <value>` | Set config value |
+
+### Output Formats
+All commands support `--format <json|table|raw>`. Default: JSON.
+
+### Source
+GitHub: https://github.com/mrgoonie/rws-cli
+NPM: https://www.npmjs.com/package/reviewweb-cli
+
+## Additional Notes
+- **Rate limits**: Not enforced in router code—apply at gateway if required.
+- **Swagger definition**: Generated via `swaggerOptions` in `src/config/swagger.ts`, scanning `src/routes/api/*.ts` for `@openapi`/`@swagger` annotations.
+- **Schemas**: See the Schema Reference above when constructing payloads; senders must adhere to required fields and value ranges to avoid `400` validation errors.

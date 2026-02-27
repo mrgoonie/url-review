@@ -23,7 +23,7 @@ export async function reviewUrlByCaptureWebUrl(
   options?: {
     debug?: boolean;
     /**
-     * @default "google/gemini-flash-1.5-8b"
+     * @default "google/gemini-3-flash-preview"
      */
     model?: VisionModel;
     /**

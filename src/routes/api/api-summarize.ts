@@ -48,7 +48,7 @@ export const apiSummarizeRouter = express.Router();
  *                   model:
  *                     type: string
  *                     description: AI model to use for summarization
- *                     default: google/gemini-2.5-flash-preview
+ *                     default: google/gemini-3-flash-preview
  *                   delayAfterLoad:
  *                     type: number
  *                     description: Optional delay after page load in milliseconds
@@ -176,7 +176,7 @@ apiSummarizeRouter.post("/url", validateSession, apiKeyAuth, async (req, res) =>
  *                   model:
  *                     type: string
  *                     description: AI model to use for summarization
- *                     default: google/gemini-2.5-flash-preview
+ *                     default: google/gemini-3-flash-preview
  *                   delayAfterLoad:
  *                     type: number
  *                     description: Optional delay after page load in milliseconds
@@ -324,7 +324,7 @@ apiSummarizeRouter.post("/website", validateSession, apiKeyAuth, async (req, res
  *                   model:
  *                     type: string
  *                     description: AI model to use for summarization
- *                     default: google/gemini-2.5-flash-preview
+ *                     default: google/gemini-3-flash-preview
  *                   delayAfterLoad:
  *                     type: number
  *                     description: Optional delay after page load in milliseconds

@@ -236,9 +236,10 @@ function formatBacklinks(backlinksData: any): any[] {
     backlinksData &&
     Array.isArray(backlinksData) &&
     backlinksData.length > 1 &&
-    backlinksData[1]?.topBacklinks?.backlinks
+    backlinksData[1]?.backlinks
   ) {
-    const backlinks = backlinksData[1].topBacklinks.backlinks;
+    // Response format: ["TopBacklinks", {"backlinks": [...]}]
+    const backlinks = backlinksData[1].backlinks;
 
     // Only keep necessary fields
     const simplifiedBacklinks = backlinks.map((backlink: any) => ({
@@ -292,7 +293,7 @@ export async function getBacklinks(domain: string): Promise<any> {
     // Step 3: Get backlinks list
     const url = "https://ahrefs.com/v4/stGetFreeBacklinksList";
     const payload = {
-      reportType: "TopBacklinks",
+      reportType: ["TopBacklinks"], // Ahrefs expects array format
       signedInput: {
         signature,
         input: {
@@ -418,9 +419,9 @@ export async function getKeywordIdeas(
     const payload = {
       withQuestionIdeas: true,
       captcha: token,
-      searchEngine,
+      searchEngine: [searchEngine], // Ahrefs expects array format like ["Google"]
       country,
-      keyword: ["Some", keyword],
+      keyword, // Ahrefs expects plain string, not ["Some", keyword]
     };
     console.debug(`Using payload: ${JSON.stringify(payload)}`);
 
@@ -592,11 +593,12 @@ export async function checkTraffic(
     const url = "https://ahrefs.com/v4/stGetFreeTrafficOverview";
 
     // Convert parameters to JSON string, then pass as a single input parameter
+    // Note: country and protocol must be null (not string "None") for Ahrefs API
     const params = {
       input: JSON.stringify({
         captcha: token,
-        country,
-        protocol: "None",
+        country: country === "None" ? null : country,
+        protocol: null,
         mode,
         url: domainOrUrl,
       }),

@@ -11,14 +11,12 @@ axiosRetry(axios, { retries: 3, retryDelay: axiosRetry.exponentialDelay });
 
 export const OPENROUTER_BASE_API_URL = "https://openrouter.ai/api/v1";
 export const DEFAULT_AI_MODELS = [
-  "google/gemini-2.5-flash-preview",
+  "google/gemini-3-flash-preview",
+  "google/gemini-3-pro-preview",
+  "google/gemini-2.5-pro",
+  "google/gemini-2.5-flash",
+  "google/gemini-2.5-flash-lite",
   "openai/gpt-4.1-mini",
-  "google/gemini-2.0-flash-001",
-  "google/gemini-2.0-flash-lite-001",
-  "google/gemini-flash-1.5",
-  "google/gemini-flash-1.5-8b",
-  "google/gemini-pro-1.5",
-  "google/gemini-2.5-pro-preview-03-25",
   "openai/chatgpt-4o-latest",
   "openai/gpt-4o-mini",
   "anthropic/claude-3-5-haiku",
@@ -38,10 +36,11 @@ export const TextModelSchema = z.enum(DEFAULT_AI_MODELS);
 export type TextModel = z.infer<typeof TextModelSchema>;
 
 export const DEFAULT_VISION_MODELS = [
-  "google/gemini-pro-1.5",
+  "google/gemini-3-flash-preview",
+  "google/gemini-3-pro-preview",
   "google/gemini-pro-vision",
   "google/gemini-flash-1.5",
-  "google/gemini-flash-1.5-8b",
+  "google/gemini-2.5-flash-lite",
   "anthropic/claude-3.5-sonnet",
   "anthropic/claude-3.5-haiku",
   "openai/chatgpt-4o-latest",
