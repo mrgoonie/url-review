@@ -352,6 +352,51 @@ Endpoints that require authentication are noted below. Routes without explicit g
 - **mode**: Optional enum (`"subdomains" | "exact"`, default `"subdomains"`).
 - **country**: Optional string (default `"None"`).
 
+## CLI Tool (reviewweb-cli)
+
+ReviewWeb.site also provides an official CLI tool for terminal-based access to all API features.
+
+### Install
+```bash
+npm install -g reviewweb-cli
+```
+
+### Authentication
+The CLI resolves API keys in order: `--api-key` flag → `RWEB_API_KEY` env var → config file (`rws config set api-key <key>`).
+
+### Commands
+
+| Command | Description |
+|---------|-------------|
+| `rws review create --url <url>` | Start AI-powered website review |
+| `rws review get <id>` | Get review by ID |
+| `rws review list` | List all reviews |
+| `rws convert markdown --url <url>` | Convert URL to Markdown |
+| `rws convert markdown-batch --urls <url1,url2>` | Batch convert URLs |
+| `rws extract data --url <url> --instructions <text> --template <json>` | Extract structured data |
+| `rws scrape url --url <url>` | Scrape URL content |
+| `rws scrape extract --url <url>` | Extract links from URL |
+| `rws summarize url --url <url>` | Summarize single URL |
+| `rws summarize website --url <url>` | Summarize entire website |
+| `rws seo backlinks --domain <domain>` | Get backlink data |
+| `rws seo keyword-ideas --keyword <kw>` | Get keyword ideas |
+| `rws seo keyword-difficulty --keyword <kw>` | Check keyword difficulty |
+| `rws seo traffic --domain <domain>` | Get traffic analysis |
+| `rws screenshot --url <url>` | Capture screenshot |
+| `rws url-check --url <url>` | Check if URL is alive |
+| `rws api-key create --name <name>` | Create API key |
+| `rws api-key list` | List API keys |
+| `rws health` | Check API status |
+| `rws profile` | View current user profile |
+| `rws config set <key> <value>` | Set config value |
+
+### Output Formats
+All commands support `--format <json|table|raw>`. Default: JSON.
+
+### Source
+GitHub: https://github.com/mrgoonie/rws-cli
+NPM: https://www.npmjs.com/package/reviewweb-cli
+
 ## Additional Notes
 - **Rate limits**: Not enforced in router code—apply at gateway if required.
 - **Swagger definition**: Generated via `swaggerOptions` in `src/config/swagger.ts`, scanning `src/routes/api/*.ts` for `@openapi`/`@swagger` annotations.
