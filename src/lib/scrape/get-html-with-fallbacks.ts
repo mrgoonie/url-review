@@ -225,7 +225,7 @@ export async function getHtmlWithFallbacks(url: string, options?: ScrapeOptions)
   if (isTwitterUrl(url)) {
     if (debug) console.log(`get-html-with-fallbacks.ts > Detected Twitter URL, using specialized handler`);
     try {
-      const html = await getTwitterHtml(url, { debug });
+      const html = await getTwitterHtml(url, { debug, includeReplies: true });
       if (debug) console.log(`get-html-with-fallbacks.ts > Successfully fetched Twitter content`);
       return opts.simpleHtml ? simplifyHtml(html) : html;
     } catch (error) {

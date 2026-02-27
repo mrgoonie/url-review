@@ -7,6 +7,7 @@
 import axios from "axios";
 
 import { env } from "@/env";
+import { getTwitterReplies, repliesToHtml, type TwitterReply } from "./get-twitter-replies";
 
 export interface TwitterContent {
   text: string;
@@ -27,6 +28,7 @@ export interface TwitterContent {
     views?: number;
   };
   createdAt?: string;
+  replies?: TwitterReply[];
   html: string; // Generated HTML representation
 }
 
@@ -108,6 +110,7 @@ function contentToHtml(content: TwitterContent): string {
           : ""
       }
     </footer>
+    ${content.replies?.length ? repliesToHtml(content.replies) : ""}
   </article>
 </body>
 </html>`;
@@ -293,6 +296,10 @@ async function fetchWithTwitter135(tweetId: string, debug?: boolean): Promise<Tw
 interface TwitterFetchOptions {
   debug?: boolean;
   timeout?: number;
+  /** Fetch replies using TwitterAPI.io (requires TWITTER_API_IO_KEY) */
+  includeReplies?: boolean;
+  /** Max replies to fetch (default: 20) */
+  repliesLimit?: number;
 }
 
 /**
@@ -323,6 +330,23 @@ export async function getTwitterContent(
     try {
       const content = await method.fn(tweetId, debug);
       if (debug) console.log(`get-twitter-content.ts > Successfully fetched with ${method.name}`);
+
+      // Fetch replies if requested and API key is available
+      if (options?.includeReplies && env.TWITTER_API_IO_KEY && tweetId) {
+        try {
+          const result = await getTwitterReplies(tweetId, {
+            limit: options.repliesLimit,
+            debug,
+          });
+          content.replies = result.replies;
+          // Re-generate HTML with replies included
+          content.html = contentToHtml(content);
+          if (debug) console.log(`get-twitter-content.ts > Fetched ${result.replies.length} replies`);
+        } catch (repliesError) {
+          if (debug) console.log(`get-twitter-content.ts > Failed to fetch replies: ${repliesError}`);
+        }
+      }
+
       return content;
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : String(error);

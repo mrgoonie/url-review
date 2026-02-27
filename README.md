@@ -38,7 +38,7 @@
 - **Auth:** Lucia (session-based with OAuth2)
 - **Validation:** Zod schemas
 - **Styling:** TailwindCSS
-- **Scraping:** Playwright + 5-method fallback chain
+- **Scraping:** Playwright + 5-method fallback chain + TwitterAPI.io (replies)
 - **AI:** OpenRouter (25+ LLM providers)
 
 ## Quick Start
@@ -253,6 +253,6 @@ See LICENSE file for details.
 
 ---
 
-**Last Updated:** 2025-12-10
+**Last Updated:** 2026-02-27
 **Repository:** git@github.com:mrgoonie/url-review.git
 **Demo:** https://reviewweb.site

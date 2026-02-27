@@ -47,6 +47,7 @@ export const envSchema = z.object({
   ELASTIC_EMAIL_APIKEY: z.string(),
   ELASTIC_EMAIL_FROM: z.string(),
   CAPSOLVER_API_KEY: z.string(),
+  TWITTER_API_IO_KEY: z.string().optional(),
 });
 export type Env = z.infer<typeof envSchema>;
 
@@ -93,6 +94,7 @@ export const env: Env = {
   ELASTIC_EMAIL_APIKEY: process.env["ELASTIC_EMAIL_APIKEY"]!,
   ELASTIC_EMAIL_FROM: process.env["ELASTIC_EMAIL_FROM"]!,
   CAPSOLVER_API_KEY: process.env["CAPSOLVER_API_KEY"]!,
+  TWITTER_API_IO_KEY: process.env["TWITTER_API_IO_KEY"],
 };
 
 const {
@@ -123,6 +125,7 @@ const {
   ELASTIC_EMAIL_APIKEY,
   ELASTIC_EMAIL_FROM,
   CAPSOLVER_API_KEY,
+  TWITTER_API_IO_KEY,
   ...clientEnv
 } = env;
 
