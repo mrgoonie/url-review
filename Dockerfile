@@ -2,8 +2,8 @@
 FROM node:20.15.1
 WORKDIR /usr/app
 
-# Install dependencies and Playwright
-RUN apt-get update && apt-get install -y python3 iputils-ping \
+# Install system deps, Python with pip, and Playwright browser libs
+RUN apt-get update && apt-get install -y python3 python3-pip iputils-ping \
   libgstreamer1.0-0 libgstreamer-plugins-base1.0-0 libgstreamer-plugins-bad1.0-0 \
   libwoff1 libopus0 libwebp7 libwebpdemux2 libenchant-2-2 libgudev-1.0-0 \
   libsecret-1-0 libhyphen0 libgdk-pixbuf2.0-0 libegl1 libnotify4 libxslt1.1 \
@@ -25,6 +25,9 @@ COPY prisma ./prisma
 
 # Install dependencies
 RUN bun install
+
+# Install Scrapling (stealth web scraper) and its browser
+RUN pip install --break-system-packages "scrapling[all]" && scrapling install
 
 # Install Playwright with PNPM
 # RUN pnpm exec playwright install --with-deps
