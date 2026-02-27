@@ -8,6 +8,7 @@ import { getHtmlWithAxios } from "./get-html-with-axios";
 import { getHtmlWithFirecrawl } from "./get-html-with-firecrawl";
 import { getHtmlContent } from "./get-html-with-playwright";
 import { getHtmlWithScrapedo } from "./get-html-with-scrapedo";
+import { getHtmlWithScrapling } from "./get-html-with-scrapling";
 import { getHtmlWithScrappey } from "./get-html-with-scrappey";
 import { getTwitterHtml, isTwitterUrl } from "./get-twitter-content";
 import { validateHtmlContent } from "./validate-html-content";
@@ -150,7 +151,18 @@ function createScrapeMethods(_options: ScrapeOptions): ScrapeMethod[] {
         return typeof html === "string" ? html : html.join("\n");
       },
     },
-    // 3. scrapedo - external service
+    // 3. scrapling - free stealth browser with anti-bot bypass
+    {
+      name: "scrapling",
+      isAvailable: () => true,
+      execute: async (url: string, opts: ScrapeOptions) => {
+        return getHtmlWithScrapling(url, {
+          timeout: opts.timeout,
+          debug: opts.debug,
+        });
+      },
+    },
+    // 4. scrapedo - external service
     {
       name: "scrapedo",
       isAvailable: () => !!env.SCRAPE_DO_API_KEY,
@@ -162,7 +174,7 @@ function createScrapeMethods(_options: ScrapeOptions): ScrapeMethod[] {
         });
       },
     },
-    // 4. scrappey - external service
+    // 5. scrappey - external service
     {
       name: "scrappey",
       isAvailable: () => !!env.RAPID_API_KEY,
@@ -175,7 +187,7 @@ function createScrapeMethods(_options: ScrapeOptions): ScrapeMethod[] {
         return typeof result === "string" ? result : JSON.stringify(result);
       },
     },
-    // 5. firecrawl - external service
+    // 6. firecrawl - external service
     {
       name: "firecrawl",
       isAvailable: () => !!env.FIRECRAWL_API_KEY,
@@ -197,9 +209,10 @@ function createScrapeMethods(_options: ScrapeOptions): ScrapeMethod[] {
  * Order of fallbacks:
  * 1. axios (fastest, but may fail with complex sites)
  * 2. playwright (more robust, but slower)
- * 3. scrapedo (external service, requires API key)
- * 4. scrappey (external service, requires API key)
- * 5. firecrawl (external service, requires API key)
+ * 3. scrapling (free stealth browser with anti-bot bypass)
+ * 4. scrapedo (external service, requires API key)
+ * 5. scrappey (external service, requires API key)
+ * 6. firecrawl (external service, requires API key)
  */
 export async function getHtmlWithFallbacks(url: string, options?: ScrapeOptions): Promise<string> {
   const debug = options?.debug ?? false;
