@@ -1,11 +1,11 @@
 <div class="px-6 py-20 flex flex-col items-center justify-center">
   <div class="w-full h-auto text-center max-w-screen-md">
-    <h2 class="text-3xl">Hi, <strong><%- user.name %></strong>!</h2>
-    <h1 class="font-bold py-4 text-6xl">Your Profile</h1>
+    <h2 class="text-3xl text-gray-800 dark:text-gray-200">Hi, <strong><%- user.name %></strong>!</h2>
+    <h1 class="font-bold py-4 text-6xl text-gray-900 dark:text-white">Your Profile</h1>
 
     <!-- PRICING PLANS -->
-    <div class="w-full border border-gray-200 dark:border-gray-700 rounded-2xl p-6 relative mb-8 shadow-lg dark:bg-gray-800 transition-all duration-300">
-      <h3 class="font-bold text-xl mb-6 text-center dark:text-white flex items-center justify-center">
+    <div class="w-full border border-gray-200 dark:border-gray-700 rounded-2xl p-6 relative mb-8 shadow-lg bg-white dark:bg-gray-800 transition-all duration-300">
+      <h3 class="font-bold text-xl mb-6 text-center text-gray-900 dark:text-white flex items-center justify-center">
         <i class="ri-price-tag-3-line mr-2"></i>Plans
       </h3>
 
@@ -70,7 +70,7 @@
 
             <!-- Action Button -->
             <% if(!isCurrentPlan) { %>
-            <a href="<%- plan.checkoutUrl %>" class="block w-full py-2 px-4 text-center rounded-lg <%= buttonClasses %>" target="_blank">
+            <a href="<%- plan.checkoutUrl %>" class="block w-full py-2 px-4 text-center rounded-lg no-underline <%= buttonClasses %>" target="_blank">
               <i class="ri-arrow-up-line mr-1"></i>Upgrade
             </a>
             <% } else { %>
@@ -85,8 +85,8 @@
     </div>
 
     <!-- API KEY -->
-    <div class="w-full border border-gray-100 dark:border-gray-700 rounded-2xl p-4 relative mb-10 shadow-xl dark:bg-gray-800">
-      <h3 class="font-bold mb-2">API keys</h3>
+    <div class="w-full border border-gray-100 dark:border-gray-700 rounded-2xl p-4 relative mb-10 shadow-xl bg-white dark:bg-gray-800">
+      <h3 class="font-bold mb-2 text-gray-900 dark:text-white">API keys</h3>
       <div class="flex gap-2 w-full" id="api-key-container">
         <script>
           function createNewApiKey() {

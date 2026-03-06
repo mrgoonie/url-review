@@ -19,6 +19,6 @@ module.exports = {
       },
     },
   },
-  darkMode: ["selector", "class"],
+  darkMode: ["selector", '[data-mode="dark"]'],
   plugins: [],
 };

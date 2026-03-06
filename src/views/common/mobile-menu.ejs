@@ -1,26 +1,26 @@
 <!-- side bar area  -->
-<div id="mobile-menu" class="md:hidden hidden bg-white dark:bg-gray-900 shadow-md">
+<div id="mobile-menu" class="md:hidden hidden bg-white dark:bg-gray-900 shadow-md border-b border-gray-200 dark:border-gray-700">
   <!-- mobile menu area start -->
   <div class="mobile-menu-main p-6 ">
     <nav class="nav-main mainmenu-nav">
       <ul class="space-y-4">
-        <li class="<%= path_name === "/" ? "text-blue-600 font-semibold" : "text-gray-600 hover:text-blue-600" %>">
-          <a href="/" class="block py-2 font-heading">Home</a>
+        <li class="<%= path_name === "/" ? "text-blue-600 dark:text-blue-400 font-semibold" : "text-gray-600 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400" %>">
+          <a href="/" class="block py-2 font-heading no-underline">Home</a>
         </li>
-        <li class="<%= path_name === "/pricing" ? "text-blue-600 font-semibold" : "text-gray-600 hover:text-blue-600" %>">
-          <a href="/pricing" class="block py-2 font-heading">Pricing</a>
+        <li class="<%= path_name === "/pricing" ? "text-blue-600 dark:text-blue-400 font-semibold" : "text-gray-600 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400" %>">
+          <a href="/pricing" class="block py-2 font-heading no-underline">Pricing</a>
         </li>
-        <li class="<%= path_name === "/mcp" ? "text-blue-600 font-semibold" : "text-gray-600 hover:text-blue-600" %>">
-          <a href="https://github.com/mrgoonie/reviewwebsite-mcp-server/" target="_blank" class="block py-2 font-heading">MCP</a>
+        <li class="<%= path_name === "/mcp" ? "text-blue-600 dark:text-blue-400 font-semibold" : "text-gray-600 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400" %>">
+          <a href="https://github.com/mrgoonie/reviewwebsite-mcp-server/" target="_blank" class="block py-2 font-heading no-underline">MCP</a>
         </li>
-        <li class="text-gray-600 hover:text-blue-600">
-          <a href="https://github.com/mrgoonie/rws-cli" target="_blank" class="block py-2 font-heading"><i class="ri-terminal-line mr-1"></i>CLI</a>
+        <li class="text-gray-600 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400">
+          <a href="https://github.com/mrgoonie/rws-cli" target="_blank" class="block py-2 font-heading no-underline"><i class="ri-terminal-line mr-1"></i>CLI</a>
         </li>
-        <li class="<%= path_name === "/contribute" ? "text-blue-600 font-semibold" : "text-gray-600 hover:text-blue-600" %>">
-          <a href="https://github.com/mrgoonie/url-review" target="_blank" class="block py-2 font-heading">Contribute</a>
+        <li class="<%= path_name === "/contribute" ? "text-blue-600 dark:text-blue-400 font-semibold" : "text-gray-600 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400" %>">
+          <a href="https://github.com/mrgoonie/url-review" target="_blank" class="block py-2 font-heading no-underline">Contribute</a>
         </li>
-        <li class="<%= path_name === "/api-docs" ? "text-blue-600 font-semibold" : "text-gray-600 hover:text-blue-600" %>">
-          <a href="/api-docs" class="block py-2 font-heading">API Docs</a>
+        <li class="<%= path_name === "/api-docs" ? "text-blue-600 dark:text-blue-400 font-semibold" : "text-gray-600 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400" %>">
+          <a href="/api-docs" class="block py-2 font-heading no-underline">API Docs</a>
         </li>
       </ul>
     </nav>
@@ -37,11 +37,11 @@
           </a>
         </span>
       </div>
-      <a href="/start-review" class="rts-btn btn-primary w-full text-center tippy" data-tippy-content="Start your review now!" data-tippy-placement="bottom">
+      <a href="/start-review" class="block w-full text-center no-underline px-6 py-3 bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-400 text-white rounded-lg tippy" data-tippy-content="Start your review now!" data-tippy-placement="bottom">
         <i class="ri-rocket-2-line mr-2"></i> Start Review
       </a>
       <% } else { %>
-      <a href="/login" class="rts-btn btn-primary w-full text-center">Get Started</a>
+      <a href="/login" class="block w-full text-center no-underline px-6 py-3 bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-400 text-white rounded-lg">Get Started</a>
       <% } %>
     </div>
 
