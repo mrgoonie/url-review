@@ -2,15 +2,15 @@
   const user = <%- user ? JSON.stringify(user) : 'null' %>;
 </script>
 <div class="px-6 py-20 flex flex-col items-center justify-center">
-  <div class="text-center bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 border border-gray-100 dark:border-gray-700">
-    <h1 class="font-bold text-gray-800 dark:text-gray-200">FREE Website Review AI Tool & API</h1>
+  <div class="text-center bg-white dark:bg-gray-800 rounded-2xl shadow-2xl dark:shadow-black/30 p-8 border border-gray-100 dark:border-gray-700">
+    <h1 class="font-bold text-gray-800 dark:text-white">FREE Website Review AI Tool & API</h1>
     <p class="text-gray-600 dark:text-gray-400">ReviewWeb.site is a tool that utilizes AI to helps you to scan through the websites and provide feedbacks based on the content.</p>
     <div class="flex flex-col gap-4">
-      <h2 class="mb-2">Examples</h2>
+      <h2 class="mb-2 text-gray-900 dark:text-white">Examples</h2>
       <!-- Check appropriated website -->
       <div class="w-full max-w-2xl mx-auto p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
-        <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
-          <i class="ri-checkbox-circle-line"></i>
+        <h3 class="text-lg font-semibold mb-4 flex items-center gap-2 text-gray-900 dark:text-white">
+          <i class="ri-checkbox-circle-line text-blue-500"></i>
           Check appropriated website
           </h2>
           <form id="reviewForm" class="space-y-4">
@@ -18,9 +18,9 @@
               <div class="flex gap-2">
                 <div class="relative flex-1">
                   <i class="ri-link absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                  <input type="url" id="websiteUrl" name="url" class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="https://example.com" required />
+                  <input type="url" id="websiteUrl" name="url" class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white" placeholder="https://example.com" required />
                 </div>
-                <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 flex items-center gap-2">
+                <button type="submit" class="px-6 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 flex items-center gap-2">
                   <i class="ri-search-line"></i>
                   Review
                 </button>
@@ -42,16 +42,16 @@
       </div>
       <!-- Scan all broken links of website -->
       <div class="w-full max-w-2xl mx-auto p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
-        <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
-          <i class="ri-link-unlink-m"></i>
+        <h3 class="text-lg font-semibold mb-4 flex items-center gap-2 text-gray-900 dark:text-white">
+          <i class="ri-link-unlink-m text-blue-500"></i>
           Scan Broken Links
           </h2>
           <form id="broken-links-form" class="flex gap-2">
             <div class="relative flex-1">
               <i class="ri-link absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-              <input type="url" name="url" placeholder="Enter website URL" class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="https://example.com" required>
+              <input type="url" name="url" class="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white" placeholder="https://example.com" required>
             </div>
-            <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 flex items-center gap-2">
+            <button type="submit" class="px-6 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 flex items-center gap-2">
               <span class="default-text"><i class="ri-search-line"></i> Scan</span>
               <span class="loading-text hidden">
                 <i class="ri-loader-4-line animate-spin"></i>
@@ -63,18 +63,18 @@
 
       <div class="flex flex-wrap justify-center items-center gap-2">
         <% if (!user) { %>
-        <a href="/login" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        <a href="/login" class="no-underline bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-400 text-white font-bold py-2 px-4 rounded">
           <i class="ri-login-box-line mr-1"></i> Login
         </a>
         <% } else { %>
-        <a href="/logout" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+        <a href="/logout" class="no-underline bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
           <i class="ri-logout-box-line mr-1"></i> Logout
         </a>
         <% } %>
-        <a href="/api-docs" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+        <a href="/api-docs" class="no-underline bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
           <i class="ri-book-open-line mr-1"></i> API Docs
         </a>
-        <a href="https://github.com/mrgoonie/url-review" target="_blank" class="bg-black hover:bg-gray-800 text-white font-bold py-2 px-4 rounded">
+        <a href="https://github.com/mrgoonie/url-review" target="_blank" class="no-underline bg-gray-800 dark:bg-gray-700 hover:bg-gray-700 dark:hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
           <i class="ri-github-line mr-1"></i> Contribute
         </a>
       </div>

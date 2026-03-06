@@ -8,8 +8,8 @@
     (function() {
       function getInitialTheme() {
         const savedTheme = localStorage.getItem('theme');
-        const systemDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        return savedTheme === 'dark' || (!savedTheme && systemDarkMode) ? 'dark' : 'light';
+        if (savedTheme) return savedTheme;
+        return 'dark';
       }
       const theme = getInitialTheme();
       document.documentElement.setAttribute('data-mode', theme);
@@ -19,7 +19,7 @@
 
 <!-- BODY -->
 
-<body class="w-full ">
+<body class="w-full bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100">
   <!-- HEADER -->
   <% if (typeof locals.headerEnabled === 'undefined' || locals.headerEnabled) { %>
   <%- include('common/header', locals) %>

@@ -30,7 +30,7 @@
     @apply text-lg;
   }
   a {
-    @apply text-blue-600 dark:text-blue-400;
+    @apply text-blue-500 dark:text-blue-400;
   }
   p {
     @apply mt-4 mb-8;
@@ -84,4 +84,33 @@
 }
 .group-ad-category.active {
   @apply bg-brand-secondary text-white;
+}
+
+/* Dark-first theme CSS custom properties */
+:root {
+  --color-bg-primary: #030712;    /* gray-950 */
+  --color-bg-surface: #1f2937;    /* gray-800 */
+  --color-accent: #3B82F6;        /* blue-500 */
+  --color-accent-hover: #60A5FA;  /* blue-400 */
+  --color-text-primary: #f3f4f6;  /* gray-100 */
+  --color-text-secondary: #9ca3af; /* gray-400 */
+  --color-border: #374151;        /* gray-700 */
+}
+[data-mode="light"] {
+  --color-bg-primary: #ffffff;
+  --color-bg-surface: #f9fafb;    /* gray-50 */
+  --color-accent: #2563EB;        /* blue-600 */
+  --color-accent-hover: #1d4ed8;  /* blue-700 */
+  --color-text-primary: #111827;  /* gray-900 */
+  --color-text-secondary: #4b5563; /* gray-600 */
+  --color-border: #e5e7eb;        /* gray-200 */
+}
+
+/* Loader dark theme */
+.loader-wrapper {
+  background-color: var(--color-bg-primary);
+}
+.loader {
+  border-color: var(--color-accent);
+  border-top-color: transparent;
 }
