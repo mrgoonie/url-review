@@ -10,6 +10,7 @@ import { getHtmlContent } from "./get-html-with-playwright";
 import { getHtmlWithScrapedo } from "./get-html-with-scrapedo";
 import { getHtmlWithScrapling } from "./get-html-with-scrapling";
 import { getHtmlWithScrappey } from "./get-html-with-scrappey";
+import { getFacebookHtml, isFacebookUrl } from "./get-facebook-content";
 import { getTwitterHtml, isTwitterUrl } from "./get-twitter-content";
 import { validateHtmlContent } from "./validate-html-content";
 
@@ -232,6 +233,19 @@ export async function getHtmlWithFallbacks(url: string, options?: ScrapeOptions)
       const errorMsg = error instanceof Error ? error.message : String(error);
       if (debug) console.log(`get-html-with-fallbacks.ts > Twitter handler failed: ${errorMsg}, falling back to generic methods`);
       // Continue to generic fallback methods if Twitter-specific methods fail
+    }
+  }
+
+  // Special handling for Facebook URLs - use specialized Facebook fetcher first
+  if (isFacebookUrl(url)) {
+    if (debug) console.log(`get-html-with-fallbacks.ts > Detected Facebook URL, using specialized handler`);
+    try {
+      const html = await getFacebookHtml(url, { debug });
+      if (debug) console.log(`get-html-with-fallbacks.ts > Successfully fetched Facebook content`);
+      return opts.simpleHtml ? simplifyHtml(html) : html;
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : String(error);
+      if (debug) console.log(`get-html-with-fallbacks.ts > Facebook handler failed: ${errorMsg}, falling back to generic methods`);
     }
   }
 
