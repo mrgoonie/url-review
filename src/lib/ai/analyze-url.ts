@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { z } from "zod";
 
-import { getHtmlWithFallbacks } from "../scrape";
+import { extractContentWithDefuddle, getHtmlWithFallbacks, type DefuddleMetadata } from "../scrape";
 import { isUrlAlive } from "../utils";
 import { type AskAiParams, type AskAiResponse, fetchAi, TextModelSchema } from "./fetch-ai";
 import { validateJson } from "./json-validator";
@@ -162,28 +162,33 @@ export async function analyzeUrl(input: AnalyzeUrlInput, options?: AnalyzeUrlOpt
 
   // Fetch website content
   let websiteContent = "";
+  let defuddleMetadata: DefuddleMetadata | undefined;
   try {
     const htmlContent = await getHtmlWithFallbacks(validatedInput.url, {
       delayAfterLoad: validatedOptions?.delayAfterLoad ?? 3000,
       debug: validatedOptions?.debug,
     });
 
-    // Remove HTML tags and trim
-    websiteContent = htmlContent.replace(/<[^>]*>/g, "").trim();
-
-    // Limit content length to prevent excessive token usage
-    // websiteContent = websiteContent.slice(0, 15000);
+    // Extract main content with Defuddle (removes nav, ads, sidebar, footer)
+    // Falls back to regex tag stripping if Defuddle fails
+    try {
+      const defuddleResult = await extractContentWithDefuddle(htmlContent, validatedInput.url);
+      websiteContent = defuddleResult.content;
+      defuddleMetadata = defuddleResult.metadata;
+    } catch (defuddleError) {
+      console.warn(
+        `analyzeUrl.ts > Defuddle failed, falling back to tag stripping:`,
+        defuddleError instanceof Error ? defuddleError.message : String(defuddleError)
+      );
+      websiteContent = htmlContent.replace(/<[^>]*>/g, "").trim();
+    }
   } catch (error) {
     throw new Error(
       `Failed to fetch website content: ${error instanceof Error ? error.message : "Unknown error"}`
     );
   }
 
-  // if (validatedOptions?.debug) {
-  //   console.log(`analyzeUrl.ts > analyzeUrl() > websiteContent :>>`, websiteContent);
-  // }
-
-  return await analyzeHtml(
+  const aiResult = await analyzeHtml(
     {
       websiteContent,
       systemPrompt: validatedInput.systemPrompt,
@@ -191,4 +196,6 @@ export async function analyzeUrl(input: AnalyzeUrlInput, options?: AnalyzeUrlOpt
     },
     validatedOptions
   );
+
+  return { ...aiResult, metadata: defuddleMetadata };
 }

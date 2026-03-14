@@ -1,4 +1,5 @@
 import { analyzeUrl } from "@/lib/ai";
+import type { DefuddleMetadata } from "@/lib/scrape";
 
 import type { ConvertWebUrlOptions } from "./convert-schemas";
 
@@ -50,12 +51,13 @@ export async function convertUrlToMarkdown(url: string, options?: ConvertWebUrlO
     }
   );
 
-  // Return the markdown content
+  // Return the markdown content with Defuddle metadata (extracted without LLM cost)
   return {
     url,
     markdown: result.data,
     model: result.model,
     usage: result.usage,
+    metadata: result.metadata,
   };
 }
 
@@ -88,6 +90,7 @@ export async function convertMultipleUrlsToMarkdown(
     error?: string;
     usage?: { total_tokens: number; prompt_tokens: number; completion_tokens: number };
     model?: string;
+    metadata?: DefuddleMetadata;
   };
 
   const allResults: ConversionResult[] = [];
@@ -103,6 +106,7 @@ export async function convertMultipleUrlsToMarkdown(
             markdown: result.markdown,
             usage: result.usage,
             model: result.model,
+            metadata: result.metadata,
           };
         } catch (error) {
           console.error(

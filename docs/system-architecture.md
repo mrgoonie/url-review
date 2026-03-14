@@ -154,6 +154,7 @@ User Request: POST /api/v1/review
               │       ├─ playwright (full browser)
               │       ├─ scrapedo (anti-detect)
               │       └─ scrappey (proxy)
+              │   └─ Defuddle extraction (clean main content + metadata)
               │
               ├─ Step 5: Extract metadata
               │   └─ metadata.scrapeMetadata()
@@ -163,8 +164,9 @@ User Request: POST /api/v1/review
               │       └─ Standard tags
               │
               ├─ Step 6: AI HTML analysis
-              │   └─ ai.analyzeUrl(html)
+              │   └─ ai.analyzeUrl(html) with clean Defuddle content
               │       └─ OpenRouter (text model)
+              │       └─ Metadata enrichment from Defuddle extraction
               │
               ├─ Step 7: Screenshot analysis
               │   └─ ai.analyzeImageBase64(screenshot)
@@ -202,15 +204,18 @@ Input: URL
   │
   ├─ SCRAPING PATH
   │  ├─ getHtmlWithFallbacks()
-  │  ├─ HTML simplification (remove scripts/styles)
+  │  ├─ Defuddle extraction (main content + metadata)
+  │  ├─ HTML simplification fallback (remove scripts/styles)
   │  └─ Blocked website detection
   │
   ├─ SUMMARIZATION PATH
-  │  ├─ analyzeUrl() with summarization prompt
+  │  ├─ analyzeUrl() with clean Defuddle content
+  │  ├─ summarization prompt
   │  └─ Format: bullet or paragraph
   │
   ├─ CONVERSION PATH
-  │  ├─ analyzeUrl() with conversion prompt
+  │  ├─ analyzeUrl() with clean Defuddle content
+  │  ├─ conversion prompt
   │  └─ Output: Markdown format
   │
   └─ EXTRACTION PATH

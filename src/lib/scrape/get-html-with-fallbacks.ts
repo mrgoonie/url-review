@@ -4,6 +4,7 @@ import * as cheerio from "cheerio";
 import { env } from "@/env";
 import { wait } from "@/lib/utils/wait";
 
+import { extractContentWithDefuddle } from "./extract-content-with-defuddle";
 import { getHtmlWithAxios } from "./get-html-with-axios";
 import { getHtmlWithFirecrawl } from "./get-html-with-firecrawl";
 import { getHtmlContent } from "./get-html-with-playwright";
@@ -95,6 +96,23 @@ function simplifyHtml(html: string): string {
   } catch (error) {
     console.error("Error simplifying HTML:", error);
     return html; // Return original HTML if simplification fails
+  }
+}
+
+/**
+ * Extract main content using Defuddle (intelligent content isolation),
+ * falling back to simplifyHtml (tag stripping) on failure.
+ */
+async function extractOrSimplifyHtml(html: string, url: string): Promise<string> {
+  try {
+    const result = await extractContentWithDefuddle(html, url);
+    return result.content;
+  } catch (error) {
+    console.warn(
+      `get-html-with-fallbacks.ts > Defuddle extraction failed, falling back to simplifyHtml:`,
+      error instanceof Error ? error.message : String(error)
+    );
+    return simplifyHtml(html);
   }
 }
 
@@ -228,7 +246,7 @@ export async function getHtmlWithFallbacks(url: string, options?: ScrapeOptions)
     try {
       const html = await getTwitterHtml(url, { debug, includeReplies: true });
       if (debug) console.log(`get-html-with-fallbacks.ts > Successfully fetched Twitter content`);
-      return opts.simpleHtml ? simplifyHtml(html) : html;
+      return opts.simpleHtml ? await extractOrSimplifyHtml(html, url) : html;
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : String(error);
       if (debug) console.log(`get-html-with-fallbacks.ts > Twitter handler failed: ${errorMsg}, falling back to generic methods`);
@@ -242,7 +260,7 @@ export async function getHtmlWithFallbacks(url: string, options?: ScrapeOptions)
     try {
       const html = await getFacebookHtml(url, { debug });
       if (debug) console.log(`get-html-with-fallbacks.ts > Successfully fetched Facebook content`);
-      return opts.simpleHtml ? simplifyHtml(html) : html;
+      return opts.simpleHtml ? await extractOrSimplifyHtml(html, url) : html;
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : String(error);
       if (debug) console.log(`get-html-with-fallbacks.ts > Facebook handler failed: ${errorMsg}, falling back to generic methods`);
@@ -287,7 +305,7 @@ export async function getHtmlWithFallbacks(url: string, options?: ScrapeOptions)
             `get-html-with-fallbacks.ts > STEP ${stepNum}: Successfully fetched HTML with ${method.name}`
           );
         }
-        return opts.simpleHtml ? simplifyHtml(html) : html;
+        return opts.simpleHtml ? await extractOrSimplifyHtml(html, url) : html;
       }
 
       // Invalid HTML - log reason and continue to next method
