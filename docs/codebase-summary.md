@@ -432,12 +432,16 @@ Implements 10-step analysis workflow:
 
 ---
 
-### Web Scraping (6 files)
+### Web Scraping (7 files)
 **Location:** `src/lib/scrape/`
 
 **Orchestrator:** `get-html-with-fallbacks.ts`
 
-**Methods (in priority order):**
+**Content Extraction:**
+1. `extract-content-with-defuddle.ts` - Pre-LLM main content extraction (NEW)
+2. HTML simplification with Defuddle fallback
+
+**Scraping Methods (in priority order):**
 1. `get-html-with-axios.ts` - Lightweight HTTP
 2. `get-html-with-firecrawl.ts` - JS rendering
 3. `get-html-with-playwright.ts` - Full browser
@@ -446,10 +450,11 @@ Implements 10-step analysis workflow:
 
 **Features:**
 - Automatic fallback on failure
+- Defuddle pre-LLM content extraction with metadata enrichment (NEW)
 - HTML simplification (removes unnecessary DOM)
 - Blocked website detection across all methods
 - Configurable timeout and retry
-- Token reduction for LLM processing
+- Token reduction for LLM processing (60-75% reduction with Defuddle)
 
 ---
 
@@ -833,6 +838,8 @@ POST /api/v1/summarize/website { url }
 - ioredis - Redis client
 - dayjs - Date handling
 - cheerio - HTML parsing
+- defuddle - Pre-LLM content extraction (NEW)
+- linkedom - Lightweight DOM implementation for Defuddle (NEW)
 
 ### Development Dependencies
 - typescript - Type checking
