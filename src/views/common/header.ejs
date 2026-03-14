@@ -1,36 +1,34 @@
 <!-- header area start -->
-<header class="header-style-one header--sticky <%= typeof page_slug !== 'undefined' ? page_slug : '' %> bg-white dark:bg-gray-900 shadow-sm">
+<header class="header-style-one header--sticky <%= typeof page_slug !== 'undefined' ? page_slug : '' %> bg-white dark:bg-gray-900 shadow-sm dark:shadow-lg dark:shadow-black/20 border-b border-gray-200 dark:border-gray-800">
   <div class="container mx-auto px-4">
     <div class="flex items-center justify-between py-4">
       <div class="logo-area">
-        <a href="/" class="logo flex items-center">
+        <a href="/" class="logo flex items-center text-gray-900 dark:text-white no-underline">
           <i class="ri-rocket-line mr-2"></i> ReviewWeb.site
-          <!-- <img class="light w-36 dark:hidden" src="/images/brand/boost-together-logo-colorful.svg" alt="logo">
-          <img class="dark hidden dark:block w-36" src="/images/brand/boost-together-logo-colorful.svg" alt="logo"> -->
         </a>
       </div>
       <nav class="hidden md:block">
         <ul class="flex space-x-6">
-          <li class="<%= path_name === "/" ? "text-blue-600 font-semibold" : "text-gray-600 hover:text-blue-600" %>">
-            <a href="/" class="transition-colors duration-300">Home</a>
+          <li class="<%= path_name === "/" ? "text-blue-600 dark:text-blue-500 font-semibold" : "text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400" %>">
+            <a href="/" class="transition-colors duration-300 no-underline">Home</a>
           </li>
-          <li class="<%= path_name === "/pricing" ? "text-blue-600 font-semibold" : "text-gray-600 hover:text-blue-600" %>">
-            <a href="/pricing" class="transition-colors duration-300">Pricing</a>
+          <li class="<%= path_name === "/pricing" ? "text-blue-600 dark:text-blue-500 font-semibold" : "text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400" %>">
+            <a href="/pricing" class="transition-colors duration-300 no-underline">Pricing</a>
           </li>
-          <li class="<%= path_name === "/mcp" ? "text-blue-600 font-semibold" : "text-gray-600 hover:text-blue-600" %>">
-            <a href="https://github.com/mrgoonie/reviewwebsite-mcp-server/" target="_blank" class="transition-colors duration-300">MCP</a>
+          <li class="<%= path_name === "/mcp" ? "text-blue-600 dark:text-blue-500 font-semibold" : "text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400" %>">
+            <a href="https://github.com/mrgoonie/reviewwebsite-mcp-server/" target="_blank" class="transition-colors duration-300 no-underline">MCP</a>
           </li>
-          <li class="<%= path_name === "/api-docs" ? "text-blue-600 font-semibold" : "text-gray-600 hover:text-blue-600" %>">
-            <a href="/api-docs" class="transition-colors duration-300">API Docs</a>
+          <li class="<%= path_name === "/api-docs" ? "text-blue-600 dark:text-blue-500 font-semibold" : "text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400" %>">
+            <a href="/api-docs" class="transition-colors duration-300 no-underline">API Docs</a>
           </li>
-          <li class="<%= path_name === "/llms.txt" ? "text-blue-600 font-semibold" : "text-gray-600 hover:text-blue-600" %>">
-            <a href="/llms.txt" class="transition-colors duration-300">llms.txt</a>
+          <li class="<%= path_name === "/llms.txt" ? "text-blue-600 dark:text-blue-500 font-semibold" : "text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400" %>">
+            <a href="/llms.txt" class="transition-colors duration-300 no-underline">llms.txt</a>
           </li>
-          <li class="">
-            <a href="https://github.com/mrgoonie/rws-cli" target="_blank" class="transition-colors duration-300"><i class="ri-terminal-line mr-1"></i>CLI</a>
+          <li class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
+            <a href="https://github.com/mrgoonie/rws-cli" target="_blank" class="transition-colors duration-300 no-underline"><i class="ri-terminal-line mr-1"></i>CLI</a>
           </li>
-          <li class="">
-            <a href="https://github.com/mrgoonie/url-review" target="_blank" class="transition-colors duration-300"><i class="ri-github-line mr-1"></i>Contribute</a>
+          <li class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
+            <a href="https://github.com/mrgoonie/url-review" target="_blank" class="transition-colors duration-300 no-underline"><i class="ri-github-line mr-1"></i>Contribute</a>
           </li>
         </ul>
       </nav>
@@ -47,7 +45,7 @@
           </span>
         </div>
         <% } else { %>
-        <a href="/login" class="rts-btn btn-primary"><i class="ri-login-box-line mr-2"></i>Get Started</a>
+        <a href="/login" class="no-underline px-6 py-2 bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-400 text-white rounded-lg transition-colors"><i class="ri-login-box-line mr-2"></i>Get Started</a>
         <% } %>
 
         <!-- Mobile menu button -->
