@@ -1,3 +1,4 @@
+export * from "./extract-content-with-defuddle";
 export * from "./get-html-with-axios";
 export * from "./get-html-with-fallbacks";
 export * from "./get-html-with-firecrawl";
