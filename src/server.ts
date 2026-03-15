@@ -90,7 +90,7 @@ app.get("/", (req, res) => {
 });
 
 // Legacy route redirects (301 for SEO)
-const legacyRoutes = ["/pricing", "/login", "/profile", "/payment-success", "/privacy", "/404"];
+const legacyRoutes = ["/pricing", "/profile", "/payment-success", "/privacy", "/404"];
 for (const route of legacyRoutes) {
   app.get(route, (req, res) => {
     const lang = req.cookies?.lang || DEFAULT_LANG;
