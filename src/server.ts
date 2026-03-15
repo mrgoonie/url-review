@@ -120,7 +120,7 @@ app.get("/checkout/confirmation", (req, res) => {
   );
 });
 
-// swagger (must be before /:lang catch-all)
+// swagger
 const specs = swaggerJSDoc(swaggerOptions());
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
