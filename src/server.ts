@@ -120,12 +120,12 @@ app.get("/checkout/confirmation", (req, res) => {
   );
 });
 
-// Mount pageRouter under /:lang with i18n middleware
-app.use("/:lang", i18nMiddleware, pageRouter);
-
-// swagger
+// swagger (must be before /:lang catch-all)
 const specs = swaggerJSDoc(swaggerOptions());
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
+
+// Mount pageRouter under /:lang with i18n middleware
+app.use("/:lang", i18nMiddleware, pageRouter);
 
 // error handler
 app.use((error: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
