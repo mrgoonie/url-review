@@ -186,7 +186,10 @@ export async function getFacebookContent(
  * Get HTML content from Facebook URL
  * This is the function that integrates with get-html-with-fallbacks
  */
-export async function getFacebookHtml(url: string, options?: FacebookFetchOptions): Promise<string> {
+export async function getFacebookHtml(
+  url: string,
+  options?: FacebookFetchOptions
+): Promise<string> {
   const content = await getFacebookContent(url, options);
   return content.html;
 }

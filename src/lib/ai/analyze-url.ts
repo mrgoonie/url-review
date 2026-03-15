@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { z } from "zod";
 
-import { extractContentWithDefuddle, getHtmlWithFallbacks, type DefuddleMetadata } from "../scrape";
+import { type DefuddleMetadata,extractContentWithDefuddle, getHtmlWithFallbacks } from "../scrape";
 import { isUrlAlive } from "../utils";
 import { type AskAiParams, type AskAiResponse, fetchAi, TextModelSchema } from "./fetch-ai";
 import { validateJson } from "./json-validator";

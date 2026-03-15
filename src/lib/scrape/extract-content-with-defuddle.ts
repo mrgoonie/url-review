@@ -1,5 +1,5 @@
-import { Defuddle } from "defuddle/node";
 import type { DefuddleResponse } from "defuddle/node";
+import { Defuddle } from "defuddle/node";
 
 /** Metadata extracted by Defuddle deterministically (no LLM cost) */
 export interface DefuddleMetadata {
