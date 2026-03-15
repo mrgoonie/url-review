@@ -1,7 +1,9 @@
-<div class="min-h-screen bg-gray-50 dark:bg-gray-900">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<%- include('../components/breadcrumbs', { crumbs: [{ label: typeof t === 'function' ? t('nav.home') : 'Home', path: '/' }, { label: typeof t === 'function' ? t('review.title') : 'Review' }] }) %>
+
+<section class="py-8 md:py-12">
+  <div class="section-container">
     <!-- Review Header -->
-    <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 mb-6">
+    <div class="glass-card p-6 mb-6">
       <div class="flex items-center justify-between mb-4">
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Website Review</h1>
         <span class="px-3 py-1 text-sm rounded-full <%= review.status === 'COMPLETED' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : review.status === 'FAILED' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' %>">
@@ -11,7 +13,7 @@
       <div class="text-gray-600 dark:text-gray-300">
         <div class="flex items-center gap-2 mb-2">
           <i class="ri-link text-gray-400"></i>
-          <a href="<%= review.url %>" target="_blank" class="hover:text-blue-500 break-all"><%= review.url %></a>
+          <a href="<%= review.url %>" target="_blank" class="hover:text-brand-orange-500 break-all"><%= review.url %></a>
         </div>
         <% if (review.instructions) { %>
         <div class="flex items-start gap-2 mt-4">
@@ -25,7 +27,7 @@
     <% if (review.status === 'COMPLETED') { %>
     <!-- AI Analysis -->
     <% if (review.aiAnalysis) { %>
-    <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 mb-6">
+    <div class="glass-card p-6 mb-6">
       <!-- HTML Analysis -->
       <% if (review.aiAnalysis.html && review.aiAnalysis.html.data) { %>
       <div class="mb-8">
@@ -189,8 +191,6 @@
       </div>
       <% } %>
 
-
-
       <!-- Model Usage Information -->
       <div class="mt-8 pt-6 border-t dark:border-gray-700">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -219,10 +219,9 @@
     </div>
     <% } %>
 
-
     <!-- Screenshots -->
     <% if (review.screenshots && review.screenshots.length > 0) { %>
-    <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+    <div class="glass-card p-6">
       <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Screenshots</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <% review.screenshots.forEach(function(screenshot) { %>
@@ -254,7 +253,7 @@
 
     <% } else if (review.status === 'FAILED') { %>
     <!-- Error Message -->
-    <div class="bg-red-50 dark:bg-red-900 border-l-4 border-red-400 p-4 mb-6">
+    <div class="glass-card p-6 border-l-4 border-red-400 mb-6">
       <div class="flex">
         <div class="flex-shrink-0">
           <i class="ri-error-warning-line text-red-400 text-xl"></i>
@@ -269,7 +268,7 @@
     </div>
     <% } else { %>
     <!-- Loading State -->
-    <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+    <div class="glass-card p-6">
       <div class="animate-pulse space-y-4">
         <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
         <div class="space-y-2">
@@ -280,4 +279,4 @@
     </div>
     <% } %>
   </div>
-</div>
+</section>

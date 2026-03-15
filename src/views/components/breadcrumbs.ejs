@@ -1,0 +1,22 @@
+<% const items = locals.crumbs || []; %>
+<% if (items.length > 0) { %>
+<nav aria-label="Breadcrumb" class="section-container py-4">
+  <ol class="flex items-center gap-2 text-sm" itemscope itemtype="https://schema.org/BreadcrumbList">
+    <% items.forEach(function(crumb, i) { %>
+    <li class="flex items-center gap-2" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+      <% if (crumb.path && i < items.length - 1) { %>
+        <a href="<%= localePath(crumb.path) %>" itemprop="item" class="text-gray-500 hover:text-brand-orange-500 transition-colors no-underline">
+          <span itemprop="name"><%= crumb.label %></span>
+        </a>
+      <% } else { %>
+        <span itemprop="name" class="text-gray-900 dark:text-white font-medium"><%= crumb.label %></span>
+      <% } %>
+      <meta itemprop="position" content="<%= i + 1 %>" />
+      <% if (i < items.length - 1) { %>
+        <i class="ri-arrow-right-s-line text-gray-400 text-xs"></i>
+      <% } %>
+    </li>
+    <% }) %>
+  </ol>
+</nav>
+<% } %>

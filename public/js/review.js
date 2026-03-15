@@ -1,3 +1,8 @@
+function getLangPrefix() {
+  const match = window.location.pathname.match(/^\/(en|vi)/);
+  return match ? '/' + match[1] : '/en';
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const reviewForm = document.getElementById('reviewForm');
   const urlInput = document.getElementById('websiteUrl');
@@ -9,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Check login
     if (!user) {
-      window.location.href = '/login';
+      window.location.href = getLangPrefix() + '/login';
       return;
     }
 
@@ -55,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Redirect to review page or show success message
       if (data.data?.id) {
-        window.location.href = `/review/${data.data.id}`;
+        window.location.href = getLangPrefix() + '/review/' + data.data.id;
       }
     } catch (error) {
       urlError.textContent = error.message || 'An error occurred while processing your request';

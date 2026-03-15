@@ -1,61 +1,63 @@
-<!-- header area start -->
-<header class="header-style-one header--sticky <%= typeof page_slug !== 'undefined' ? page_slug : '' %> bg-white dark:bg-gray-900 shadow-sm dark:shadow-lg dark:shadow-black/20 border-b border-gray-200 dark:border-gray-800">
-  <div class="container mx-auto px-4">
-    <div class="flex items-center justify-between py-4">
-      <div class="logo-area">
-        <a href="/" class="logo flex items-center text-gray-900 dark:text-white no-underline">
-          <i class="ri-rocket-line mr-2"></i> ReviewWeb.site
-        </a>
-      </div>
-      <nav class="hidden md:block">
-        <ul class="flex space-x-6">
-          <li class="<%= path_name === "/" ? "text-blue-600 dark:text-blue-500 font-semibold" : "text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400" %>">
-            <a href="/" class="transition-colors duration-300 no-underline">Home</a>
-          </li>
-          <li class="<%= path_name === "/pricing" ? "text-blue-600 dark:text-blue-500 font-semibold" : "text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400" %>">
-            <a href="/pricing" class="transition-colors duration-300 no-underline">Pricing</a>
-          </li>
-          <li class="<%= path_name === "/mcp" ? "text-blue-600 dark:text-blue-500 font-semibold" : "text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400" %>">
-            <a href="https://github.com/mrgoonie/reviewwebsite-mcp-server/" target="_blank" class="transition-colors duration-300 no-underline">MCP</a>
-          </li>
-          <li class="<%= path_name === "/api-docs" ? "text-blue-600 dark:text-blue-500 font-semibold" : "text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400" %>">
-            <a href="/api-docs" class="transition-colors duration-300 no-underline">API Docs</a>
-          </li>
-          <li class="<%= path_name === "/llms.txt" ? "text-blue-600 dark:text-blue-500 font-semibold" : "text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400" %>">
-            <a href="/llms.txt" class="transition-colors duration-300 no-underline">llms.txt</a>
-          </li>
-          <li class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
-            <a href="https://github.com/mrgoonie/rws-cli" target="_blank" class="transition-colors duration-300 no-underline"><i class="ri-terminal-line mr-1"></i>CLI</a>
-          </li>
-          <li class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
-            <a href="https://github.com/mrgoonie/url-review" target="_blank" class="transition-colors duration-300 no-underline"><i class="ri-github-line mr-1"></i>Contribute</a>
-          </li>
-        </ul>
+<header class="sticky top-0 z-50 w-full bg-white/80 dark:bg-gray-950/80 backdrop-blur-lg border-b border-gray-200/50 dark:border-gray-800/50 transition-all duration-300">
+  <div class="section-container">
+    <div class="flex items-center justify-between h-16 md:h-18">
+      <a href="<%= typeof localePath === 'function' ? localePath('/') : '/' %>" class="flex items-center gap-2 no-underline group">
+        <div class="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center">
+          <i class="ri-rocket-line text-white text-lg"></i>
+        </div>
+        <span class="font-heading font-bold text-xl text-gray-900 dark:text-white group-hover:text-brand-orange-500 transition-colors">
+          ReviewWeb<span class="text-brand-orange-500">.site</span>
+        </span>
+      </a>
+
+      <nav class="hidden lg:flex items-center gap-1" aria-label="Main navigation">
+        <%
+          const navItems = [
+            { key: 'home', path: '/', label: typeof t === 'function' ? t('nav.home') : 'Home' },
+            { key: 'pricing', path: '/pricing', label: typeof t === 'function' ? t('nav.pricing') : 'Pricing' },
+            { key: 'apiDocs', path: '/api-docs', label: typeof t === 'function' ? t('nav.apiDocs') : 'API Docs', noLang: true },
+            { key: 'mcp', path: 'https://github.com/mrgoonie/reviewwebsite-mcp-server/', label: typeof t === 'function' ? t('nav.mcp') : 'MCP', external: true },
+            { key: 'cli', path: 'https://github.com/mrgoonie/rws-cli', label: typeof t === 'function' ? t('nav.cli') : 'CLI', external: true, icon: 'ri-terminal-line' },
+          ];
+        %>
+        <% navItems.forEach(function(item) { %>
+          <a href="<%= item.external ? item.path : item.noLang ? item.path : (typeof localePath === 'function' ? localePath(item.path) : item.path) %>"
+             class="px-3 py-2 rounded-lg text-sm font-medium transition-colors no-underline
+               <%= (typeof path_name !== 'undefined' && path_name === item.path) ? 'text-brand-orange-500 bg-brand-orange-500/10' : 'text-gray-600 dark:text-gray-300 hover:text-brand-orange-500 hover:bg-gray-100 dark:hover:bg-gray-800' %>"
+             <% if (item.external) { %>target="_blank" rel="noopener"<% } %>>
+            <% if (item.icon) { %><i class="<%= item.icon %> mr-1"></i><% } %>
+            <%= item.label %>
+            <% if (item.external) { %><i class="ri-external-link-line text-xs ml-0.5 opacity-50"></i><% } %>
+          </a>
+        <% }) %>
       </nav>
-      <div class="flex items-center space-x-4">
-        <% if (user) { %>
-        <div class="flex items-center space-x-3">
-          <a href="/logout" class="text-gray-600 hover:text-red-600 dark:text-gray-300 dark:hover:text-red-400 tippy" data-tippy-content="Logout" data-tippy-placement="bottom">
+
+      <div class="flex items-center gap-2">
+        <% if (typeof t === 'function') { %>
+        <%- include('../components/language-switcher', locals) %>
+        <% } %>
+        <%- include('../components/dark-mode-toggle') %>
+
+        <% if (typeof user !== 'undefined' && user) { %>
+          <a href="<%= typeof localePath === 'function' ? localePath('/profile') : '/profile' %>" class="btn-ghost text-sm no-underline hidden sm:flex">
+            <i class="ri-user-line mr-1"></i> <%= user.name %>
+          </a>
+          <a href="/logout" class="btn-ghost text-sm text-red-500 hover:text-red-600 no-underline tippy" data-tippy-content="<%= typeof t === 'function' ? t('nav.logout') : 'Logout' %>">
             <i class="ri-logout-box-line"></i>
           </a>
-          <span class="text-gray-700 dark:text-gray-300">
-            Hi, <a href="/profile" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 tippy" data-tippy-content="Profile" data-tippy-placement="bottom">
-              <%= user.name %> <i class="ri-user-line ml-1"></i>
-            </a>
-          </span>
-        </div>
         <% } else { %>
-        <a href="/login" class="no-underline px-6 py-2 bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-400 text-white rounded-lg transition-colors"><i class="ri-login-box-line mr-2"></i>Get Started</a>
+          <a href="<%= typeof localePath === 'function' ? localePath('/login') : '/login' %>" class="btn-primary text-sm no-underline hidden sm:flex">
+            <%= typeof t === 'function' ? t('nav.getStarted') : 'Get Started' %> <i class="ri-arrow-right-line ml-1"></i>
+          </a>
         <% } %>
 
-        <!-- Mobile menu button -->
-        <button class="md:hidden p-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700" id="mobile-menu-button">
-          <i class="ri-menu-line text-xl"></i>
+        <button id="mobile-menu-btn" class="lg:hidden btn-ghost p-2" aria-label="Toggle menu" aria-expanded="false">
+          <i class="ri-menu-line text-xl" id="menu-icon-open"></i>
+          <i class="ri-close-line text-xl hidden" id="menu-icon-close"></i>
         </button>
       </div>
     </div>
   </div>
 
-  <%- include('./mobile-menu') %>
+  <%- include('./mobile-menu', locals) %>
 </header>
-<!-- header area end -->

@@ -17,7 +17,8 @@ pageRouter.get("/checkout", async (req, res, next) => {
 
   // validate
   if (!polarProductId || !polarPriceId || !userId) {
-    return res.redirect("/404");
+    const lang = res.locals.lang || "en";
+    return res.redirect(`/${lang}/404`);
   }
 
   // success url

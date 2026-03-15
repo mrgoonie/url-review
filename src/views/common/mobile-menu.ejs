@@ -1,55 +1,93 @@
-<!-- side bar area  -->
-<div id="mobile-menu" class="md:hidden hidden bg-white dark:bg-gray-900 shadow-md border-b border-gray-200 dark:border-gray-700">
-  <!-- mobile menu area start -->
-  <div class="mobile-menu-main p-6 ">
-    <nav class="nav-main mainmenu-nav">
-      <ul class="space-y-4">
-        <li class="<%= path_name === "/" ? "text-blue-600 dark:text-blue-400 font-semibold" : "text-gray-600 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400" %>">
-          <a href="/" class="block py-2 font-heading no-underline">Home</a>
-        </li>
-        <li class="<%= path_name === "/pricing" ? "text-blue-600 dark:text-blue-400 font-semibold" : "text-gray-600 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400" %>">
-          <a href="/pricing" class="block py-2 font-heading no-underline">Pricing</a>
-        </li>
-        <li class="<%= path_name === "/mcp" ? "text-blue-600 dark:text-blue-400 font-semibold" : "text-gray-600 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400" %>">
-          <a href="https://github.com/mrgoonie/reviewwebsite-mcp-server/" target="_blank" class="block py-2 font-heading no-underline">MCP</a>
-        </li>
-        <li class="text-gray-600 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400">
-          <a href="https://github.com/mrgoonie/rws-cli" target="_blank" class="block py-2 font-heading no-underline"><i class="ri-terminal-line mr-1"></i>CLI</a>
-        </li>
-        <li class="<%= path_name === "/contribute" ? "text-blue-600 dark:text-blue-400 font-semibold" : "text-gray-600 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400" %>">
-          <a href="https://github.com/mrgoonie/url-review" target="_blank" class="block py-2 font-heading no-underline">Contribute</a>
-        </li>
-        <li class="<%= path_name === "/api-docs" ? "text-blue-600 dark:text-blue-400 font-semibold" : "text-gray-600 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400" %>">
-          <a href="/api-docs" class="block py-2 font-heading no-underline">API Docs</a>
-        </li>
-      </ul>
-    </nav>
-
-    <div class="mt-8 space-y-6">
-      <% if (user) { %>
-      <div class="flex items-center space-x-3">
-        <a href="/logout" class="text-gray-600 hover:text-red-600 dark:text-gray-300 dark:hover:text-red-400 tippy" data-tippy-content="Logout" data-tippy-placement="bottom">
-          <i class="ri-logout-box-line"></i>
-        </a>
-        <span class="text-gray-700 dark:text-gray-300">
-          Hi, <a href="/profile" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 tippy" data-tippy-content="Profile" data-tippy-placement="bottom">
-            <%= user.name %> <i class="ri-user-line ml-1"></i>
-          </a>
+<div id="mobile-menu" class="lg:hidden fixed inset-0 z-40 hidden" aria-hidden="true">
+  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" id="mobile-menu-backdrop"></div>
+  <div class="absolute right-0 top-0 h-full w-80 max-w-[85vw] bg-white dark:bg-gray-900 shadow-2xl transform translate-x-full transition-transform duration-300 ease-out" id="mobile-menu-panel">
+    <div class="flex flex-col h-full">
+      <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
+        <span class="font-heading font-bold text-lg text-gray-900 dark:text-white">
+          ReviewWeb<span class="text-brand-orange-500">.site</span>
         </span>
+        <button id="mobile-menu-close" class="btn-ghost p-2" aria-label="Close menu">
+          <i class="ri-close-line text-xl"></i>
+        </button>
       </div>
-      <a href="/start-review" class="block w-full text-center no-underline px-6 py-3 bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-400 text-white rounded-lg tippy" data-tippy-content="Start your review now!" data-tippy-placement="bottom">
-        <i class="ri-rocket-2-line mr-2"></i> Start Review
-      </a>
-      <% } else { %>
-      <a href="/login" class="block w-full text-center no-underline px-6 py-3 bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-400 text-white rounded-lg">Get Started</a>
-      <% } %>
-    </div>
 
-    <ul class="social-area-one flex space-x-4 mt-12 justify-center">
-      <li><a href="https://x.com/goon_nguyen" target="_blank" class="text-gray-600 hover:text-black dark:text-gray-300 dark:hover:text-white"><i class="ri-twitter-x-line text-2xl"></i></a></li>
-      <li><a href="https://fb.com/mrgoonie" target="_blank" class="text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400"><i class="ri-facebook-circle-fill text-2xl"></i></a></li>
-    </ul>
+      <nav class="flex-1 overflow-y-auto p-4" aria-label="Mobile navigation">
+        <ul class="space-y-1">
+          <%
+            const mobileNavItems = [
+              { path: '/', label: typeof t === 'function' ? t('nav.home') : 'Home', icon: 'ri-home-line' },
+              { path: '/pricing', label: typeof t === 'function' ? t('nav.pricing') : 'Pricing', icon: 'ri-price-tag-3-line' },
+              { path: '/api-docs', label: typeof t === 'function' ? t('nav.apiDocs') : 'API Docs', icon: 'ri-book-open-line', noLang: true },
+              { path: 'https://github.com/mrgoonie/reviewwebsite-mcp-server/', label: typeof t === 'function' ? t('nav.mcp') : 'MCP', icon: 'ri-plug-line', external: true },
+              { path: 'https://github.com/mrgoonie/rws-cli', label: typeof t === 'function' ? t('nav.cli') : 'CLI', icon: 'ri-terminal-line', external: true },
+              { path: 'https://github.com/mrgoonie/url-review', label: typeof t === 'function' ? t('nav.contribute') : 'Contribute', icon: 'ri-github-line', external: true },
+            ];
+          %>
+          <% mobileNavItems.forEach(function(item) { %>
+          <li>
+            <a href="<%= item.external ? item.path : item.noLang ? item.path : (typeof localePath === 'function' ? localePath(item.path) : item.path) %>"
+               class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium no-underline transition-colors
+                 <%= (typeof path_name !== 'undefined' && path_name === item.path) ? 'text-brand-orange-500 bg-brand-orange-500/10' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800' %>"
+               <% if (item.external) { %>target="_blank" rel="noopener"<% } %>>
+              <i class="<%= item.icon %>"></i>
+              <%= item.label %>
+            </a>
+          </li>
+          <% }) %>
+        </ul>
+      </nav>
+
+      <div class="p-4 border-t border-gray-200 dark:border-gray-800 space-y-3">
+        <% if (typeof user !== 'undefined' && user) { %>
+          <a href="<%= typeof localePath === 'function' ? localePath('/profile') : '/profile' %>" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 dark:text-gray-300 no-underline">
+            <i class="ri-user-line"></i> <%= user.name %>
+          </a>
+          <a href="/logout" class="block w-full text-center btn-ghost text-red-500 no-underline">
+            <i class="ri-logout-box-line mr-1"></i> <%= typeof t === 'function' ? t('nav.logout') : 'Logout' %>
+          </a>
+        <% } else { %>
+          <a href="<%= typeof localePath === 'function' ? localePath('/login') : '/login' %>" class="block w-full text-center btn-primary no-underline">
+            <%= typeof t === 'function' ? t('nav.getStarted') : 'Get Started' %> <i class="ri-arrow-right-line ml-1"></i>
+          </a>
+        <% } %>
+      </div>
+    </div>
   </div>
-  <!-- mobile menu area end -->
 </div>
-<!-- side bar area end -->
+
+<script>
+(function() {
+  const btn = document.getElementById('mobile-menu-btn');
+  const menu = document.getElementById('mobile-menu');
+  const panel = document.getElementById('mobile-menu-panel');
+  const backdrop = document.getElementById('mobile-menu-backdrop');
+  const closeBtn = document.getElementById('mobile-menu-close');
+  const iconOpen = document.getElementById('menu-icon-open');
+  const iconClose = document.getElementById('menu-icon-close');
+
+  function openMenu() {
+    menu.classList.remove('hidden');
+    menu.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    requestAnimationFrame(() => { panel.classList.remove('translate-x-full'); });
+    iconOpen?.classList.add('hidden');
+    iconClose?.classList.remove('hidden');
+    btn?.setAttribute('aria-expanded', 'true');
+  }
+
+  function closeMenu() {
+    panel.classList.add('translate-x-full');
+    document.body.style.overflow = '';
+    iconOpen?.classList.remove('hidden');
+    iconClose?.classList.add('hidden');
+    btn?.setAttribute('aria-expanded', 'false');
+    setTimeout(() => { menu.classList.add('hidden'); menu.setAttribute('aria-hidden', 'true'); }, 300);
+  }
+
+  btn?.addEventListener('click', function() {
+    btn.getAttribute('aria-expanded') === 'true' ? closeMenu() : openMenu();
+  });
+  backdrop?.addEventListener('click', closeMenu);
+  closeBtn?.addEventListener('click', closeMenu);
+})();
+</script>

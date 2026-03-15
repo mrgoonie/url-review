@@ -1,0 +1,26 @@
+<div class="relative" id="lang-switcher">
+  <button class="btn-ghost text-sm flex items-center gap-1 px-2" aria-label="<%= t('common.language') %>" id="lang-btn">
+    <i class="ri-global-line"></i>
+    <span class="uppercase font-medium"><%= lang %></span>
+    <i class="ri-arrow-down-s-line text-xs"></i>
+  </button>
+  <div id="lang-dropdown" class="hidden absolute right-0 top-full mt-1 w-36 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl py-1 z-50">
+    <% (locals.supportedLangs || ['en','vi']).forEach(function(l) { %>
+    <a href="<%= altLangPath(l) %>"
+       class="flex items-center gap-2 px-4 py-2 text-sm no-underline transition-colors
+         <%= l === lang ? 'text-brand-orange-500 bg-brand-orange-500/5 font-medium' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700' %>">
+      <% if (l === 'en') { %>English<% } else if (l === 'vi') { %>Tiếng Việt<% } %>
+      <% if (l === lang) { %><i class="ri-check-line ml-auto"></i><% } %>
+    </a>
+    <% }) %>
+  </div>
+</div>
+<script>
+  document.getElementById('lang-btn')?.addEventListener('click', function(e) {
+    e.stopPropagation();
+    document.getElementById('lang-dropdown')?.classList.toggle('hidden');
+  });
+  document.addEventListener('click', function() {
+    document.getElementById('lang-dropdown')?.classList.add('hidden');
+  });
+</script>

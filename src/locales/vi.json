@@ -1,0 +1,129 @@
+{
+  "meta": {
+    "siteTitle": "ReviewWeb.site",
+    "siteDescription": "Nền tảng Phân tích Website bằng AI - Quét, đánh giá và tối ưu hóa bất kỳ website nào bằng trí tuệ nhân tạo",
+    "siteKeywords": "đánh giá website, phân tích AI, kiểm tra SEO, liên kết hỏng, quét website"
+  },
+  "nav": {
+    "home": "Trang chủ",
+    "pricing": "Bảng giá",
+    "mcp": "MCP",
+    "apiDocs": "Tài liệu API",
+    "llmsTxt": "llms.txt",
+    "cli": "CLI",
+    "contribute": "Đóng góp",
+    "getStarted": "Bắt đầu",
+    "login": "Đăng nhập",
+    "logout": "Đăng xuất",
+    "profile": "Hồ sơ",
+    "hi": "Xin chào"
+  },
+  "hero": {
+    "badge": "Phân tích Website bằng AI",
+    "title": "Phân tích Bất kỳ Website nào với Trí tuệ Nhân tạo",
+    "subtitle": "Nhận đánh giá website toàn diện, kiểm tra SEO, quét liên kết hỏng và phân tích AI chỉ trong vài giây. Được tin dùng bởi lập trình viên và marketer trên toàn thế giới.",
+    "cta": "Phân tích Miễn phí",
+    "ctaSecondary": "Xem Tài liệu API",
+    "trustedBy": "Được {{count}}+ người dùng tin tưởng trên toàn thế giới"
+  },
+  "features": {
+    "sectionTitle": "Tất cả Những gì Bạn Cần",
+    "sectionSubtitle": "Công cụ mạnh mẽ để phân tích, đánh giá và tối ưu hóa website",
+    "aiReview": "Đánh giá Website bằng AI",
+    "aiReviewDesc": "Phân tích tự động 10 bước với tóm tắt nội dung AI và chụp ảnh màn hình đa thiết bị",
+    "brokenLinks": "Quét Liên kết Hỏng",
+    "brokenLinksDesc": "Phát hiện và báo cáo tất cả liên kết hỏng trên bất kỳ website nào với mã trạng thái HTTP chi tiết",
+    "seoAudit": "Phân tích SEO",
+    "seoAuditDesc": "Trích xuất metadata, thẻ Open Graph, Twitter Cards và nhận đề xuất SEO hành động",
+    "screenshot": "Chụp Ảnh Màn hình",
+    "screenshotDesc": "Ảnh chụp đa thiết bị với xem trước desktop, tablet và mobile để kiểm tra responsive",
+    "api": "API cho Lập trình viên",
+    "apiDesc": "API RESTful với định dạng phản hồi nhất quán, xác thực API key và hỗ trợ webhook",
+    "batch": "Xử lý Hàng loạt",
+    "batchDesc": "Xử lý hơn 10 URL mỗi phút với giới hạn tốc độ thông minh và quản lý hàng đợi"
+  },
+  "howItWorks": {
+    "sectionTitle": "Cách Hoạt động",
+    "sectionSubtitle": "Ba bước đơn giản để phân tích website toàn diện",
+    "step1Title": "Nhập URL",
+    "step1Desc": "Dán bất kỳ URL website nào vào công cụ phân tích",
+    "step2Title": "AI Phân tích",
+    "step2Desc": "Engine AI thực hiện phân tích sâu 10 bước",
+    "step3Title": "Nhận Kết quả",
+    "step3Desc": "Nhận báo cáo chi tiết với thông tin hành động"
+  },
+  "pricing": {
+    "title": "Bảng giá Đơn giản, Minh bạch",
+    "subtitle": "Bắt đầu miễn phí. Nâng cấp khi bạn cần thêm sức mạnh.",
+    "perMonth": "mỗi tháng",
+    "recommended": "Đề xuất",
+    "getStarted": "Bắt đầu",
+    "currentPlan": "Gói Hiện tại",
+    "features": "Tính năng",
+    "faq": "Câu hỏi Thường gặp"
+  },
+  "login": {
+    "title": "Đăng nhập",
+    "subtitle": "Đăng nhập để truy cập bảng điều khiển và API keys",
+    "githubBtn": "Đăng nhập với GitHub",
+    "googleBtn": "Đăng nhập với Google",
+    "backHome": "Về Trang chủ"
+  },
+  "profile": {
+    "title": "Hồ sơ",
+    "apiKeys": "API Keys",
+    "plan": "Gói Hiện tại",
+    "usage": "Sử dụng",
+    "createKey": "Tạo API Key",
+    "noKeys": "Chưa có API key nào",
+    "copyKey": "Sao chép Key"
+  },
+  "review": {
+    "title": "Đánh giá Website",
+    "analyzing": "Đang phân tích...",
+    "reviewBtn": "Đánh giá",
+    "placeholder": "https://example.com",
+    "checkWebsite": "Kiểm tra Website",
+    "checkWebsiteDesc": "Nhập URL để nhận đánh giá website bằng AI"
+  },
+  "scan": {
+    "title": "Quét Liên kết Hỏng",
+    "scanBtn": "Quét",
+    "scanning": "Đang quét...",
+    "scanLinksDesc": "Phát hiện liên kết hỏng trên bất kỳ website nào"
+  },
+  "footer": {
+    "home": "Trang chủ",
+    "products": "Sản phẩm Khác",
+    "legal": "Pháp lý",
+    "privacy": "Chính sách Bảo mật",
+    "terms": "Điều khoản Dịch vụ",
+    "madeWith": "Được tạo với tình yêu bởi",
+    "copyright": "Tất cả quyền được bảo lưu.",
+    "description": "Nền tảng phân tích website bằng AI dành cho lập trình viên và marketer."
+  },
+  "common": {
+    "learnMore": "Tìm hiểu Thêm",
+    "viewAll": "Xem Tất cả",
+    "loading": "Đang tải...",
+    "error": "Đã xảy ra lỗi",
+    "notFound": "Không Tìm thấy Trang",
+    "notFoundDesc": "Trang bạn tìm kiếm không tồn tại hoặc đã được di chuyển.",
+    "backHome": "Về Trang chủ",
+    "language": "Ngôn ngữ",
+    "english": "English",
+    "vietnamese": "Tiếng Việt",
+    "darkMode": "Chế độ Tối",
+    "lightMode": "Chế độ Sáng"
+  },
+  "cta": {
+    "title": "Sẵn sàng Phân tích Website của Bạn?",
+    "subtitle": "Bắt đầu với phân tích miễn phí và khám phá cách AI có thể cải thiện sự hiện diện web của bạn.",
+    "button": "Bắt đầu Miễn phí"
+  },
+  "checkout": {
+    "confirmation": "Đang Xử lý Đơn hàng",
+    "success": "Thanh toán Thành công",
+    "successMsg": "Thanh toán của bạn đã được xử lý thành công."
+  }
+}
