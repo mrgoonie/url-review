@@ -1,28 +1,25 @@
-<div class="w-full h-screen flex justify-center items-center">
-  <div class="h-auto text-center flex flex-col items-center">
-    <script>
-      async function checkOrderStatus() {
-        const url = new URL(window.location.href);
-        const checkoutId = url.searchParams.get("checkout_id");
-        const order = await fetch(`/api/v1/order/status/${checkoutId}`).then(res => res.json());
-        if (order.data.status === "PAID" || order.data.status === "CANCELLED") {
-          window.location.href = "/profile";
+<section class="min-h-[60vh] flex items-center justify-center py-12">
+  <div class="section-container text-center">
+    <div class="glass-card max-w-lg mx-auto p-8 md:p-12">
+      <div class="w-16 h-16 rounded-full bg-brand-orange-500/10 flex items-center justify-center mx-auto mb-6">
+        <i class="ri-loader-4-line text-3xl text-brand-orange-500 animate-spin"></i>
+      </div>
+      <h1 class="text-2xl font-heading font-bold text-gray-900 dark:text-white mb-4">
+        <%= typeof t === 'function' ? t('checkout.confirmation') : 'Order Processing' %>
+      </h1>
+      <p class="text-gray-600 dark:text-gray-400 mb-6">Thank you for your subscription. We are processing your payment, please wait.</p>
+      <script>
+        async function checkOrderStatus() {
+          const url = new URL(window.location.href);
+          const checkoutId = url.searchParams.get("checkout_id");
+          const order = await fetch('/api/v1/order/status/' + checkoutId).then(res => res.json());
+          if (order.data.status === "PAID" || order.data.status === "CANCELLED") {
+            window.location.href = "<%= typeof localePath === 'function' ? localePath('/profile') : '/profile' %>";
+          }
         }
-      }
-      setInterval(checkOrderStatus, 10_000);
-      checkOrderStatus();
-    </script>
-
-    <img src="/apple-touch-icon.png" alt="VidCap.xyz" class="size-20" />
-    <h1 class="font-bold text-gray-900 dark:text-white">Congratulations!</h1>
-
-    <div class="flex flex-col items-center p-8 bg-white dark:bg-gray-800 rounded-lg drop-shadow-2xl dark:shadow-black/30 gap-4 my-4 border border-gray-100 dark:border-gray-700">
-      <p class="text-gray-700 dark:text-gray-300">Thank you for your subscription. We are processing your payment, please wait.</p>
+        setInterval(checkOrderStatus, 10000);
+        checkOrderStatus();
+      </script>
     </div>
-
-    <p>
-      Copyright <%= new Date().getFullYear() %>.
-      <a href="https://x.com/goon_nguyen">@goon_nguyen</a>
-    </p>
   </div>
-</div>
+</section>

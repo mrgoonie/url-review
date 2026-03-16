@@ -1,24 +1,21 @@
-<div class="pt-80 pb-60 px-10 md:px-0 w-full flex justify-center items-center">
-  <div class="w-full h-auto text-center max-w-screen-sm">
-    <h2 class="text-4xl text-gray-800 dark:text-gray-200">Your payment is successful!</h2>
-    <h1 class="font-bold py-4 text-6xl text-gray-900 dark:text-white">Congratulations!</h1>
-
-    <div class="w-full border border-gray-100 dark:border-gray-700 rounded-2xl p-4 relative mb-10 shadow-xl bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300">
-      Check your balance in <a href="/profile" class="text-blue-400 hover:text-blue-500">Profile</a> page.
-      <br />
-      You can also re-activate your group ad in <a href="/dashboard/group-ads" class="text-blue-400 hover:text-blue-500">Group Ads</a> page.
-    </div>
-
-    <div class="flex gap-2 justify-center">
-      <%- include("../common/button", {
-      content: " <i class='ri-user-line mr-2'></i> Profile",
-      href: "/profile",
-      className: "bg-red-400 hover:bg-red-500"
-    }) %>
-      <%- include("../common/button", {
-      content: " <i class='ri-home-line mr-2'></i> Home",
-      href: "/",
-    }) %>
+<section class="min-h-[60vh] flex items-center justify-center py-12">
+  <div class="section-container text-center">
+    <div class="glass-card max-w-lg mx-auto p-8 md:p-12">
+      <div class="w-16 h-16 rounded-full bg-green-500/10 flex items-center justify-center mx-auto mb-6">
+        <i class="ri-check-line text-3xl text-green-500"></i>
+      </div>
+      <h1 class="text-2xl font-heading font-bold text-gray-900 dark:text-white mb-4">
+        <%= typeof t === 'function' ? t('checkout.success') : 'Payment Successful' %>
+      </h1>
+      <p class="text-gray-600 dark:text-gray-400 mb-6"><%= typeof t === 'function' ? t('checkout.successMsg') : 'Your payment has been processed successfully.' %></p>
+      <div class="flex gap-3 justify-center">
+        <a href="<%= typeof localePath === 'function' ? localePath('/profile') : '/profile' %>" class="btn-primary no-underline">
+          <i class="ri-user-line mr-2"></i> <%= typeof t === 'function' ? t('nav.profile') : 'Profile' %>
+        </a>
+        <a href="<%= typeof localePath === 'function' ? localePath('/') : '/' %>" class="btn-secondary no-underline">
+          <i class="ri-home-line mr-2"></i> <%= typeof t === 'function' ? t('nav.home') : 'Home' %>
+        </a>
+      </div>
     </div>
   </div>
-</div>
+</section>

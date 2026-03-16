@@ -1,0 +1,129 @@
+{
+  "meta": {
+    "siteTitle": "ReviewWeb.site",
+    "siteDescription": "AI-Powered Website Analysis Platform - Scan, review, and optimize any website with artificial intelligence",
+    "siteKeywords": "website review, AI analysis, SEO audit, broken links, website scanner"
+  },
+  "nav": {
+    "home": "Home",
+    "pricing": "Pricing",
+    "mcp": "MCP",
+    "apiDocs": "API Docs",
+    "llmsTxt": "llms.txt",
+    "cli": "CLI",
+    "contribute": "Contribute",
+    "getStarted": "Get Started",
+    "login": "Login",
+    "logout": "Logout",
+    "profile": "Profile",
+    "hi": "Hi"
+  },
+  "hero": {
+    "badge": "AI-Powered Website Analysis",
+    "title": "Analyze Any Website with AI Intelligence",
+    "subtitle": "Get comprehensive website reviews, SEO audits, broken link scans, and AI-powered insights in seconds. Trusted by developers and marketers worldwide.",
+    "cta": "Start Free Analysis",
+    "ctaSecondary": "View API Docs",
+    "trustedBy": "Trusted by {{count}}+ users worldwide"
+  },
+  "features": {
+    "sectionTitle": "Everything You Need",
+    "sectionSubtitle": "Powerful tools to analyze, review, and optimize websites",
+    "aiReview": "AI Website Review",
+    "aiReviewDesc": "10-step automated analysis with AI-powered content summarization and screenshot capture across multiple viewports",
+    "brokenLinks": "Broken Link Scanner",
+    "brokenLinksDesc": "Detect and report all broken links on any website with detailed HTTP status codes and recommendations",
+    "seoAudit": "SEO Analysis",
+    "seoAuditDesc": "Extract metadata, Open Graph tags, Twitter Cards, and get actionable SEO recommendations",
+    "screenshot": "Screenshot Capture",
+    "screenshotDesc": "Multi-viewport screenshots with desktop, tablet, and mobile previews for responsive testing",
+    "api": "Developer API",
+    "apiDesc": "RESTful API with consistent response format, API key authentication, and webhook support",
+    "batch": "Batch Processing",
+    "batchDesc": "Process 10+ URLs per minute with intelligent rate limiting and queue management"
+  },
+  "howItWorks": {
+    "sectionTitle": "How It Works",
+    "sectionSubtitle": "Three simple steps to get comprehensive website analysis",
+    "step1Title": "Enter Your URL",
+    "step1Desc": "Paste any website URL into the analysis tool",
+    "step2Title": "AI Analyzes",
+    "step2Desc": "Our AI engine performs a 10-step deep analysis",
+    "step3Title": "Get Results",
+    "step3Desc": "Receive detailed reports with actionable insights"
+  },
+  "pricing": {
+    "title": "Simple, Transparent Pricing",
+    "subtitle": "Start free. Upgrade when you need more power.",
+    "perMonth": "per month",
+    "recommended": "Recommended",
+    "getStarted": "Get Started",
+    "currentPlan": "Current Plan",
+    "features": "Features",
+    "faq": "Frequently Asked Questions"
+  },
+  "login": {
+    "title": "Sign In",
+    "subtitle": "Sign in to access your dashboard and API keys",
+    "githubBtn": "Sign in with GitHub",
+    "googleBtn": "Sign in with Google",
+    "backHome": "Back to Home"
+  },
+  "profile": {
+    "title": "Profile",
+    "apiKeys": "API Keys",
+    "plan": "Current Plan",
+    "usage": "Usage",
+    "createKey": "Create API Key",
+    "noKeys": "No API keys yet",
+    "copyKey": "Copy Key"
+  },
+  "review": {
+    "title": "Website Review",
+    "analyzing": "Analyzing...",
+    "reviewBtn": "Review",
+    "placeholder": "https://example.com",
+    "checkWebsite": "Check Website",
+    "checkWebsiteDesc": "Enter a URL to get an AI-powered website review"
+  },
+  "scan": {
+    "title": "Broken Link Scan",
+    "scanBtn": "Scan",
+    "scanning": "Scanning...",
+    "scanLinksDesc": "Detect broken links on any website"
+  },
+  "footer": {
+    "home": "Home",
+    "products": "Other Products",
+    "legal": "Legal",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "madeWith": "Made with love by",
+    "copyright": "All rights reserved.",
+    "description": "AI-powered website analysis platform for developers and marketers."
+  },
+  "common": {
+    "learnMore": "Learn More",
+    "viewAll": "View All",
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "notFound": "Page Not Found",
+    "notFoundDesc": "The page you are looking for does not exist or has been moved.",
+    "backHome": "Back to Home",
+    "language": "Language",
+    "english": "English",
+    "vietnamese": "Tiếng Việt",
+    "darkMode": "Dark Mode",
+    "lightMode": "Light Mode"
+  },
+  "cta": {
+    "title": "Ready to Analyze Your Website?",
+    "subtitle": "Start with a free analysis and discover how AI can help improve your web presence.",
+    "button": "Get Started Free"
+  },
+  "checkout": {
+    "confirmation": "Order Processing",
+    "success": "Payment Successful",
+    "successMsg": "Your payment has been processed successfully."
+  }
+}

@@ -7,6 +7,7 @@
 import axios from "axios";
 
 import { env } from "@/env";
+
 import { getTwitterReplies, repliesToHtml, type TwitterReply } from "./get-twitter-replies";
 
 export interface TwitterContent {
@@ -39,7 +40,12 @@ export function isTwitterUrl(url: string): boolean {
   try {
     const urlObj = new URL(url);
     const host = urlObj.hostname.toLowerCase();
-    return host === "twitter.com" || host === "x.com" || host === "www.twitter.com" || host === "www.x.com";
+    return (
+      host === "twitter.com" ||
+      host === "x.com" ||
+      host === "www.twitter.com" ||
+      host === "www.x.com"
+    );
   } catch {
     return false;
   }
@@ -261,7 +267,9 @@ async function fetchWithTwitter135(tweetId: string, debug?: boolean): Promise<Tw
   // Twitter135 returns complex nested structure
   const instructions = response.data?.data?.tweetResult?.result;
   const legacy = instructions?.legacy || instructions?.tweet?.legacy;
-  const user = instructions?.core?.user_results?.result?.legacy || instructions?.tweet?.core?.user_results?.result?.legacy;
+  const user =
+    instructions?.core?.user_results?.result?.legacy ||
+    instructions?.tweet?.core?.user_results?.result?.legacy;
 
   if (!legacy?.full_text && !legacy?.text) throw new Error("Twitter135: No tweet data returned");
 
@@ -341,9 +349,11 @@ export async function getTwitterContent(
           content.replies = result.replies;
           // Re-generate HTML with replies included
           content.html = contentToHtml(content);
-          if (debug) console.log(`get-twitter-content.ts > Fetched ${result.replies.length} replies`);
+          if (debug)
+            console.log(`get-twitter-content.ts > Fetched ${result.replies.length} replies`);
         } catch (repliesError) {
-          if (debug) console.log(`get-twitter-content.ts > Failed to fetch replies: ${repliesError}`);
+          if (debug)
+            console.log(`get-twitter-content.ts > Failed to fetch replies: ${repliesError}`);
         }
       }
 

@@ -1,0 +1,77 @@
+<section class="relative overflow-hidden">
+  <div class="absolute inset-0 gradient-bg opacity-5 dark:opacity-10"></div>
+  <div class="absolute top-0 right-0 w-96 h-96 bg-brand-orange-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+  <div class="absolute bottom-0 left-0 w-96 h-96 bg-brand-purple-500/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+
+  <div class="section-container relative py-20 md:py-32">
+    <div class="max-w-4xl mx-auto text-center">
+      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-orange-500/10 dark:bg-brand-orange-500/20 text-brand-orange-500 text-sm font-medium mb-6 animate-fade-in">
+        <i class="ri-sparkle-line"></i>
+        <%= t('hero.badge') %>
+      </div>
+
+      <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-heading font-extrabold text-gray-900 dark:text-white mb-6 leading-tight animate-fade-in-up" style="animation-delay: 0.1s">
+        <%= t('hero.title') %>
+      </h1>
+
+      <p class="text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-10 animate-fade-in-up" style="animation-delay: 0.2s">
+        <%= t('hero.subtitle') %>
+      </p>
+
+      <div class="max-w-2xl mx-auto mb-8 animate-fade-in-up" style="animation-delay: 0.3s">
+        <form id="reviewForm" class="flex flex-col sm:flex-row gap-3">
+          <div class="relative flex-1">
+            <i class="ri-link absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
+            <input type="url" id="websiteUrl" name="url"
+              class="w-full pl-12 pr-4 py-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-lg focus:ring-2 focus:ring-brand-orange-500 focus:border-brand-orange-500 outline-none transition-all"
+              placeholder="<%= t('review.placeholder') %>" required />
+          </div>
+          <button type="submit" class="btn-primary py-4 px-8 text-lg whitespace-nowrap">
+            <i class="ri-search-line mr-2"></i> <%= t('hero.cta') %>
+          </button>
+        </form>
+        <div id="urlError" class="text-red-500 text-sm mt-2 hidden"></div>
+      </div>
+
+      <div id="reviewResult" class="max-w-2xl mx-auto mt-6 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hidden text-left">
+        <div class="animate-pulse flex space-x-4">
+          <div class="flex-1 space-y-4 py-1">
+            <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+            <div class="space-y-2">
+              <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
+              <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-5/6"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap justify-center gap-4 mt-6 animate-fade-in-up" style="animation-delay: 0.4s">
+        <a href="/api-docs" class="btn-secondary no-underline">
+          <i class="ri-book-open-line mr-2"></i> <%= t('hero.ctaSecondary') %>
+        </a>
+        <a href="https://github.com/mrgoonie/url-review" target="_blank" rel="noopener" class="btn-ghost no-underline">
+          <i class="ri-github-line mr-2"></i> <%= t('nav.contribute') %>
+        </a>
+      </div>
+
+      <div class="flex flex-wrap justify-center gap-8 md:gap-12 mt-12 pt-8 border-t border-gray-200 dark:border-gray-800 animate-fade-in-up" style="animation-delay: 0.5s">
+        <div class="text-center">
+          <div class="text-2xl md:text-3xl font-heading font-bold text-gray-900 dark:text-white">25+</div>
+          <div class="text-sm text-gray-500 dark:text-gray-400">AI Models</div>
+        </div>
+        <div class="text-center">
+          <div class="text-2xl md:text-3xl font-heading font-bold text-gray-900 dark:text-white">10-Step</div>
+          <div class="text-sm text-gray-500 dark:text-gray-400">Deep Analysis</div>
+        </div>
+        <div class="text-center">
+          <div class="text-2xl md:text-3xl font-heading font-bold text-gray-900 dark:text-white">REST</div>
+          <div class="text-sm text-gray-500 dark:text-gray-400">API Available</div>
+        </div>
+        <div class="text-center">
+          <div class="text-2xl md:text-3xl font-heading font-bold text-gray-900 dark:text-white">Free</div>
+          <div class="text-sm text-gray-500 dark:text-gray-400">Tier Available</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,68 +1,69 @@
-<!-- Footer -->
-<footer class="bg-white dark:bg-gray-950 py-12 px-4 sm:px-6 lg:px-8 border-t border-gray-200 dark:border-gray-800">
-  <div class="max-w-7xl mx-auto">
-    <!-- Grid layout for footer content -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
-      <!-- Home column -->
+<footer class="bg-white dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800">
+  <div class="section-container py-12 md:py-16">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+      <div class="col-span-2 md:col-span-1">
+        <a href="<%= typeof localePath === 'function' ? localePath('/') : '/' %>" class="flex items-center gap-2 no-underline mb-4">
+          <div class="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center">
+            <i class="ri-rocket-line text-white text-lg"></i>
+          </div>
+          <span class="font-heading font-bold text-lg text-gray-900 dark:text-white">
+            ReviewWeb<span class="text-brand-orange-500">.site</span>
+          </span>
+        </a>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
+          <%= typeof t === 'function' ? t('footer.description') : 'AI-powered website analysis platform.' %>
+        </p>
+        <div class="flex gap-3">
+          <a href="https://x.com/goon_nguyen" target="_blank" rel="noopener" class="w-9 h-9 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 hover:text-brand-orange-500 hover:bg-brand-orange-500/10 transition-all no-underline">
+            <i class="ri-twitter-x-line"></i>
+          </a>
+          <a href="https://fb.com/mrgoonie" target="_blank" rel="noopener" class="w-9 h-9 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 hover:text-brand-orange-500 hover:bg-brand-orange-500/10 transition-all no-underline">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a href="https://github.com/mrgoonie/url-review" target="_blank" rel="noopener" class="w-9 h-9 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 hover:text-brand-orange-500 hover:bg-brand-orange-500/10 transition-all no-underline">
+            <i class="ri-github-fill"></i>
+          </a>
+        </div>
+      </div>
+
       <div>
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Home</h3>
+        <h4 class="font-heading font-semibold text-sm text-gray-900 dark:text-white uppercase tracking-wider mb-4"><%= typeof t === 'function' ? t('footer.home') : 'Home' %></h4>
         <ul class="space-y-2">
-          <li><a href="/api-docs" class="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors">API Docs</a></li>
-          <li><a href="https://github.com/mrgoonie/url-review" class="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors">Contribute</a></li>
+          <li><a href="<%= typeof localePath === 'function' ? localePath('/') : '/' %>" class="text-sm text-gray-500 dark:text-gray-400 hover:text-brand-orange-500 transition-colors no-underline"><%= typeof t === 'function' ? t('nav.home') : 'Home' %></a></li>
+          <li><a href="<%= typeof localePath === 'function' ? localePath('/pricing') : '/pricing' %>" class="text-sm text-gray-500 dark:text-gray-400 hover:text-brand-orange-500 transition-colors no-underline"><%= typeof t === 'function' ? t('nav.pricing') : 'Pricing' %></a></li>
+          <li><a href="/api-docs" class="text-sm text-gray-500 dark:text-gray-400 hover:text-brand-orange-500 transition-colors no-underline"><%= typeof t === 'function' ? t('nav.apiDocs') : 'API Docs' %></a></li>
+          <li><a href="/llms.txt" class="text-sm text-gray-500 dark:text-gray-400 hover:text-brand-orange-500 transition-colors no-underline">llms.txt</a></li>
         </ul>
       </div>
 
-      <!-- Other products column 1 -->
       <div>
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Other products</h3>
+        <h4 class="font-heading font-semibold text-sm text-gray-900 dark:text-white uppercase tracking-wider mb-4"><%= typeof t === 'function' ? t('footer.products') : 'Other Products' %></h4>
         <ul class="space-y-2">
-          <li><a href="https://digicord.site" class="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors">DigiCord AI</a></li>
-          <li><a href="https://readtube.me" class="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors">ReadTube</a></li>
-          <li><a href="https://zii.one" class="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors">ZII.ONE</a></li>
-          <li><a href="https://indieboosting.com" class="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors">IndieBoosting</a></li>
-          <li><a href="https://dxup.dev" class="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors">DXUP Platform</a></li>
+          <li><a href="https://digicord.site" target="_blank" rel="noopener" class="text-sm text-gray-500 dark:text-gray-400 hover:text-brand-orange-500 transition-colors no-underline">DigiCord AI</a></li>
+          <li><a href="https://zii.one" target="_blank" rel="noopener" class="text-sm text-gray-500 dark:text-gray-400 hover:text-brand-orange-500 transition-colors no-underline">ZII.ONE</a></li>
+          <li><a href="https://indieboosting.com" target="_blank" rel="noopener" class="text-sm text-gray-500 dark:text-gray-400 hover:text-brand-orange-500 transition-colors no-underline">IndieBoosting</a></li>
+          <li><a href="https://dxup.dev" target="_blank" rel="noopener" class="text-sm text-gray-500 dark:text-gray-400 hover:text-brand-orange-500 transition-colors no-underline">DXUP Platform</a></li>
         </ul>
       </div>
 
-      <!-- Other products column 2 -->
       <div>
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">&nbsp;</h3>
+        <h4 class="font-heading font-semibold text-sm text-gray-900 dark:text-white uppercase tracking-wider mb-4"><%= typeof t === 'function' ? t('footer.legal') : 'Legal' %></h4>
         <ul class="space-y-2">
-          <li><a href="https://boosttogether.com" class="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors">BoostTogether</a></li>
-          <li><a href="https://vidcap.xyz" class="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors">VidCap</a></li>
-          <li><a href="https://savedb.site" class="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors">SaveDB</a></li>
-          <li><a href="https://topranking.ai" class="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors">TopRanking</a></li>
-          <li><a href="https://wearetopgroup.com" class="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors">WeAreTopGroup</a></li>
+          <li><a href="<%= typeof localePath === 'function' ? localePath('/privacy') : '/privacy' %>" class="text-sm text-gray-500 dark:text-gray-400 hover:text-brand-orange-500 transition-colors no-underline"><%= typeof t === 'function' ? t('footer.privacy') : 'Privacy Policy' %></a></li>
+          <li><a href="https://github.com/mrgoonie/url-review" target="_blank" rel="noopener" class="text-sm text-gray-500 dark:text-gray-400 hover:text-brand-orange-500 transition-colors no-underline"><%= typeof t === 'function' ? t('nav.contribute') : 'Contribute' %></a></li>
         </ul>
       </div>
-
-      <!-- Empty column for balance -->
-      <div></div>
     </div>
+  </div>
 
-    <!-- Footer bottom -->
-    <div class="border-t border-gray-200 dark:border-gray-700 pt-8 flex flex-col sm:flex-row items-center justify-between">
-      <!-- Social links -->
-      <div class="flex space-x-6 mb-4 sm:mb-0">
-        <a href="https://fb.com/mrgoonie" target="_blank" class="text-gray-400 hover:text-blue-500 transition-colors">
-          <span class="sr-only">Facebook</span>
-          <i class="ri-facebook-circle-fill text-2xl"></i>
-        </a>
-        <a href="https://x.com/goon_nguyen" target="_blank" class="text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
-          <span class="sr-only">Twitter</span>
-          <i class="ri-twitter-x-line text-2xl"></i>
-        </a>
-      </div>
-
-      <!-- Copyright -->
-      <p class="text-center text-sm text-gray-500 dark:text-gray-400 mb-4 sm:mb-0">
-        Made with ❤️ by <a href="https://x.com/goon_nguyen" target="_blank" class="text-blue-500 hover:underline font-bold">@goon_nguyen</a>
+  <div class="border-t border-gray-200 dark:border-gray-800">
+    <div class="section-container py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <p class="text-sm text-gray-400">
+        &copy; <%= new Date().getFullYear() %> ReviewWeb.site. <%= typeof t === 'function' ? t('footer.copyright') : 'All rights reserved.' %>
       </p>
-
-      <!-- Privacy Policy -->
-      <div>
-        <a href="/privacy" class="text-sm text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors">Privacy Policy</a>
-      </div>
+      <p class="text-sm text-gray-400">
+        <%= typeof t === 'function' ? t('footer.madeWith') : 'Made with love by' %> <a href="https://x.com/goon_nguyen" target="_blank" rel="noopener" class="text-brand-orange-500 hover:underline font-medium no-underline">@goon_nguyen</a>
+      </p>
     </div>
   </div>
 </footer>

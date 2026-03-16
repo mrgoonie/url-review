@@ -27,5 +27,6 @@ pageRouter.get("/", async (_req, res) => {
     clientEnv,
     user: user ? maskUser(user) : null,
     categories,
+    pageScripts: ["/js/review.js", "/js/scan-links.js"],
   });
 });

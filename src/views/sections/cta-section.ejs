@@ -1,0 +1,15 @@
+<section class="py-16 md:py-24">
+  <div class="section-container">
+    <div class="relative overflow-hidden rounded-3xl gradient-bg p-8 md:p-16 text-center">
+      <div class="absolute top-0 left-0 w-64 h-64 bg-white/10 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+      <div class="absolute bottom-0 right-0 w-48 h-48 bg-white/10 rounded-full translate-x-1/4 translate-y-1/4"></div>
+      <div class="relative">
+        <h2 class="text-3xl md:text-4xl font-heading font-bold text-white mb-4"><%= t('cta.title') %></h2>
+        <p class="text-lg text-white/80 max-w-xl mx-auto mb-8"><%= t('cta.subtitle') %></p>
+        <a href="<%= localePath(user ? '/' : '/login') %>" class="inline-flex items-center justify-center px-8 py-4 font-semibold text-brand-orange-500 bg-white rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5 no-underline">
+          <%= t('cta.button') %> <i class="ri-arrow-right-line ml-2"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

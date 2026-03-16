@@ -1,20 +1,72 @@
 import { analyzeUrl } from "@/lib/ai";
 import type { DefuddleMetadata } from "@/lib/scrape";
+import { extractMarkdownWithDefuddle, getHtmlWithFallbacks } from "@/lib/scrape";
+import { isUrlAlive } from "@/lib/utils";
 
 import type { ConvertWebUrlOptions } from "./convert-schemas";
 
+/** Minimum word count to consider Defuddle markdown usable */
+const MIN_DEFUDDLE_WORD_COUNT = 20;
+
 /**
- * Convert a web URL to Markdown format
- * @param url The URL to convert
- * @param options Conversion options
- * @returns Markdown content of the URL
+ * Convert a web URL to Markdown format.
+ * Strategy: Defuddle first (free, no LLM cost) → LLM fallback if Defuddle fails.
  */
 export async function convertUrlToMarkdown(url: string, options?: ConvertWebUrlOptions) {
-  // Default instructions for conversion
+  const debug = options?.debug ?? false;
+
+  // Step 1: Verify URL is alive
+  const { alive } = await isUrlAlive(url, { timeout: 15_000 });
+  if (!alive) throw new Error(`URL ${url} is not alive`);
+
+  // Step 2: Fetch raw HTML
+  const html = await getHtmlWithFallbacks(url, {
+    delayAfterLoad: options?.delayAfterLoad ?? 3000,
+    debug,
+  });
+
+  // Step 3: Try Defuddle markdown conversion (free, no LLM cost)
+  try {
+    const defuddleResult = await extractMarkdownWithDefuddle(html, url);
+    const wordCount = defuddleResult.markdown.split(/\s+/).length;
+
+    if (wordCount >= MIN_DEFUDDLE_WORD_COUNT) {
+      if (debug) console.log(`convert-crud.ts > Defuddle markdown succeeded (${wordCount} words)`);
+      return {
+        url,
+        markdown: defuddleResult.markdown,
+        model: "defuddle",
+        usage: { total_tokens: 0, prompt_tokens: 0, completion_tokens: 0 },
+        metadata: defuddleResult.metadata,
+      };
+    }
+
+    if (debug) {
+      console.log(
+        `convert-crud.ts > Defuddle markdown too short (${wordCount} words), falling back to LLM`
+      );
+    }
+  } catch (error) {
+    if (debug) {
+      console.log(
+        `convert-crud.ts > Defuddle markdown failed: ${error instanceof Error ? error.message : String(error)}, falling back to LLM`
+      );
+    }
+  }
+
+  // Step 4: Fallback to LLM-based conversion
+  return convertUrlToMarkdownWithLlm(url, options);
+}
+
+/**
+ * Convert a web URL to Markdown using LLM (original method).
+ * Used as fallback when Defuddle cannot produce usable markdown.
+ */
+async function convertUrlToMarkdownWithLlm(url: string, options?: ConvertWebUrlOptions) {
   const instructions =
     options?.instructions ||
     `Convert the HTML content of this webpage into well-formatted Markdown.
-    
+
     ## Instructions:
     - Create a clean, readable Markdown document
     - Preserve the document structure (headings, paragraphs, lists, etc.)
@@ -27,17 +79,11 @@ export async function convertUrlToMarkdown(url: string, options?: ConvertWebUrlO
     - Include a source URL reference at the bottom
     - Ensure the Markdown is valid and well-formatted`;
 
-  // Default system prompt
   const systemPrompt =
     "You are an expert HTML to Markdown converter. Your task is to convert webpage content into clean, well-formatted Markdown while preserving the important content and structure.";
 
-  // Use analyzeUrl to process the content
   const result = await analyzeUrl(
-    {
-      url,
-      systemPrompt,
-      instructions,
-    },
+    { url, systemPrompt, instructions },
     {
       jsonResponseFormat: {
         type: "object",
@@ -51,7 +97,6 @@ export async function convertUrlToMarkdown(url: string, options?: ConvertWebUrlO
     }
   );
 
-  // Return the markdown content with Defuddle metadata (extracted without LLM cost)
   return {
     url,
     markdown: result.data,
@@ -71,15 +116,12 @@ export async function convertMultipleUrlsToMarkdown(
   urls: string[],
   options?: ConvertWebUrlOptions
 ) {
-  // Limit the number of URLs to process
   const MAX_URLS = options?.maxLinks || 20;
   const urlsToProcess = urls.slice(0, MAX_URLS);
 
-  // Process URLs with controlled concurrency
-  const concurrencyLimit = 5; // Process 5 URLs at a time
+  const concurrencyLimit = 5;
   const chunks: string[][] = [];
 
-  // Split URLs into chunks for controlled concurrency
   for (let i = 0; i < urlsToProcess.length; i += concurrencyLimit) {
     chunks.push(urlsToProcess.slice(i, i + concurrencyLimit));
   }
@@ -95,7 +137,6 @@ export async function convertMultipleUrlsToMarkdown(
 
   const allResults: ConversionResult[] = [];
 
-  // Process each chunk sequentially, but URLs within a chunk in parallel
   for (const chunk of chunks) {
     const chunkResults = await Promise.all(
       chunk.map(async (url) => {
@@ -125,7 +166,6 @@ export async function convertMultipleUrlsToMarkdown(
     allResults.push(...chunkResults);
   }
 
-  // Calculate total usage across all conversions
   const totalUsage = allResults.reduce(
     (acc, item) => {
       if (item.usage) {
@@ -138,7 +178,6 @@ export async function convertMultipleUrlsToMarkdown(
     { total_tokens: 0, prompt_tokens: 0, completion_tokens: 0 }
   );
 
-  // Return the results
   return {
     urls: urlsToProcess,
     results: allResults,

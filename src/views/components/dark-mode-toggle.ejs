@@ -1,0 +1,24 @@
+<button id="theme-toggle" class="btn-ghost p-2" aria-label="Toggle theme">
+  <i class="ri-moon-line text-lg" id="theme-icon-dark"></i>
+  <i class="ri-sun-line text-lg hidden" id="theme-icon-light"></i>
+</button>
+<script>
+  (function() {
+    const btn = document.getElementById('theme-toggle');
+    const iconDark = document.getElementById('theme-icon-dark');
+    const iconLight = document.getElementById('theme-icon-light');
+    function updateIcons() {
+      const isDark = document.documentElement.getAttribute('data-mode') === 'dark';
+      if (iconDark) iconDark.classList.toggle('hidden', isDark);
+      if (iconLight) iconLight.classList.toggle('hidden', !isDark);
+    }
+    updateIcons();
+    btn?.addEventListener('click', function() {
+      const current = document.documentElement.getAttribute('data-mode');
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-mode', next);
+      localStorage.setItem('theme', next);
+      updateIcons();
+    });
+  })();
+</script>

@@ -24,15 +24,14 @@ interface ScraplingOptions {
  * @param options - timeout (ms), CSS selector, debug flag
  * @returns HTML content string
  */
-export function getHtmlWithScrapling(
-  url: string,
-  options?: ScraplingOptions
-): Promise<string> {
+export function getHtmlWithScrapling(url: string, options?: ScraplingOptions): Promise<string> {
   const timeoutSec = Math.ceil((options?.timeout ?? 30000) / 1000);
   const debug = options?.debug ?? false;
 
   if (debug) {
-    console.log(`get-html-with-scrapling.ts > Fetching ${url} with Scrapling (timeout: ${timeoutSec}s)`);
+    console.log(
+      `get-html-with-scrapling.ts > Fetching ${url} with Scrapling (timeout: ${timeoutSec}s)`
+    );
   }
 
   const args = [SCRIPT_PATH, url, "--timeout", String(timeoutSec)];

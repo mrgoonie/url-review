@@ -1,171 +1,96 @@
-<div class="px-6 py-20 flex flex-col items-center justify-center">
-  <div class="w-full h-auto text-center max-w-screen-md">
-    <h2 class="text-3xl text-gray-800 dark:text-gray-200">Hi, <strong><%- user.name %></strong>!</h2>
-    <h1 class="font-bold py-4 text-6xl text-gray-900 dark:text-white">Your Profile</h1>
+<%- include('../components/breadcrumbs', { crumbs: [{ label: t('nav.home'), path: '/' }, { label: t('profile.title') }] }) %>
 
-    <!-- PRICING PLANS -->
-    <div class="w-full border border-gray-200 dark:border-gray-700 rounded-2xl p-6 relative mb-8 shadow-lg bg-white dark:bg-gray-800 transition-all duration-300">
-      <h3 class="font-bold text-xl mb-6 text-center text-gray-900 dark:text-white flex items-center justify-center">
-        <i class="ri-price-tag-3-line mr-2"></i>Plans
-      </h3>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full" id="plan-container">
-        <% locals.plans.forEach((plan, index) => { %>
-        <% const isCurrentPlan = locals.userPlan.planId === plan.id; %>
-        <% 
-          // Define unique styles for each plan to avoid CSS duplication
-          let cardClasses, headerClasses, titleClasses, priceClasses, buttonClasses;
-          
-          if (isCurrentPlan) {
-            cardClasses = "shadow-md border-0 outline outline-2 outline-blue-500 dark:outline-blue-400";
-            headerClasses = "bg-blue-500 dark:bg-blue-600";
-            titleClasses = "text-white";
-            buttonClasses = "bg-green-500 text-white font-medium cursor-default";
-          } else {
-            cardClasses = "hover:shadow-md hover:scale-[1.02] border-0 outline outline-1 outline-gray-200 dark:outline-gray-700";
-            headerClasses = "bg-gray-100 dark:bg-gray-700";
-            titleClasses = "text-gray-800 dark:text-white";
-            buttonClasses = "bg-blue-500 hover:bg-blue-600 text-white font-medium transition-colors duration-300";
-          }
-        %>
-
-        <div class="relative flex flex-col h-full overflow-hidden rounded-2xl transition-all duration-300 <%= cardClasses %>" data-id="<%- plan.id %>">
-
-          <!-- Plan Header -->
-          <div class="p-4 <%= headerClasses %> text-center relative">
-            <h4 class="font-bold text-lg <%= titleClasses %>">
-              <%- plan.name %>
-            </h4>
-
-            <!-- Plan Badge -->
-            <% if(isCurrentPlan) { %>
-            <div class="absolute top-0 right-0 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg shadow-sm">
-              <i class="ri-check-line mr-1"></i>Current
-            </div>
-            <% } %>
-          </div>
-
-          <!-- Plan Content -->
-          <div class="p-6 text-center bg-white dark:bg-gray-800 flex-grow flex flex-col">
-            <!-- Plan Price -->
-            <div class="flex items-center justify-center">
-              <span class="text-3xl font-bold dark:text-white"><%- plan.price / 100 %></span>
-              <span class="text-sm font-normal ml-1 text-gray-700 dark:text-gray-300"><%- plan.currency %></span>
-            </div>
-            <div class="text-sm text-gray-500 dark:text-gray-400 mb-6">per month</div>
-
-            <!-- Plan Description -->
-            <div class="text-xs italic text-gray-600 dark:text-gray-300 mb-6 flex-grow">
-              <%- plan.description %>
-            </div>
-
-            <!-- Benefits -->
-            <div class="text-sm text-gray-600 dark:text-gray-300 mb-6 flex-grow">
-              <ul>
-                <% plan.benefits.forEach((benefit) => { %>
-                <li><%- benefit %></li>
-                <% }) %>
-              </ul>
-            </div>
-
-            <!-- Action Button -->
-            <% if(!isCurrentPlan) { %>
-            <a href="<%- plan.checkoutUrl %>" class="block w-full py-2 px-4 text-center rounded-lg no-underline <%= buttonClasses %>" target="_blank">
-              <i class="ri-arrow-up-line mr-1"></i>Upgrade
-            </a>
-            <% } else { %>
-            <div class="block w-full py-2 px-4 text-center rounded-lg <%= buttonClasses %>">
-              <i class="ri-check-double-line mr-1"></i>Active Plan
-            </div>
-            <% } %>
-          </div>
-        </div>
-        <% }); %>
+<section class="py-8 md:py-12">
+  <div class="section-container">
+    <div class="max-w-4xl mx-auto">
+      <div class="mb-8">
+        <h1 class="text-3xl md:text-4xl font-heading font-bold text-gray-900 dark:text-white mb-2">
+          <%= t('nav.hi') %>, <strong><%- user.name %></strong>!
+        </h1>
+        <p class="text-gray-600 dark:text-gray-400"><%= t('profile.title') %></p>
       </div>
-    </div>
 
-    <!-- API KEY -->
-    <div class="w-full border border-gray-100 dark:border-gray-700 rounded-2xl p-4 relative mb-10 shadow-xl bg-white dark:bg-gray-800">
-      <h3 class="font-bold mb-2 text-gray-900 dark:text-white">API keys</h3>
-      <div class="flex gap-2 w-full" id="api-key-container">
+      <!-- Current Plan -->
+      <div class="glass-card p-6 md:p-8 mb-8">
+        <h2 class="text-xl font-heading font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+          <i class="ri-price-tag-3-line mr-2 text-brand-orange-500"></i> <%= t('profile.plan') %>
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <% locals.plans.forEach(function(plan) { %>
+          <% const isCurrentPlan = locals.userPlan && locals.userPlan.planId === plan.id; %>
+          <div class="rounded-xl border p-4 transition-all
+            <%= isCurrentPlan ? 'border-brand-orange-500 bg-brand-orange-500/5' : 'border-gray-200 dark:border-gray-700' %>">
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="font-heading font-bold text-gray-900 dark:text-white"><%- plan.name %></h3>
+              <% if (isCurrentPlan) { %>
+              <span class="badge-primary text-xs"><i class="ri-check-line mr-1"></i>Active</span>
+              <% } %>
+            </div>
+            <div class="text-2xl font-bold text-gray-900 dark:text-white mb-1">$<%- plan.price / 100 %> <span class="text-sm font-normal text-gray-500"><%- plan.currency %></span></div>
+            <p class="text-xs text-gray-500 mb-3"><%= t('pricing.perMonth') %></p>
+            <% if (!isCurrentPlan) { %>
+            <a href="<%- plan.checkoutUrl %>" class="block w-full text-center btn-secondary text-sm no-underline py-2">
+              <i class="ri-arrow-up-line mr-1"></i> Upgrade
+            </a>
+            <% } %>
+          </div>
+          <% }) %>
+        </div>
+      </div>
+
+      <!-- API Keys -->
+      <div class="glass-card p-6 md:p-8 mb-8">
+        <h2 class="text-xl font-heading font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+          <i class="ri-key-2-line mr-2 text-brand-orange-500"></i> <%= t('profile.apiKeys') %>
+        </h2>
         <script>
           function createNewApiKey() {
             const name = document.getElementById("api-key-name").value;
-            fetch("/api/v1/api_key", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  name
-                }),
-              })
-              .then((res) => res.json())
-              .then((data) => {
-                if (data.success) {
-                  alert("Create new API key successfully");
-                  setTimeout(() => {
-                    location.reload();
-                  }, 1000);
-                  return;
-                }
-                alert(data.message);
-              });
+            fetch("/api/v1/api_key", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name }) })
+              .then(res => res.json())
+              .then(data => { if (data.success) { location.reload(); } else { console.error(data.message); } });
           }
-
           function deleteApiKey(id) {
-            fetch(`/api/v1/api_key/${id}`, {
-                method: "DELETE",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-              })
-              .then((res) => res.json())
-              .then((data) => {
-                if (data.success) {
-                  alert("Delete API key successfully");
-                  setTimeout(() => {
-                    location.reload();
-                  }, 1000);
-                  return;
-                }
-                alert(data.message);
-              });
+            fetch('/api/v1/api_key/' + id, { method: "DELETE", headers: { "Content-Type": "application/json" } })
+              .then(res => res.json())
+              .then(data => { if (data.success) { location.reload(); } else { console.error(data.message); } });
           }
         </script>
-        <input class=" border border-gray-300 dark:border-gray-600 rounded-xl py-2 px-4 flex-grow" type="text" id="api-key-name" placeholder="API key name" />
-        <button class="w-auto flex items-center justify-center py-2 px-8 bg-blue-400 hover:bg-blue-500 transition-all rounded-xl text-white" onclick="createNewApiKey()">
-          <i class="ri-add-line mr-2"></i> Create
-        </button>
-      </div>
-      <ul>
-        <% locals.apiKeys.forEach((apiKey, index) => { %>
-        <li class="flex justify-between items-start text-left border-b border-gray-300 dark:border-gray-600 py-2 gap-2">
-          <div class="border border-gray-300 dark:border-gray-600 rounded-md pt-1 pb-2 size-8 text-center">
-            <span class="text-gray-500"><%- index + 1 %></span>
-          </div>
-          <div class="flex-grow">
-            <p class="text-base font-bold"><%- apiKey.name %> (<%- apiKey.displayCreatedAt %>)</p>
-            <%- include('../common/link-copy', { link: apiKey.key }) %>
-          </div>
-          <button class="text-red-400 hover:text-red-500 transition-all p-2 border border-red-400 hover:border-red-500 rounded-md" onclick="deleteApiKey('<%- apiKey.id %>')">
-            <i class="ri-delete-bin-line"></i>
+        <div class="flex gap-2 mb-4">
+          <input class="input-field flex-grow" type="text" id="api-key-name" placeholder="API key name" />
+          <button class="btn-primary whitespace-nowrap" onclick="createNewApiKey()">
+            <i class="ri-add-line mr-1"></i> <%= t('profile.createKey') %>
           </button>
-        </li>
-        <% }); %>
-      </ul>
-    </div>
+        </div>
+        <% if (locals.apiKeys && locals.apiKeys.length > 0) { %>
+        <ul class="space-y-3">
+          <% locals.apiKeys.forEach(function(apiKey, index) { %>
+          <li class="flex items-center justify-between p-3 rounded-xl border border-gray-200 dark:border-gray-700 gap-3">
+            <div class="flex-grow min-w-0">
+              <p class="font-medium text-gray-900 dark:text-white text-sm truncate"><%- apiKey.name %></p>
+              <p class="text-xs text-gray-500"><%- apiKey.displayCreatedAt %></p>
+              <%- include('../common/link-copy', { link: apiKey.key }) %>
+            </div>
+            <button class="btn-ghost text-red-500 hover:text-red-600 p-2 flex-shrink-0" onclick="deleteApiKey('<%- apiKey.id %>')">
+              <i class="ri-delete-bin-line"></i>
+            </button>
+          </li>
+          <% }) %>
+        </ul>
+        <% } else { %>
+        <p class="text-gray-500 dark:text-gray-400 text-sm text-center py-4"><%= t('profile.noKeys') %></p>
+        <% } %>
+      </div>
 
-    <div class="flex gap-2 justify-center">
-      <%- include("../common/button", {
-      content: " <i class='ri-logout-box-line mr-2'></i> Log out",
-      href: "/logout",
-      className: "bg-red-400 hover:bg-red-500"
-    }) %>
-      <%- include("../common/button", {
-      content: " <i class='ri-home-line mr-2'></i> Home",
-      href: "/",
-    }) %>
+      <!-- Actions -->
+      <div class="flex gap-3 justify-center">
+        <a href="/logout" class="btn-ghost text-red-500 no-underline">
+          <i class="ri-logout-box-line mr-1"></i> <%= t('nav.logout') %>
+        </a>
+        <a href="<%= localePath('/') %>" class="btn-secondary no-underline">
+          <i class="ri-home-line mr-1"></i> <%= t('nav.home') %>
+        </a>
+      </div>
     </div>
   </div>
-</div>
+</section>

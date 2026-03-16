@@ -1,0 +1,25 @@
+<section class="py-16 md:py-24">
+  <div class="section-container">
+    <%- include('../components/ui-section-header', { title: t('howItWorks.sectionTitle'), subtitle: t('howItWorks.sectionSubtitle') }) %>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+      <% const steps = [
+        { num: '01', icon: 'ri-link', title: t('howItWorks.step1Title'), desc: t('howItWorks.step1Desc') },
+        { num: '02', icon: 'ri-robot-line', title: t('howItWorks.step2Title'), desc: t('howItWorks.step2Desc') },
+        { num: '03', icon: 'ri-file-chart-line', title: t('howItWorks.step3Title'), desc: t('howItWorks.step3Desc') },
+      ]; %>
+      <% steps.forEach(function(step, i) { %>
+      <div class="relative text-center animate-on-scroll" style="transition-delay: <%= i * 0.15 %>s">
+        <div class="text-6xl font-heading font-extrabold text-gray-100 dark:text-gray-800 absolute -top-4 left-1/2 -translate-x-1/2 select-none"><%= step.num %></div>
+        <div class="relative w-16 h-16 rounded-2xl bg-brand-orange-500/10 dark:bg-brand-orange-500/20 flex items-center justify-center mx-auto mb-4">
+          <i class="<%= step.icon %> text-3xl text-brand-orange-500"></i>
+        </div>
+        <h3 class="text-xl font-heading font-bold text-gray-900 dark:text-white mb-2"><%= step.title %></h3>
+        <p class="text-gray-600 dark:text-gray-400"><%= step.desc %></p>
+        <% if (i < 2) { %>
+        <div class="hidden md:block absolute top-12 left-[calc(50%+40px)] w-[calc(100%-80px)] h-px bg-gradient-to-r from-gray-200 dark:from-gray-700 to-transparent"></div>
+        <% } %>
+      </div>
+      <% }) %>
+    </div>
+  </div>
+</section>

@@ -1,3 +1,8 @@
+function getLangPrefix() {
+  const match = window.location.pathname.match(/^\/(en|vi)/);
+  return match ? '/' + match[1] : '/en';
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('broken-links-form');
   const submitButton = form.querySelector('button[type="submit"]');
@@ -15,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Check login
     if (!user) {
-      window.location.href = '/login';
+      window.location.href = getLangPrefix() + '/login';
       return;
     }
 
@@ -50,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // Redirect to scan results page
-      window.location.href = `/scan/${data.data.id}`;
+      window.location.href = getLangPrefix() + '/scan/' + data.data.id;
     } catch (error) {
       console.error('Error scanning links:', error);
       alert(error.message || 'An error occurred while scanning links');

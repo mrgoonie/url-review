@@ -78,6 +78,8 @@ pageRouter.get("/review/:reviewId", validateSession, async (req, res) => {
       review,
       site_name: AppConfig.siteName,
       clientEnv,
+      needsHighlight: true,
+      needsChart: true,
     });
   } catch (error) {
     console.error("review.ts > GET /:reviewId > Error :>>", error);

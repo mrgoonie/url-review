@@ -13,10 +13,11 @@ import { pageRouter } from "./router";
 dayjs.extend(localizedFormat);
 
 pageRouter.get("/profile", verifyRequest, validateSession, async (_req, res) => {
-  if (!res.locals.user) return res.redirect("/login");
+  const lang = res.locals.lang || "en";
+  if (!res.locals.user) return res.redirect(`/${lang}/login`);
   const { id } = res.locals.user;
   const user = await getUser(id);
-  if (!user) return res.redirect("/login?redirect_uri=/profile");
+  if (!user) return res.redirect(`/${lang}/login?redirect_uri=/${lang}/profile`);
 
   // Fetch all API keys for the user
   const apiKeys = await prisma.apiKey
@@ -38,7 +39,7 @@ pageRouter.get("/profile", verifyRequest, validateSession, async (_req, res) => 
 
   const plans = await getAvailablePricingPlans();
   plans.forEach((plan) => {
-    plan.checkoutUrl = `/checkout?productId=${plan.polarProductId}&priceId=${plan.polarPriceId}&userId=${user.id}`;
+    plan.checkoutUrl = `/${lang}/checkout?productId=${plan.polarProductId}&priceId=${plan.polarPriceId}&userId=${user.id}`;
   });
   const userPlan = await getUserPlanByUserId(user.id);
 

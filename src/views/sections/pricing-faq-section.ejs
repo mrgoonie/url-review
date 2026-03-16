@@ -1,0 +1,36 @@
+<div class="max-w-3xl mx-auto">
+  <h2 class="text-2xl md:text-3xl font-heading font-bold text-gray-900 dark:text-white text-center mb-8">
+    <%= t('pricing.faq') %>
+  </h2>
+  <div class="space-y-3" id="faq-accordion">
+    <% const faqs = [
+      { q: 'What counts as a request?', a: 'Each API call (review, scrape, screenshot, etc.) counts as one request toward your monthly limit.' },
+      { q: 'Can I upgrade or downgrade anytime?', a: 'Yes, you can change your plan at any time. Changes take effect at the start of your next billing cycle.' },
+      { q: 'Is there a free trial?', a: 'The Free tier is available forever with generous limits. No credit card required to start.' },
+      { q: 'Do you offer enterprise plans?', a: 'Yes! Contact us for custom limits, dedicated support, and SLA guarantees.' },
+    ]; %>
+    <% faqs.forEach(function(faq, i) { %>
+    <div class="glass-card overflow-hidden">
+      <button class="w-full flex items-center justify-between p-5 text-left font-medium text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors faq-toggle" data-target="faq-<%= i %>">
+        <span><%= faq.q %></span>
+        <i class="ri-arrow-down-s-line text-xl transition-transform duration-200"></i>
+      </button>
+      <div id="faq-<%= i %>" class="hidden px-5 pb-5">
+        <p class="text-gray-600 dark:text-gray-400"><%= faq.a %></p>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+</div>
+<script>
+  document.querySelectorAll('.faq-toggle').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      const target = document.getElementById(this.dataset.target);
+      const icon = this.querySelector('i');
+      const isOpen = !target.classList.contains('hidden');
+      document.querySelectorAll('#faq-accordion [id^="faq-"]').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.faq-toggle i').forEach(ic => ic.style.transform = '');
+      if (!isOpen) { target.classList.remove('hidden'); icon.style.transform = 'rotate(180deg)'; }
+    });
+  });
+</script>

@@ -1,0 +1,27 @@
+<section class="py-16 md:py-24 bg-gray-50/50 dark:bg-gray-900/50">
+  <div class="section-container">
+    <div class="max-w-3xl mx-auto">
+      <div class="glass-card p-6 md:p-8 animate-on-scroll">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center">
+            <i class="ri-link-unlink-m text-xl text-red-500"></i>
+          </div>
+          <h3 class="text-xl font-heading font-bold text-gray-900 dark:text-white"><%= t('scan.title') %></h3>
+        </div>
+        <p class="text-gray-600 dark:text-gray-400 mb-4"><%= t('scan.scanLinksDesc') %></p>
+        <form id="broken-links-form" class="flex flex-col sm:flex-row gap-3">
+          <div class="relative flex-1">
+            <i class="ri-link absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            <input type="url" name="url"
+              class="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-brand-orange-500 focus:border-brand-orange-500 outline-none transition-all"
+              placeholder="<%= t('review.placeholder') %>" required />
+          </div>
+          <button type="submit" class="btn-primary whitespace-nowrap">
+            <span class="default-text"><i class="ri-search-line mr-1"></i> <%= t('scan.scanBtn') %></span>
+            <span class="loading-text hidden"><i class="ri-loader-4-line animate-spin mr-1"></i> <%= t('scan.scanning') %></span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>

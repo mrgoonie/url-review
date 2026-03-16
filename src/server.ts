@@ -12,6 +12,7 @@ import { fileURLToPath } from "url";
 import { env } from "@/env";
 import { validateSession, verifyRequest } from "@/lib/auth";
 import { browserPool } from "@/lib/playwright";
+import { DEFAULT_LANG, i18nMiddleware, isSupportedLang } from "@/middlewares/i18n";
 import { createInitialPlans } from "@/modules/plan/plans";
 import { initWorkspacePermissions } from "@/modules/workspace";
 import { apiRouter } from "@/routes/api";
@@ -31,6 +32,13 @@ declare global {
       apiKey: ApiKey | null;
       session: Session | null;
       csrfToken: string;
+      // i18n
+      t: (key: string, replacements?: Record<string, string>) => string;
+      lang: string;
+      altLangs: string[];
+      supportedLangs: string[];
+      localePath: (path: string) => string;
+      altLangPath: (altLang: string) => string;
     }
   }
 }
@@ -68,11 +76,56 @@ app.use(validateSession);
 
 // routes
 app.use(authRouter);
-app.use(pageRouter);
+
+// Root redirect to preferred language
+app.get("/", (req, res) => {
+  const cookieLang = req.cookies?.lang;
+  const headerLang = req.headers["accept-language"]?.slice(0, 2);
+  const lang = isSupportedLang(cookieLang)
+    ? cookieLang
+    : isSupportedLang(headerLang || "")
+      ? headerLang
+      : DEFAULT_LANG;
+  res.redirect(301, `/${lang}`);
+});
+
+// Legacy route redirects (301 for SEO)
+const legacyRoutes = ["/pricing", "/profile", "/payment-success", "/privacy", "/404"];
+for (const route of legacyRoutes) {
+  app.get(route, (req, res) => {
+    const lang = req.cookies?.lang || DEFAULT_LANG;
+    res.redirect(301, `/${lang}${route}`);
+  });
+}
+app.get("/review/:id", (req, res) => {
+  const lang = req.cookies?.lang || DEFAULT_LANG;
+  res.redirect(301, `/${lang}/review/${req.params.id}`);
+});
+app.get("/scan/:id", (req, res) => {
+  const lang = req.cookies?.lang || DEFAULT_LANG;
+  res.redirect(301, `/${lang}/scan/${req.params.id}`);
+});
+app.get("/checkout", (req, res) => {
+  const lang = req.cookies?.lang || DEFAULT_LANG;
+  res.redirect(
+    301,
+    `/${lang}/checkout${req.url.includes("?") ? req.url.substring(req.url.indexOf("?")) : ""}`
+  );
+});
+app.get("/checkout/confirmation", (req, res) => {
+  const lang = req.cookies?.lang || DEFAULT_LANG;
+  res.redirect(
+    301,
+    `/${lang}/checkout/confirmation${req.url.includes("?") ? req.url.substring(req.url.indexOf("?")) : ""}`
+  );
+});
 
 // swagger
 const specs = swaggerJSDoc(swaggerOptions());
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
+
+// Mount pageRouter under /:lang with i18n middleware
+app.use("/:lang", i18nMiddleware, pageRouter);
 
 // error handler
 app.use((error: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {

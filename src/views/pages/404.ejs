@@ -1,11 +1,16 @@
-<div class="w-full flex justify-center items-center">
-  <div class="h-auto text-center px-6">
-    <h1 class="text-2xl font-bold py-2 text-gray-900 dark:text-white">404</h1>
-    <h2 class="pb-4 text-gray-700 dark:text-gray-300">Page not found</h2>
-    <%- include("../common/button", {
-      content: "<i class='ri-home-line mr-2'></i> Home",
-      href: "/",
-    }) %>
-
+<section class="min-h-[60vh] flex items-center justify-center py-12">
+  <div class="section-container text-center">
+    <div class="max-w-lg mx-auto">
+      <div class="text-8xl md:text-9xl font-heading font-extrabold gradient-text mb-4 select-none">404</div>
+      <h1 class="text-2xl md:text-3xl font-heading font-bold text-gray-900 dark:text-white mb-4">
+        <%= typeof t === 'function' ? t('common.notFound') : 'Page Not Found' %>
+      </h1>
+      <p class="text-gray-600 dark:text-gray-400 mb-8">
+        <%= typeof t === 'function' ? t('common.notFoundDesc') : 'The page you are looking for does not exist.' %>
+      </p>
+      <a href="<%= typeof localePath === 'function' ? localePath('/') : '/en' %>" class="btn-primary no-underline">
+        <i class="ri-home-line mr-2"></i> <%= typeof t === 'function' ? t('common.backHome') : 'Back to Home' %>
+      </a>
+    </div>
   </div>
-</div>
+</section>

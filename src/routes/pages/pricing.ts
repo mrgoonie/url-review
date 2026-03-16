@@ -16,10 +16,11 @@ pageRouter.get("/pricing", verifyRequest, validateSession, async (_req, res) => 
   const user = id ? await getUser(id) : null;
 
   const plans = await getAvailablePricingPlans();
+  const lang = res.locals.lang || "en";
   plans.forEach((plan) => {
     plan.checkoutUrl = user
-      ? `/checkout?productId=${plan.polarProductId}&priceId=${plan.polarPriceId}&userId=${user?.id}`
-      : `/login?redirect_uri=/pricing`;
+      ? `/${lang}/checkout?productId=${plan.polarProductId}&priceId=${plan.polarPriceId}&userId=${user?.id}`
+      : `/${lang}/login?redirect_uri=/${lang}/pricing`;
   });
 
   return res.render("master", {

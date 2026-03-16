@@ -5,13 +5,13 @@ import { env } from "@/env";
 import { wait } from "@/lib/utils/wait";
 
 import { extractContentWithDefuddle } from "./extract-content-with-defuddle";
+import { getFacebookHtml, isFacebookUrl } from "./get-facebook-content";
 import { getHtmlWithAxios } from "./get-html-with-axios";
 import { getHtmlWithFirecrawl } from "./get-html-with-firecrawl";
 import { getHtmlContent } from "./get-html-with-playwright";
 import { getHtmlWithScrapedo } from "./get-html-with-scrapedo";
 import { getHtmlWithScrapling } from "./get-html-with-scrapling";
 import { getHtmlWithScrappey } from "./get-html-with-scrappey";
-import { getFacebookHtml, isFacebookUrl } from "./get-facebook-content";
 import { getTwitterHtml, isTwitterUrl } from "./get-twitter-content";
 import { validateHtmlContent } from "./validate-html-content";
 
@@ -242,28 +242,36 @@ export async function getHtmlWithFallbacks(url: string, options?: ScrapeOptions)
 
   // Special handling for Twitter/X URLs - use specialized Twitter fetcher first
   if (isTwitterUrl(url)) {
-    if (debug) console.log(`get-html-with-fallbacks.ts > Detected Twitter URL, using specialized handler`);
+    if (debug)
+      console.log(`get-html-with-fallbacks.ts > Detected Twitter URL, using specialized handler`);
     try {
       const html = await getTwitterHtml(url, { debug, includeReplies: true });
       if (debug) console.log(`get-html-with-fallbacks.ts > Successfully fetched Twitter content`);
       return opts.simpleHtml ? await extractOrSimplifyHtml(html, url) : html;
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : String(error);
-      if (debug) console.log(`get-html-with-fallbacks.ts > Twitter handler failed: ${errorMsg}, falling back to generic methods`);
+      if (debug)
+        console.log(
+          `get-html-with-fallbacks.ts > Twitter handler failed: ${errorMsg}, falling back to generic methods`
+        );
       // Continue to generic fallback methods if Twitter-specific methods fail
     }
   }
 
   // Special handling for Facebook URLs - use specialized Facebook fetcher first
   if (isFacebookUrl(url)) {
-    if (debug) console.log(`get-html-with-fallbacks.ts > Detected Facebook URL, using specialized handler`);
+    if (debug)
+      console.log(`get-html-with-fallbacks.ts > Detected Facebook URL, using specialized handler`);
     try {
       const html = await getFacebookHtml(url, { debug });
       if (debug) console.log(`get-html-with-fallbacks.ts > Successfully fetched Facebook content`);
       return opts.simpleHtml ? await extractOrSimplifyHtml(html, url) : html;
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : String(error);
-      if (debug) console.log(`get-html-with-fallbacks.ts > Facebook handler failed: ${errorMsg}, falling back to generic methods`);
+      if (debug)
+        console.log(
+          `get-html-with-fallbacks.ts > Facebook handler failed: ${errorMsg}, falling back to generic methods`
+        );
     }
   }
 

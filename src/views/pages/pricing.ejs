@@ -1,81 +1,46 @@
-<div class="px-6 py-20 flex flex-col items-center justify-center">
-  <div class="w-full h-auto text-center max-w-screen-md">
-    <h1 class="font-bold py-4 text-6xl mb-8 text-gray-900 dark:text-white">Pricing</h1>
+<%- include('../components/breadcrumbs', { crumbs: [{ label: t('nav.home'), path: '/' }, { label: t('pricing.title') }] }) %>
 
-    <!-- PRICING PLANS -->
-    <div class="w-full border border-gray-200 dark:border-gray-700 rounded-2xl p-6 relative mb-8 shadow-lg bg-white dark:bg-gray-800 transition-all duration-300">
-      <h3 class="font-bold text-xl mb-6 text-center text-gray-900 dark:text-white flex items-center justify-center">
-        <i class="ri-price-tag-3-line mr-2"></i>Available Plans
-      </h3>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full" id="plan-container">
-        <% locals.plans.forEach((plan, index) => { %>
-        <% const isRecommended = plan.name === "Starter"; %>
-        <% 
-          // Define unique styles for each plan to avoid CSS duplication
-          let cardClasses, headerClasses, titleClasses, priceClasses, buttonClasses;
-          
-          if (isRecommended) {
-            cardClasses = "shadow-md border-0 outline outline-2 outline-blue-500 dark:outline-blue-400";
-            headerClasses = "bg-blue-500 dark:bg-blue-600";
-            titleClasses = "text-white";
-            buttonClasses = "bg-green-500 text-white font-medium cursor-default";
-          } else {
-            cardClasses = "hover:shadow-md hover:scale-[1.02] border-0 outline outline-1 outline-gray-200 dark:outline-gray-700";
-            headerClasses = "bg-gray-100 dark:bg-gray-700";
-            titleClasses = "text-gray-800 dark:text-white";
-            buttonClasses = "bg-blue-500 hover:bg-blue-600 text-white font-medium transition-colors duration-300";
-          }
-        %>
-
-        <div class="relative flex flex-col h-full overflow-hidden rounded-2xl transition-all duration-300 <%= cardClasses %>" data-id="<%- plan.id %>">
-
-          <!-- Plan Header -->
-          <div class="p-4 <%= headerClasses %> text-center relative">
-            <h4 class="font-bold text-lg <%= titleClasses %>">
-              <%- plan.name %>
-            </h4>
-
-            <!-- Plan Badge -->
-            <% if(isRecommended) { %>
-            <div class="absolute top-0 right-0 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-bl-lg shadow-sm">
-              <i class="ri-check-line mr-1"></i>Recommended
-            </div>
-            <% } %>
-          </div>
-
-          <!-- Plan Content -->
-          <div class="p-6 text-center bg-white dark:bg-gray-800 flex-grow flex flex-col">
-            <!-- Plan Price -->
-            <div class="flex items-center justify-center">
-              <span class="text-3xl font-bold dark:text-white"><%- plan.price / 100 %></span>
-              <span class="text-sm font-normal ml-1 text-gray-700 dark:text-gray-300"><%- plan.currency %></span>
-            </div>
-            <div class="text-sm text-gray-500 dark:text-gray-400 mb-6">per month</div>
-
-            <!-- Plan Description -->
-            <div class="text-xs italic text-gray-600 dark:text-gray-300 mb-6 flex-grow">
-              <%- plan.description %>
-            </div>
-
-            <!-- Benefits -->
-            <div class="text-sm text-gray-600 dark:text-gray-300 mb-6 flex-grow">
-              <ul>
-                <% plan.benefits.forEach((benefit) => { %>
-                <li><%- benefit %></li>
-                <% }) %>
-              </ul>
-            </div>
-
-            <!-- Action Button -->
-            <a href="<%- plan.checkoutUrl %>" class="block w-full py-2 px-4 text-center rounded-lg no-underline <%= buttonClasses %>" target="_blank">
-              <i class="ri-arrow-right-line mr-1"></i>Get Started
-            </a>
-          </div>
-        </div>
-        <% }); %>
-      </div>
+<section class="py-12 md:py-20">
+  <div class="section-container">
+    <div class="text-center mb-12">
+      <h1 class="text-4xl md:text-5xl font-heading font-bold text-gray-900 dark:text-white mb-4"><%= t('pricing.title') %></h1>
+      <p class="text-lg text-gray-600 dark:text-gray-400 max-w-xl mx-auto"><%= t('pricing.subtitle') %></p>
     </div>
-    <!-- END PRICING PLANS -->
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-16">
+      <% locals.plans.forEach(function(plan, index) { %>
+      <% const isRecommended = plan.name === "Starter"; %>
+      <div class="relative glass-card overflow-hidden transition-all duration-300 hover:-translate-y-1
+        <%= isRecommended ? 'ring-2 ring-brand-orange-500 shadow-xl shadow-brand-orange-500/10' : '' %>">
+        <% if (isRecommended) { %>
+        <div class="absolute top-0 right-0 bg-brand-orange-500 text-white text-xs font-bold px-3 py-1.5 rounded-bl-xl">
+          <i class="ri-star-line mr-1"></i><%= t('pricing.recommended') %>
+        </div>
+        <% } %>
+        <div class="p-6 md:p-8">
+          <h3 class="text-xl font-heading font-bold text-gray-900 dark:text-white mb-2"><%- plan.name %></h3>
+          <div class="flex items-baseline gap-1 mb-1">
+            <span class="text-4xl font-heading font-bold text-gray-900 dark:text-white">$<%- plan.price / 100 %></span>
+            <span class="text-sm text-gray-500 dark:text-gray-400"><%- plan.currency %></span>
+          </div>
+          <p class="text-sm text-gray-500 dark:text-gray-400 mb-6"><%= t('pricing.perMonth') %></p>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mb-6"><%- plan.description %></p>
+          <ul class="space-y-3 mb-8">
+            <% plan.benefits.forEach(function(benefit) { %>
+            <li class="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-300">
+              <i class="ri-check-line text-green-500 mt-0.5 flex-shrink-0"></i>
+              <span><%- benefit %></span>
+            </li>
+            <% }) %>
+          </ul>
+          <a href="<%- plan.checkoutUrl %>" class="block w-full text-center no-underline py-3 rounded-xl font-semibold transition-all duration-200 <%= isRecommended ? 'btn-primary' : 'btn-secondary' %>">
+            <%= t('pricing.getStarted') %> <i class="ri-arrow-right-line ml-1"></i>
+          </a>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+
+    <%- include('../sections/pricing-faq-section', locals) %>
   </div>
-</div>
+</section>

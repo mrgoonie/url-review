@@ -1,93 +1,59 @@
-<html lang="en">
-<!-- HEAD -->
+<!DOCTYPE html>
+<html lang="<%= typeof lang !== 'undefined' ? lang : 'en' %>" data-mode="dark">
 
 <head>
   <%- include('common/head', locals) %>
   <script>
-    // Immediately invoked function to set the theme on page load
     (function() {
-      function getInitialTheme() {
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme) return savedTheme;
-        return 'dark';
-      }
-      const theme = getInitialTheme();
+      const theme = localStorage.getItem('theme') || 'dark';
       document.documentElement.setAttribute('data-mode', theme);
     })();
   </script>
 </head>
 
-<!-- BODY -->
-
-<body class="w-full bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100">
-  <!-- HEADER -->
+<body class="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-body antialiased">
   <% if (typeof locals.headerEnabled === 'undefined' || locals.headerEnabled) { %>
-  <%- include('common/header', locals) %>
+    <%- include('common/header', locals) %>
   <% } %>
 
-  <!-- PAGE -->
-  <% if (typeof page !== 'undefined') { %>
-  <%- include(page, locals); %>
-  <% } %>
+  <main>
+    <% if (typeof page !== 'undefined') { %>
+      <%- include(page, locals) %>
+    <% } %>
+  </main>
 
-  <!-- IndieBoosting -->
-  <div class="w-full max-w-4xl mx-auto my-10 text-center">
-    <script src="https://cdn.indieboosting.com/latest/script.js?id=36ODIB1SBT&maxProducts=9&maxColumns=3&title=My Other Products"></script>
-  </div>
-
-  <!-- FOOTER -->
   <% if (typeof locals.footerEnabled === 'undefined' || locals.footerEnabled) { %>
-  <%- include('common/footer', locals) %>
+    <%- include('common/footer', locals) %>
   <% } %>
 
-  <div id="anywhere-home" class=""></div>
+  <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js" defer></script>
+  <script src="/js/marked.min.js" defer></script>
+  <script src="https://unpkg.com/@popperjs/core@2" defer></script>
+  <script src="https://unpkg.com/tippy.js@6" defer></script>
 
-  <!-- pre loader start -->
-  <div class="loader-wrapper">
-    <div class="loader">
-    </div>
-    <div class="loader-section section-left"></div>
-    <div class="loader-section section-right"></div>
-  </div>
-  <!-- pre loader end -->
+  <% if (locals.needsHighlight) { %>
+  <script src="/vendor/highlight/highlight.min.js" defer></script>
+  <% } %>
+  <% if (locals.needsChart) { %>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+  <% } %>
 
-  <!-- Scripts -->
-  <!-- Day.js -->
-  <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
-  <!-- marked.js -->
-  <script src="/js/marked.min.js"></script>
-  <!-- highlight.js -->
-  <script src="/vendor/highlight/highlight.min.js"></script>
-  <!-- jQuery -->
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-  <!-- Slick -->
-  <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" />
-  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.css" />
-  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
-  <!-- Tippy.js -->
-  <script src="https://unpkg.com/@popperjs/core@2"></script>
-  <script src="https://unpkg.com/tippy.js@6"></script>
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="/assets/js/auth.js" defer></script>
+  <script src="/js/scroll-animations.js" defer></script>
 
-  <!-- Main JS -->
-  <script defer src="/assets/js/plugins/gsap.min.js"></script>
-  <!-- Users -->
-  <script defer src="/assets/js/auth.js"></script>
-  <!-- Drawers -->
-  <script defer src="/assets/js/plugins/drawers.js"></script>
-  <!-- Modals -->
-  <script defer src="/assets/js/plugins/modals.js"></script>
-  <!-- Tippy -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      tippy('.tippy', {
-        animation: 'fade',
-        duration: 300,
-        interactive: true,
-      });
+      if (typeof tippy !== 'undefined') {
+        tippy('.tippy', { animation: 'fade', duration: 200, interactive: true });
+      }
     });
   </script>
+
+  <% if (locals.pageScripts) { %>
+    <% locals.pageScripts.forEach(function(script) { %>
+      <script src="<%= script %>" defer></script>
+    <% }) %>
+  <% } %>
 </body>
 
 </html>
