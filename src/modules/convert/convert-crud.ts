@@ -1,6 +1,8 @@
 import { analyzeUrl } from "@/lib/ai";
 import type { DefuddleMetadata } from "@/lib/scrape";
 import { extractMarkdownWithDefuddle, getHtmlWithFallbacks } from "@/lib/scrape";
+import { getTwitterContent, isTwitterUrl } from "@/lib/scrape/get-twitter-content";
+import { twitterContentToMarkdown } from "@/lib/scrape/twitter-to-markdown";
 import { isUrlAlive } from "@/lib/utils";
 
 import type { ConvertWebUrlOptions } from "./convert-schemas";
@@ -19,13 +21,39 @@ export async function convertUrlToMarkdown(url: string, options?: ConvertWebUrlO
   const { alive } = await isUrlAlive(url, { timeout: 15_000 });
   if (!alive) throw new Error(`URL ${url} is not alive`);
 
-  // Step 2: Fetch raw HTML
+  // Step 2: Twitter/X URLs — bypass Defuddle, convert structured data directly to Markdown
+  if (isTwitterUrl(url)) {
+    if (debug) console.log(`convert-crud.ts > Detected Twitter URL, using direct Markdown conversion`);
+    try {
+      const twitterContent = await getTwitterContent(url, {
+        debug,
+        includeReplies: true,
+      });
+      const result = twitterContentToMarkdown(twitterContent);
+      return {
+        url,
+        markdown: result.markdown,
+        model: "twitter-api",
+        usage: { total_tokens: 0, prompt_tokens: 0, completion_tokens: 0 },
+        metadata: result.metadata,
+      };
+    } catch (error) {
+      if (debug) {
+        console.log(
+          `convert-crud.ts > Twitter direct conversion failed: ${error instanceof Error ? error.message : String(error)}, falling back to generic flow`
+        );
+      }
+      // Fall through to generic Defuddle/LLM flow
+    }
+  }
+
+  // Step 3: Fetch raw HTML
   const html = await getHtmlWithFallbacks(url, {
     delayAfterLoad: options?.delayAfterLoad ?? 3000,
     debug,
   });
 
-  // Step 3: Try Defuddle markdown conversion (free, no LLM cost)
+  // Step 4: Try Defuddle markdown conversion (free, no LLM cost)
   try {
     const defuddleResult = await extractMarkdownWithDefuddle(html, url);
     const wordCount = defuddleResult.markdown.split(/\s+/).length;
@@ -54,7 +82,7 @@ export async function convertUrlToMarkdown(url: string, options?: ConvertWebUrlO
     }
   }
 
-  // Step 4: Fallback to LLM-based conversion
+  // Step 5: Fallback to LLM-based conversion
   return convertUrlToMarkdownWithLlm(url, options);
 }
 

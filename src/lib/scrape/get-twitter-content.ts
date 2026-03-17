@@ -10,6 +10,21 @@ import { env } from "@/env";
 
 import { getTwitterReplies, repliesToHtml, type TwitterReply } from "./get-twitter-replies";
 
+/** FxTwitter article (X long-form content) with DraftJS blocks */
+export interface TwitterArticle {
+  title: string;
+  previewText: string;
+  coverImageUrl?: string;
+  blocks: Array<{
+    type: string;
+    text: string;
+    inlineStyleRanges: Array<{ offset: number; length: number; style: string }>;
+    entityRanges: Array<{ offset: number; length: number; key: number }>;
+  }>;
+  entityMap: Record<string, any>;
+  mediaEntities: any[];
+}
+
 export interface TwitterContent {
   text: string;
   author: {
@@ -30,6 +45,8 @@ export interface TwitterContent {
   };
   createdAt?: string;
   replies?: TwitterReply[];
+  /** X Article (long-form DraftJS content), present when tweet links to an article */
+  article?: TwitterArticle;
   html: string; // Generated HTML representation
 }
 
@@ -136,6 +153,36 @@ async function fetchWithFxTwitter(tweetId: string, debug?: boolean): Promise<Twi
   const tweet = response.data?.tweet;
   if (!tweet) throw new Error("FxTwitter: No tweet data returned");
 
+  // Extract article data if present (X long-form content)
+  let article: TwitterArticle | undefined;
+  if (tweet.article?.content?.blocks) {
+    const rawEntityMap = tweet.article.content.entityMap;
+    // Normalize entityMap: FxTwitter may return array of {key, value} instead of Record
+    let entityMap: Record<string, any>;
+    if (Array.isArray(rawEntityMap)) {
+      entityMap = {};
+      for (const entry of rawEntityMap as any[]) {
+        const key = String(entry.key ?? entry.index ?? "");
+        entityMap[key] = entry.value ?? entry;
+      }
+    } else {
+      entityMap = rawEntityMap || {};
+    }
+
+    const coverUrl =
+      tweet.article.cover_media?.media_info?.original_img_url ||
+      tweet.article.cover_media?.url;
+
+    article = {
+      title: tweet.article.title || "",
+      previewText: tweet.article.preview_text || "",
+      coverImageUrl: coverUrl,
+      blocks: tweet.article.content.blocks,
+      entityMap,
+      mediaEntities: tweet.article.media_entities || [],
+    };
+  }
+
   const content: TwitterContent = {
     text: tweet.text || "",
     author: {
@@ -155,6 +202,7 @@ async function fetchWithFxTwitter(tweetId: string, debug?: boolean): Promise<Twi
       views: tweet.views,
     },
     createdAt: tweet.created_at,
+    article,
     html: "",
   };
 
