@@ -1,0 +1,40 @@
+{
+  "content": {
+    "enabled": true,
+    "pollIntervalMs": 60000,
+    "platforms": {
+      "x": {
+        "enabled": true,
+        "maxPostsPerDay": 5,
+        "threadMaxParts": 6
+      },
+      "facebook": {
+        "enabled": false,
+        "pageId": "",
+        "maxPostsPerDay": 3
+      }
+    },
+    "reviewMode": "auto",
+    "schedule": {
+      "timezone": "Asia/Saigon",
+      "quietHoursStart": "23:00",
+      "quietHoursEnd": "06:00"
+    },
+    "selfImprovement": {
+      "enabled": true,
+      "engagementCheckIntervalHours": 6,
+      "topPerformingCount": 10
+    },
+    "maxContentPerDay": 10,
+    "contentDir": "~/.claudekit/content/",
+    "dbPath": "~/.claudekit/content.db",
+    "state": {
+      "lastScanAt": "2026-03-05T09:36:01.648Z",
+      "lastEngagementCheckAt": "2026-03-05T09:36:01.652Z",
+      "processedEvents": [],
+      "contentQueue": [],
+      "currentlyCreating": null,
+      "dailyPostCounts": {}
+    }
+  }
+}
