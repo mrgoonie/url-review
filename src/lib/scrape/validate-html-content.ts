@@ -13,6 +13,7 @@ const BLOCK_PATTERNS: RegExp[] = [
   // Security blocks
   /To help us keep this website secure/i,
   /You've been blocked/i,
+  /been blocked by network security/i,
   /Access denied/i,
   /403 Forbidden/i,
   /Request blocked/i,
