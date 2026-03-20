@@ -266,9 +266,7 @@ function resolveArticleMediaUrl(
   mediaId: string,
   mediaEntities: any[]
 ): { url: string; type: "image" | "video" } | null {
-  const entity = mediaEntities.find(
-    (m: any) => m.media_id === mediaId || m.media_key === mediaId
-  );
+  const entity = mediaEntities.find((m: any) => m.media_id === mediaId || m.media_key === mediaId);
   if (!entity) return null;
 
   const info = entity.media_info;
