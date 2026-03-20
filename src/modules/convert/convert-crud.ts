@@ -23,7 +23,8 @@ export async function convertUrlToMarkdown(url: string, options?: ConvertWebUrlO
 
   // Step 2: Twitter/X URLs — bypass Defuddle, convert structured data directly to Markdown
   if (isTwitterUrl(url)) {
-    if (debug) console.log(`convert-crud.ts > Detected Twitter URL, using direct Markdown conversion`);
+    if (debug)
+      console.log(`convert-crud.ts > Detected Twitter URL, using direct Markdown conversion`);
     try {
       const twitterContent = await getTwitterContent(url, {
         debug,

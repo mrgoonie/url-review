@@ -170,8 +170,7 @@ async function fetchWithFxTwitter(tweetId: string, debug?: boolean): Promise<Twi
     }
 
     const coverUrl =
-      tweet.article.cover_media?.media_info?.original_img_url ||
-      tweet.article.cover_media?.url;
+      tweet.article.cover_media?.media_info?.original_img_url || tweet.article.cover_media?.url;
 
     article = {
       title: tweet.article.title || "",
