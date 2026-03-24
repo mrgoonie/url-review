@@ -3,9 +3,9 @@
     <%- include('../components/ui-section-header', { title: t('howItWorks.sectionTitle'), subtitle: t('howItWorks.sectionSubtitle') }) %>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
       <% const steps = [
-        { num: '01', icon: 'ri-link', title: t('howItWorks.step1Title'), desc: t('howItWorks.step1Desc') },
-        { num: '02', icon: 'ri-robot-line', title: t('howItWorks.step2Title'), desc: t('howItWorks.step2Desc') },
-        { num: '03', icon: 'ri-file-chart-line', title: t('howItWorks.step3Title'), desc: t('howItWorks.step3Desc') },
+        { num: '01', icon: 'ri-terminal-line', title: t('howItWorks.step1Title'), desc: t('howItWorks.step1Desc') },
+        { num: '02', icon: 'ri-robot-2-line', title: t('howItWorks.step2Title'), desc: t('howItWorks.step2Desc') },
+        { num: '03', icon: 'ri-bar-chart-box-line', title: t('howItWorks.step3Title'), desc: t('howItWorks.step3Desc') },
       ]; %>
       <% steps.forEach(function(step, i) { %>
       <div class="relative text-center animate-on-scroll" style="transition-delay: <%= i * 0.15 %>s">
@@ -20,6 +20,14 @@
         <% } %>
       </div>
       <% }) %>
+    </div>
+
+    <!-- Pipeline visualization -->
+    <div class="mt-12 text-center animate-on-scroll" style="transition-delay: 0.5s">
+      <div class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gray-100 dark:bg-gray-800 text-sm font-mono text-gray-500 dark:text-gray-400">
+        <i class="ri-flow-chart text-brand-orange-500"></i>
+        <%= t('howItWorks.pipelineSteps') %>
+      </div>
     </div>
   </div>
 </section>

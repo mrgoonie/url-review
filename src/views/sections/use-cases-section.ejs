@@ -1,0 +1,71 @@
+<section class="py-16 md:py-24 bg-gray-50/50 dark:bg-gray-900/50">
+  <div class="section-container">
+    <%- include('../components/ui-section-header', { title: t('useCases.sectionTitle'), subtitle: t('useCases.sectionSubtitle') }) %>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <% const personas = [
+        {
+          icon: 'ri-code-s-slash-line',
+          iconBg: 'bg-blue-500/10 dark:bg-blue-500/20',
+          iconColor: 'text-blue-500',
+          title: t('useCases.devTitle'),
+          desc: t('useCases.devDesc'),
+          bullets: [t('useCases.devBullet1'), t('useCases.devBullet2'), t('useCases.devBullet3'), t('useCases.devBullet4')],
+          cta: t('useCases.devCta'),
+          href: localePath('/api-docs')
+        },
+        {
+          icon: 'ri-line-chart-line',
+          iconBg: 'bg-green-500/10 dark:bg-green-500/20',
+          iconColor: 'text-green-500',
+          title: t('useCases.marketerTitle'),
+          desc: t('useCases.marketerDesc'),
+          bullets: [t('useCases.marketerBullet1'), t('useCases.marketerBullet2'), t('useCases.marketerBullet3'), t('useCases.marketerBullet4')],
+          cta: t('useCases.marketerCta'),
+          href: '#reviewForm'
+        },
+        {
+          icon: 'ri-team-line',
+          iconBg: 'bg-purple-500/10 dark:bg-purple-500/20',
+          iconColor: 'text-purple-500',
+          title: t('useCases.agencyTitle'),
+          desc: t('useCases.agencyDesc'),
+          bullets: [t('useCases.agencyBullet1'), t('useCases.agencyBullet2'), t('useCases.agencyBullet3'), t('useCases.agencyBullet4')],
+          cta: t('useCases.agencyCta'),
+          href: localePath('/pricing')
+        },
+        {
+          icon: 'ri-seo-line',
+          iconBg: 'bg-brand-orange-500/10 dark:bg-brand-orange-500/20',
+          iconColor: 'text-brand-orange-500',
+          title: t('useCases.seoTitle'),
+          desc: t('useCases.seoDesc'),
+          bullets: [t('useCases.seoBullet1'), t('useCases.seoBullet2'), t('useCases.seoBullet3'), t('useCases.seoBullet4')],
+          cta: t('useCases.seoCta'),
+          href: '#reviewForm'
+        }
+      ]; %>
+
+      <% personas.forEach(function(persona, i) { %>
+      <div class="glass-card p-6 flex flex-col animate-on-scroll" style="transition-delay: <%= i * 0.1 %>s">
+        <div class="w-12 h-12 rounded-xl <%= persona.iconBg %> flex items-center justify-center mb-4">
+          <i class="<%= persona.icon %> text-2xl <%= persona.iconColor %>"></i>
+        </div>
+        <h3 class="text-lg font-heading font-bold text-gray-900 dark:text-white mb-1"><%= persona.title %></h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4"><%= persona.desc %></p>
+        <ul class="space-y-2 mb-6 flex-1">
+          <% persona.bullets.forEach(function(bullet) { %>
+          <li class="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-400">
+            <i class="ri-check-line text-green-500 mt-0.5 flex-shrink-0"></i>
+            <span><%= bullet %></span>
+          </li>
+          <% }) %>
+        </ul>
+        <a href="<%= persona.href %>" class="btn-secondary text-center text-sm no-underline">
+          <%= persona.cta %> <i class="ri-arrow-right-line ml-1"></i>
+        </a>
+      </div>
+      <% }) %>
+    </div>
+  </div>
+</section>

@@ -7,8 +7,13 @@
         <h2 class="text-3xl md:text-4xl font-heading font-bold text-white mb-4"><%= t('cta.title') %></h2>
         <p class="text-lg text-white/80 max-w-xl mx-auto mb-8"><%= t('cta.subtitle') %></p>
         <a href="<%= localePath(user ? '/' : '/login') %>" class="inline-flex items-center justify-center px-8 py-4 font-semibold text-brand-orange-500 bg-white rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5 no-underline">
-          <%= t('cta.button') %> <i class="ri-arrow-right-line ml-2"></i>
+          <%= t('cta.button') %> <i class="ri-key-2-line ml-2"></i>
         </a>
+        <p class="text-white/60 text-sm mt-4">
+          <a href="#reviewForm" class="underline hover:text-white transition-colors no-underline text-white/60 hover:text-white">
+            <%= t('cta.buttonAlt') %>
+          </a>
+        </p>
       </div>
     </div>
   </div>

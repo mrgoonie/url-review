@@ -1,0 +1,147 @@
+<section class="py-16 md:py-24">
+  <div class="section-container">
+    <%- include('../components/ui-section-header', { title: t('demo.sectionTitle'), subtitle: t('demo.sectionSubtitle') }) %>
+
+    <div class="max-w-4xl mx-auto animate-on-scroll">
+      <!-- Tab buttons -->
+      <div class="flex flex-wrap gap-2 mb-0" role="tablist" aria-label="Demo preview tabs">
+        <% const demoTabs = [
+          { id: 'review', icon: 'ri-file-search-line', label: t('demo.tabReview') },
+          { id: 'markdown', icon: 'ri-markdown-line', label: t('demo.tabMarkdown') },
+          { id: 'seo', icon: 'ri-seo-line', label: t('demo.tabSeo') },
+          { id: 'screenshot', icon: 'ri-screenshot-2-line', label: t('demo.tabScreenshot') },
+        ]; %>
+        <% demoTabs.forEach(function(tab, i) { %>
+        <button role="tab" aria-selected="<%= i === 0 %>" aria-controls="demo-panel-<%= tab.id %>"
+          data-demo-tab="<%= tab.id %>"
+          class="demo-tab-btn px-4 py-2.5 rounded-t-xl text-sm font-medium transition-all duration-200 <%= i === 0 ? 'bg-white dark:bg-gray-800 text-brand-orange-500 border border-b-0 border-gray-200 dark:border-gray-700' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200' %>">
+          <i class="<%= tab.icon %> mr-1.5"></i> <%= tab.label %>
+        </button>
+        <% }) %>
+      </div>
+
+      <!-- Tab panels -->
+      <div class="glass-card rounded-tl-none overflow-hidden">
+        <!-- Review panel -->
+        <div id="demo-panel-review" role="tabpanel" class="demo-panel p-6">
+          <p class="text-sm text-gray-500 dark:text-gray-400 mb-4"><%= t('demo.reviewDesc') %></p>
+          <div class="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-4 font-mono text-sm overflow-x-auto">
+            <pre class="text-gray-700 dark:text-gray-300 whitespace-pre-wrap"><code>{
+  "status": 200,
+  "data": {
+    "url": "https://example.com",
+    "score": 87,
+    "summary": "Well-structured site with strong SEO fundamentals. Minor accessibility improvements recommended.",
+    "seo": { "score": 92, "issues": 2 },
+    "performance": { "score": 85, "loadTime": "1.2s" },
+    "accessibility": { "score": 78, "issues": 5 },
+    "brokenLinks": { "total": 24, "broken": 1 },
+    "screenshots": ["desktop.png", "tablet.png", "mobile.png"]
+  }
+}</code></pre>
+          </div>
+        </div>
+
+        <!-- Markdown panel -->
+        <div id="demo-panel-markdown" role="tabpanel" class="demo-panel p-6 hidden">
+          <p class="text-sm text-gray-500 dark:text-gray-400 mb-4"><%= t('demo.markdownDesc') %></p>
+          <div class="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-4 font-mono text-sm overflow-x-auto">
+            <pre class="text-gray-700 dark:text-gray-300 whitespace-pre-wrap"><code># Example.com
+
+## About
+A clean, modern website showcasing best practices
+in web development and design.
+
+## Key Features
+- **Responsive Design** — Works on all devices
+- **Fast Loading** — Optimized for performance
+- **Accessible** — WCAG 2.1 AA compliant
+
+## Navigation
+- [Home](/)
+- [About](/about)
+- [Contact](/contact)
+
+---
+*Extracted by ReviewWeb.site API*</code></pre>
+          </div>
+        </div>
+
+        <!-- SEO panel -->
+        <div id="demo-panel-seo" role="tabpanel" class="demo-panel p-6 hidden">
+          <p class="text-sm text-gray-500 dark:text-gray-400 mb-4"><%= t('demo.seoDesc') %></p>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="border-b border-gray-200 dark:border-gray-700">
+                  <th class="text-left py-2 px-3 text-gray-500 dark:text-gray-400 font-medium">Tag</th>
+                  <th class="text-left py-2 px-3 text-gray-500 dark:text-gray-400 font-medium">Value</th>
+                </tr>
+              </thead>
+              <tbody class="text-gray-700 dark:text-gray-300">
+                <tr class="border-b border-gray-100 dark:border-gray-800"><td class="py-2 px-3 font-mono text-xs">title</td><td class="py-2 px-3">Example Domain — Official Website</td></tr>
+                <tr class="border-b border-gray-100 dark:border-gray-800"><td class="py-2 px-3 font-mono text-xs">description</td><td class="py-2 px-3">The official example domain for documentation and testing purposes.</td></tr>
+                <tr class="border-b border-gray-100 dark:border-gray-800"><td class="py-2 px-3 font-mono text-xs">og:image</td><td class="py-2 px-3">https://example.com/og-image.png</td></tr>
+                <tr class="border-b border-gray-100 dark:border-gray-800"><td class="py-2 px-3 font-mono text-xs">og:type</td><td class="py-2 px-3">website</td></tr>
+                <tr class="border-b border-gray-100 dark:border-gray-800"><td class="py-2 px-3 font-mono text-xs">twitter:card</td><td class="py-2 px-3">summary_large_image</td></tr>
+                <tr><td class="py-2 px-3 font-mono text-xs">canonical</td><td class="py-2 px-3">https://example.com</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Screenshot panel -->
+        <div id="demo-panel-screenshot" role="tabpanel" class="demo-panel p-6 hidden">
+          <p class="text-sm text-gray-500 dark:text-gray-400 mb-4"><%= t('demo.screenshotDesc') %></p>
+          <div class="grid grid-cols-3 gap-4">
+            <div class="text-center">
+              <div class="bg-gray-100 dark:bg-gray-800 rounded-lg aspect-video flex items-center justify-center border-2 border-dashed border-gray-300 dark:border-gray-600">
+                <div class="text-center">
+                  <i class="ri-computer-line text-3xl text-gray-400"></i>
+                  <p class="text-xs text-gray-400 mt-1">1920×1080</p>
+                </div>
+              </div>
+              <p class="text-xs text-gray-500 mt-2 font-medium">Desktop</p>
+            </div>
+            <div class="text-center">
+              <div class="bg-gray-100 dark:bg-gray-800 rounded-lg aspect-video flex items-center justify-center border-2 border-dashed border-gray-300 dark:border-gray-600">
+                <div class="text-center">
+                  <i class="ri-tablet-line text-3xl text-gray-400"></i>
+                  <p class="text-xs text-gray-400 mt-1">768×1024</p>
+                </div>
+              </div>
+              <p class="text-xs text-gray-500 mt-2 font-medium">Tablet</p>
+            </div>
+            <div class="text-center">
+              <div class="bg-gray-100 dark:bg-gray-800 rounded-lg aspect-video flex items-center justify-center border-2 border-dashed border-gray-300 dark:border-gray-600">
+                <div class="text-center">
+                  <i class="ri-smartphone-line text-3xl text-gray-400"></i>
+                  <p class="text-xs text-gray-400 mt-1">375×812</p>
+                </div>
+              </div>
+              <p class="text-xs text-gray-500 mt-2 font-medium">Mobile</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll('.demo-tab-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var tabId = this.dataset.demoTab;
+      document.querySelectorAll('.demo-tab-btn').forEach(function(b) {
+        b.classList.remove('bg-white', 'dark:bg-gray-800', 'text-brand-orange-500', 'border', 'border-b-0', 'border-gray-200', 'dark:border-gray-700');
+        b.classList.add('text-gray-500', 'dark:text-gray-400');
+        b.setAttribute('aria-selected', 'false');
+      });
+      this.classList.add('bg-white', 'dark:bg-gray-800', 'text-brand-orange-500', 'border', 'border-b-0', 'border-gray-200', 'dark:border-gray-700');
+      this.classList.remove('text-gray-500', 'dark:text-gray-400');
+      this.setAttribute('aria-selected', 'true');
+      document.querySelectorAll('.demo-panel').forEach(function(p) { p.classList.add('hidden'); });
+      document.getElementById('demo-panel-' + tabId).classList.remove('hidden');
+    });
+  });
+</script>

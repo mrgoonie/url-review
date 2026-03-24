@@ -2,8 +2,31 @@
   const user = <%- user ? JSON.stringify(user) : 'null' %>;
 </script>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "ReviewWeb.site",
+  "description": "<%- t('meta.siteDescription') %>",
+  "url": "https://reviewweb.site",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+
 <%- include('../sections/hero-section', locals) %>
+<%- include('../sections/trust-bar-section', locals) %>
+<%- include('../sections/demo-preview-section', locals) %>
+<%- include('../sections/use-cases-section', locals) %>
 <%- include('../sections/features-section', locals) %>
+<%- include('../sections/api-showcase-section', locals) %>
 <%- include('../sections/how-it-works-section', locals) %>
-<%- include('../sections/tool-section', locals) %>
+<%- include('../sections/comparison-section', locals) %>
+<%- include('../sections/pricing-faq-section', locals) %>
+<%- include('../sections/faq-section', locals) %>
 <%- include('../sections/cta-section', locals) %>

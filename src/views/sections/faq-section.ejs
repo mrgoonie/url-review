@@ -1,0 +1,49 @@
+<section class="py-16 md:py-24">
+  <div class="section-container">
+    <%- include('../components/ui-section-header', { title: t('faq.sectionTitle'), subtitle: t('faq.sectionSubtitle') }) %>
+
+    <div class="max-w-3xl mx-auto space-y-3" id="general-faq-accordion">
+      <% const generalFaqs = [
+        { q: t('faq.q1'), a: t('faq.a1') },
+        { q: t('faq.q2'), a: t('faq.a2') },
+        { q: t('faq.q3'), a: t('faq.a3') },
+        { q: t('faq.q4'), a: t('faq.a4') },
+        { q: t('faq.q5'), a: t('faq.a5') },
+        { q: t('faq.q6'), a: t('faq.a6') },
+        { q: t('faq.q7'), a: t('faq.a7') },
+      ]; %>
+      <% generalFaqs.forEach(function(faq, i) { %>
+      <div class="glass-card overflow-hidden animate-on-scroll" style="transition-delay: <%= i * 0.05 %>s">
+        <button class="w-full flex items-center justify-between p-5 text-left font-medium text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors general-faq-toggle"
+          data-target="general-faq-<%= i %>" aria-expanded="false" aria-controls="general-faq-<%= i %>">
+          <span><%= faq.q %></span>
+          <i class="ri-arrow-down-s-line text-xl transition-transform duration-200 flex-shrink-0 ml-4"></i>
+        </button>
+        <div id="general-faq-<%= i %>" class="hidden px-5 pb-5" role="region">
+          <p class="text-gray-600 dark:text-gray-400"><%= faq.a %></p>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll('.general-faq-toggle').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var target = document.getElementById(this.dataset.target);
+      var icon = this.querySelector('i');
+      var isOpen = !target.classList.contains('hidden');
+      // Close all
+      document.querySelectorAll('#general-faq-accordion [id^="general-faq-"]').forEach(function(el) { el.classList.add('hidden'); });
+      document.querySelectorAll('.general-faq-toggle i').forEach(function(ic) { ic.style.transform = ''; });
+      document.querySelectorAll('.general-faq-toggle').forEach(function(b) { b.setAttribute('aria-expanded', 'false'); });
+      // Open clicked (if was closed)
+      if (!isOpen) {
+        target.classList.remove('hidden');
+        icon.style.transform = 'rotate(180deg)';
+        this.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
+</script>

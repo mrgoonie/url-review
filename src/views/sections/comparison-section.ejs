@@ -1,0 +1,84 @@
+<section class="py-16 md:py-24 bg-gray-50/50 dark:bg-gray-900/50">
+  <div class="section-container">
+    <%- include('../components/ui-section-header', { title: t('comparison.sectionTitle'), subtitle: t('comparison.sectionSubtitle') }) %>
+
+    <div class="max-w-4xl mx-auto overflow-x-auto animate-on-scroll">
+      <table class="w-full text-sm border-collapse">
+        <thead>
+          <tr>
+            <th class="text-left py-3 px-4 font-medium text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-900 sticky left-0 z-10 min-w-[160px]">
+              Feature
+            </th>
+            <th class="text-center py-3 px-4 font-heading font-bold text-white bg-brand-orange-500 rounded-t-lg min-w-[120px]">
+              ReviewWeb
+            </th>
+            <th class="text-center py-3 px-4 font-medium text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 min-w-[120px]">
+              <%= t('comparison.competitorAhrefs') %>
+            </th>
+            <th class="text-center py-3 px-4 font-medium text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 rounded-tr-lg min-w-[120px]">
+              <%= t('comparison.competitorScrapingBee') %>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <% const compFeatures = [
+            { label: t('comparison.featureReview'), rw: true, ah: false, sb: false },
+            { label: t('comparison.featureScraping'), rw: true, ah: false, sb: true },
+            { label: t('comparison.featureSeo'), rw: true, ah: true, sb: false },
+            { label: t('comparison.featureScreenshot'), rw: true, ah: false, sb: false },
+            { label: t('comparison.featureSummarize'), rw: true, ah: false, sb: false },
+            { label: t('comparison.featureMarkdown'), rw: true, ah: false, sb: false },
+            { label: t('comparison.featureBatch'), rw: true, ah: true, sb: true },
+            { label: t('comparison.featureFree'), rw: true, ah: false, sb: true },
+          ]; %>
+          <% compFeatures.forEach(function(feat, i) { %>
+          <tr class="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+            <td class="py-3 px-4 font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-900 sticky left-0 z-10">
+              <%= feat.label %>
+            </td>
+            <td class="py-3 px-4 text-center bg-brand-orange-500/5 dark:bg-brand-orange-500/10">
+              <% if (feat.rw) { %>
+              <i class="ri-check-line text-lg text-green-500"></i>
+              <% } else { %>
+              <i class="ri-close-line text-lg text-gray-300 dark:text-gray-600"></i>
+              <% } %>
+            </td>
+            <td class="py-3 px-4 text-center">
+              <% if (feat.ah) { %>
+              <i class="ri-check-line text-lg text-green-500"></i>
+              <% } else { %>
+              <i class="ri-close-line text-lg text-gray-300 dark:text-gray-600"></i>
+              <% } %>
+            </td>
+            <td class="py-3 px-4 text-center">
+              <% if (feat.sb) { %>
+              <i class="ri-check-line text-lg text-green-500"></i>
+              <% } else { %>
+              <i class="ri-close-line text-lg text-gray-300 dark:text-gray-600"></i>
+              <% } %>
+            </td>
+          </tr>
+          <% }) %>
+          <!-- Price row -->
+          <tr class="border-t-2 border-gray-200 dark:border-gray-700">
+            <td class="py-4 px-4 font-bold text-gray-900 dark:text-white bg-white dark:bg-gray-900 sticky left-0 z-10">
+              <%= t('comparison.featurePrice') %>
+            </td>
+            <td class="py-4 px-4 text-center bg-brand-orange-500/5 dark:bg-brand-orange-500/10">
+              <span class="text-lg font-bold text-brand-orange-500">$0</span>
+              <span class="text-gray-500 text-xs"><%= t('comparison.perMonth') %></span>
+            </td>
+            <td class="py-4 px-4 text-center">
+              <span class="text-lg font-bold text-gray-700 dark:text-gray-300">$139</span>
+              <span class="text-gray-500 text-xs"><%= t('comparison.perMonth') %></span>
+            </td>
+            <td class="py-4 px-4 text-center">
+              <span class="text-lg font-bold text-gray-700 dark:text-gray-300">$49</span>
+              <span class="text-gray-500 text-xs"><%= t('comparison.perMonth') %></span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
