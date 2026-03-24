@@ -33,7 +33,7 @@ ReviewWeb.site follows a layered architecture with clear separation between pres
 │  └──────────┘ └──────────┘ └──────────┘ └──────────┘          │
 │                                                                  │
 │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐          │
-│  │ Screenshot│ │ Profile  │ │ Analytics│ │ Payment  │          │
+│  │ Screenshot│ │ HtmlToSS │ │ Profile  │ │ Analytics│          │
 │  │ Routes   │ │ Routes   │ │ Routes   │ │ Routes   │          │
 │  └──────────┘ └──────────┘ └──────────┘ └──────────┘          │
 └─────────────────────────────────────────────────────────────────┘
@@ -81,8 +81,8 @@ ReviewWeb.site follows a layered architecture with clear separation between pres
 │  └──────────┘ └──────────┘ └──────────┘ └──────────┘          │
 │                                                                  │
 │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐          │
-│  │ Browser  │ │ Email    │ │ CDN/Store│ │ YouTube  │          │
-│  │Automation│ │ (ElasticE)│ │ (Upfile) │ │Integration│         │
+│  │ Browser  │ │ Email    │ │ CDN/Store│ │ File     │          │
+│  │Automation│ │ (ElasticE)│ │ (Upfile) │ │Utilities │          │
 │  └──────────┘ └──────────┘ └──────────┘ └──────────┘          │
 │                                                                  │
 │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐          │
@@ -218,9 +218,14 @@ Input: URL
   │  ├─ conversion prompt
   │  └─ Output: Markdown format
   │
-  └─ EXTRACTION PATH
-     ├─ analyzeUrl() with JSON template
-     └─ Validate response with json-validator
+  ├─ EXTRACTION PATH
+  │  ├─ analyzeUrl() with JSON template
+  │  └─ Validate response with json-validator
+  │
+  └─ HTML-TO-SCREENSHOT PATH (NEW)
+     ├─ Accept raw HTML or ZIP file
+     ├─ Optional: Extract and serve ZIP content
+     └─ Render via Playwright & return screenshot
 ```
 
 ### Authentication Flow
@@ -277,6 +282,43 @@ User Subscription Request
   └─ Step 7: Send confirmation email
      └─ email.sendSubscriptionConfirmation()
 ```
+
+### HTML-to-Screenshot Workflow (NEW)
+
+```
+User Request: POST /api/v1/html-to-screenshot
+              ├─ Payload: JSON (html) or Form (file + optional entryFile)
+              ├─ Authentication check (API key or session)
+              ├─ Rate limit check (Redis)
+              │
+              ├─ Path 1: Raw HTML
+              │  ├─ Accept html string
+              │  ├─ renderHtmlToScreenshot(html)
+              │  └─ Return screenshot buffer
+              │
+              └─ Path 2: ZIP File
+                 ├─ Accept ZIP file (max 50MB)
+                 ├─ Validate magic bytes (PK)
+                 ├─ extractZipToTempDir() with security:
+                 │  ├─ Zip-slip protection
+                 │  ├─ Decompression bomb limits (200MB, 500 entries)
+                 │  └─ Cleanup callback
+                 ├─ Serve via /tmp-render express.static
+                 ├─ renderServedHtmlToScreenshot(entryFile)
+                 └─ Return screenshot + cleanup temp files
+
+Response: 200 OK
+          {
+            status: 200,
+            data: {
+              screenshotUrl: "cloudflare-r2-url",
+              // or
+              imageBuffer: base64-encoded image
+            }
+          }
+```
+
+---
 
 ### Rate Limiting System
 

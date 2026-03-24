@@ -79,6 +79,7 @@ Democratize website analysis by making advanced AI-powered content extraction an
 
 #### 4. Media Handling
 - **Screenshot capture** - Desktop, mobile, tablet viewports
+- **HTML-to-Screenshot** - Render raw HTML or ZIP files to screenshots (NEW)
 - **Shareable thumbnails** - Multiple templates
 - **Image extraction** - Bulk image discovery
 - **Vision analysis** - AI understanding of images
@@ -330,6 +331,7 @@ Democratize website analysis by making advanced AI-powered content extraction an
 | `/api/v1/scrape` | POST | Scrape website HTML |
 | `/api/v1/scrape/extract` | POST | Extract data with AI |
 | `/api/v1/screenshot` | POST | Capture screenshot |
+| `/api/v1/html-to-screenshot` | POST | Render HTML/ZIP to screenshot (NEW) |
 | `/api/v1/convert` | POST | HTML-to-Markdown conversion |
 | `/api/v1/summarize/url` | POST | Summarize single URL |
 | `/api/v1/summarize/website` | POST | Summarize full website |
