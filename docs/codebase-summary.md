@@ -500,7 +500,7 @@ Implements 10-step analysis workflow:
 
 ---
 
-### Browser Automation (4 files)
+### Browser Automation (5 files)
 **Location:** `src/lib/playwright/`
 
 **Components:**
@@ -508,6 +508,7 @@ Implements 10-step analysis workflow:
 - `get-html-content.ts` - DOM extraction
 - `get-images.ts` - Image scraping
 - `screenshot.ts` - Page capture
+- `render-html-content.ts` - HTML rendering to screenshot (NEW)
 
 ---
 
@@ -550,13 +551,14 @@ Implements 10-step analysis workflow:
 
 ---
 
-### Utilities (30+ files)
+### Utilities (31+ files)
 **Location:** `src/lib/utils/`
 
 **Categories:**
 - **String:** code-block, contain, count, extract, format, humanize, random, slug
 - **Data:** array, buffer, date, time, price, ai-cost, email, image, upload
 - **URL:** get-final-url, is-url-alive
+- **File:** extract-zip-to-temp-dir (ZIP extraction with security) (NEW)
 - **Other:** os, retry, wait, country, tz-names, cssVar, mongodb
 
 ---
@@ -666,7 +668,7 @@ Implements 10-step analysis workflow:
 
 ---
 
-## API Routes (16 modules)
+## API Routes (17 modules)
 
 ### Core Endpoints
 - `/api/v1/review` - Website review CRUD
@@ -674,6 +676,7 @@ Implements 10-step analysis workflow:
 - `/api/v1/screenshot` - Screenshot capture
 - `/api/v1/convert` - URL-to-Markdown
 - `/api/v1/summarize` - Content summarization
+- `/api/v1/html-to-screenshot` - HTML rendering to screenshot (NEW)
 - `/api/v1/profile` - User profile
 - `/api/v1/api_key` - API key management
 - `/api/v1/ai/models` - Available AI models
@@ -840,6 +843,7 @@ POST /api/v1/summarize/website { url }
 - cheerio - HTML parsing
 - defuddle - Pre-LLM content extraction (NEW)
 - linkedom - Lightweight DOM implementation for Defuddle (NEW)
+- adm-zip - ZIP file extraction and handling (NEW)
 
 ### Development Dependencies
 - typescript - Type checking
