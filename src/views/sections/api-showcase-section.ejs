@@ -1,0 +1,126 @@
+<section class="py-16 md:py-24">
+  <div class="section-container">
+    <%- include('../components/ui-section-header', { title: t('apiShowcase.sectionTitle'), subtitle: t('apiShowcase.sectionSubtitle') }) %>
+
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 max-w-6xl mx-auto">
+      <!-- Code block (left) -->
+      <div class="lg:col-span-3 animate-on-scroll">
+        <!-- Language tabs -->
+        <div class="flex gap-1">
+          <% const codeTabs = [
+            { id: 'curl', label: t('apiShowcase.tabCurl') },
+            { id: 'node', label: t('apiShowcase.tabNode') },
+            { id: 'python', label: t('apiShowcase.tabPython') },
+          ]; %>
+          <% codeTabs.forEach(function(tab, i) { %>
+          <button data-code-tab="<%= tab.id %>"
+            class="code-tab-btn px-4 py-2 text-sm font-medium rounded-t-lg transition-colors <%= i === 0 ? 'bg-gray-900 dark:bg-gray-800 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-600' %>">
+            <%= tab.label %>
+          </button>
+          <% }) %>
+        </div>
+
+        <!-- Code panels -->
+        <div class="relative bg-gray-900 dark:bg-gray-800 rounded-b-xl rounded-tr-xl overflow-hidden">
+          <button id="code-copy-btn"
+            class="absolute top-3 right-3 px-3 py-1.5 text-xs font-medium text-gray-400 hover:text-white bg-gray-800 dark:bg-gray-700 hover:bg-gray-700 dark:hover:bg-gray-600 rounded-lg transition-colors z-10">
+            <i class="ri-file-copy-line mr-1"></i>
+            <span class="copy-label"><%= t('apiShowcase.copyBtn') %></span>
+          </button>
+
+          <div id="code-panel-curl" class="code-panel p-5 overflow-x-auto">
+            <pre class="text-sm text-gray-300 leading-relaxed"><code><span class="text-green-400">curl</span> -X POST https://reviewweb.site/api/v1/review \
+  -H <span class="text-yellow-300">"x-api-key: YOUR_API_KEY"</span> \
+  -H <span class="text-yellow-300">"Content-Type: application/json"</span> \
+  -d <span class="text-yellow-300">'{"url": "https://example.com"}'</span></code></pre>
+          </div>
+
+          <div id="code-panel-node" class="code-panel p-5 overflow-x-auto hidden">
+            <pre class="text-sm text-gray-300 leading-relaxed"><code><span class="text-purple-400">const</span> response = <span class="text-purple-400">await</span> <span class="text-blue-400">fetch</span>(<span class="text-yellow-300">'https://reviewweb.site/api/v1/review'</span>, {
+  method: <span class="text-yellow-300">'POST'</span>,
+  headers: {
+    <span class="text-yellow-300">'x-api-key'</span>: <span class="text-yellow-300">'YOUR_API_KEY'</span>,
+    <span class="text-yellow-300">'Content-Type'</span>: <span class="text-yellow-300">'application/json'</span>
+  },
+  body: <span class="text-blue-400">JSON</span>.<span class="text-blue-400">stringify</span>({ url: <span class="text-yellow-300">'https://example.com'</span> })
+});
+<span class="text-purple-400">const</span> data = <span class="text-purple-400">await</span> response.<span class="text-blue-400">json</span>();</code></pre>
+          </div>
+
+          <div id="code-panel-python" class="code-panel p-5 overflow-x-auto hidden">
+            <pre class="text-sm text-gray-300 leading-relaxed"><code><span class="text-purple-400">import</span> requests
+
+response = requests.<span class="text-blue-400">post</span>(
+    <span class="text-yellow-300">'https://reviewweb.site/api/v1/review'</span>,
+    headers={<span class="text-yellow-300">'x-api-key'</span>: <span class="text-yellow-300">'YOUR_API_KEY'</span>},
+    json={<span class="text-yellow-300">'url'</span>: <span class="text-yellow-300">'https://example.com'</span>}
+)
+data = response.<span class="text-blue-400">json</span>()</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Endpoints list (right) -->
+      <div class="lg:col-span-2 animate-on-scroll" style="transition-delay: 0.15s">
+        <h3 class="text-lg font-heading font-bold text-gray-900 dark:text-white mb-4">
+          <i class="ri-route-line mr-2 text-brand-orange-500"></i><%= t('apiShowcase.endpoints') %>
+        </h3>
+        <div class="space-y-3">
+          <% const endpoints = [
+            { method: 'POST', path: '/api/v1/review', desc: t('apiShowcase.endpointReview') },
+            { method: 'POST', path: '/api/v1/scrape', desc: t('apiShowcase.endpointScrape') },
+            { method: 'POST', path: '/api/v1/scrape/extract', desc: t('apiShowcase.endpointExtract') },
+            { method: 'POST', path: '/api/v1/screenshot', desc: t('apiShowcase.endpointScreenshot') },
+            { method: 'POST', path: '/api/v1/convert', desc: t('apiShowcase.endpointConvert') },
+            { method: 'POST', path: '/api/v1/summarize/url', desc: t('apiShowcase.endpointSummarize') },
+            { method: 'POST', path: '/api/v1/seo-insights', desc: t('apiShowcase.endpointSeo') },
+          ]; %>
+          <% endpoints.forEach(function(ep) { %>
+          <div class="flex items-start gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 flex-shrink-0 mt-0.5">
+              <%= ep.method %>
+            </span>
+            <div class="min-w-0">
+              <code class="text-xs text-gray-700 dark:text-gray-300 break-all"><%= ep.path %></code>
+              <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5"><%= ep.desc %></p>
+            </div>
+          </div>
+          <% }) %>
+        </div>
+        <a href="<%= localePath('/api-docs') %>" class="btn-secondary w-full text-center mt-4 no-underline">
+          <%= t('apiShowcase.viewAllEndpoints') %> <i class="ri-arrow-right-line ml-1"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Code tab switching
+  document.querySelectorAll('.code-tab-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var tabId = this.dataset.codeTab;
+      document.querySelectorAll('.code-tab-btn').forEach(function(b) {
+        b.classList.remove('bg-gray-900', 'dark:bg-gray-800', 'text-white');
+        b.classList.add('bg-gray-200', 'dark:bg-gray-700', 'text-gray-600', 'dark:text-gray-400');
+      });
+      this.classList.add('bg-gray-900', 'dark:bg-gray-800', 'text-white');
+      this.classList.remove('bg-gray-200', 'dark:bg-gray-700', 'text-gray-600', 'dark:text-gray-400');
+      document.querySelectorAll('.code-panel').forEach(function(p) { p.classList.add('hidden'); });
+      document.getElementById('code-panel-' + tabId).classList.remove('hidden');
+    });
+  });
+
+  // Copy button
+  document.getElementById('code-copy-btn').addEventListener('click', function() {
+    var activePanel = document.querySelector('.code-panel:not(.hidden) code');
+    if (activePanel) {
+      navigator.clipboard.writeText(activePanel.textContent).then(function() {
+        var label = document.querySelector('#code-copy-btn .copy-label');
+        var original = label.textContent;
+        label.textContent = '<%= t("apiShowcase.copiedBtn") %>';
+        setTimeout(function() { label.textContent = original; }, 2000);
+      });
+    }
+  });
+</script>

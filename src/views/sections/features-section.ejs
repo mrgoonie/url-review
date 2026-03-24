@@ -1,14 +1,16 @@
-<section class="py-16 md:py-24 bg-gray-50/50 dark:bg-gray-900/50">
+<section class="py-16 md:py-24">
   <div class="section-container">
     <%- include('../components/ui-section-header', { title: t('features.sectionTitle'), subtitle: t('features.sectionSubtitle') }) %>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       <% const features = [
-        { icon: 'ri-robot-line', title: t('features.aiReview'), desc: t('features.aiReviewDesc') },
+        { icon: 'ri-search-eye-line', title: t('features.aiReview'), desc: t('features.aiReviewDesc') },
         { icon: 'ri-link-unlink-m', title: t('features.brokenLinks'), desc: t('features.brokenLinksDesc') },
         { icon: 'ri-seo-line', title: t('features.seoAudit'), desc: t('features.seoAuditDesc') },
         { icon: 'ri-screenshot-2-line', title: t('features.screenshot'), desc: t('features.screenshotDesc') },
         { icon: 'ri-code-s-slash-line', title: t('features.api'), desc: t('features.apiDesc') },
         { icon: 'ri-stack-line', title: t('features.batch'), desc: t('features.batchDesc') },
+        { icon: 'ri-markdown-line', title: t('features.markdown'), desc: t('features.markdownDesc') },
+        { icon: 'ri-sparkling-line', title: t('features.summarize'), desc: t('features.summarizeDesc') },
       ]; %>
       <% features.forEach(function(feat, i) { %>
       <div class="animate-on-scroll" style="transition-delay: <%= i * 0.1 %>s">
