@@ -4,6 +4,7 @@ import chalk from "chalk";
 import cookieParser from "cookie-parser";
 import express from "express";
 import type { Session, User } from "lucia";
+import os from "os";
 import path from "path";
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
@@ -66,6 +67,15 @@ app.set("view engine", "ejs");
 
 // assets
 app.use(express.static(path.join(__dirname, "../public")));
+
+// Serve temp-rendered HTML/ZIP content for screenshot capture (internal use only)
+app.use(
+  "/tmp-render",
+  express.static(path.join(os.tmpdir(), "html-render"), {
+    dotfiles: "deny",
+    index: false,
+  })
+);
 
 // API routes
 app.use(apiRouter);
