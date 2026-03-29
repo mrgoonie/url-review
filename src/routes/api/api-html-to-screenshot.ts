@@ -58,12 +58,7 @@ function sanitizeEntryFile(entryFile: string): string {
 }
 
 /** Send output as R2 URL or direct image buffer */
-async function sendOutput(
-  res: express.Response,
-  buffer: Buffer,
-  output: string,
-  type: string
-) {
+async function sendOutput(res: express.Response, buffer: Buffer, output: string, type: string) {
   if (output === "buffer") {
     res.set("Content-Type", type === "jpeg" ? "image/jpeg" : "image/png");
     return res.send(buffer);
@@ -253,7 +248,7 @@ apiHtmlToScreenshotRouter.post(
           } catch {
             return res.status(400).json({
               success: false,
-              message: "Invalid viewport JSON. Expected: {\"width\": number, \"height\": number}",
+              message: 'Invalid viewport JSON. Expected: {"width": number, "height": number}',
             });
           }
         }
