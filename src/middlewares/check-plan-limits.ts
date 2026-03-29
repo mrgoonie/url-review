@@ -22,6 +22,52 @@ const getRedisKeys = (userId: string) => {
   return { minuteKey, monthKey };
 };
 
+// --- In-memory fallback when Redis is unavailable ---
+const memCache = new Map<string, { count: number; expiresAt: number }>();
+
+function memIncr(key: string, ttlSeconds: number): number {
+  const now = Date.now();
+  const entry = memCache.get(key);
+
+  if (entry && entry.expiresAt > now) {
+    entry.count += 1;
+    return entry.count;
+  }
+
+  // Expired or new — reset
+  memCache.set(key, { count: 1, expiresAt: now + ttlSeconds * 1000 });
+  return 1;
+}
+
+// Periodically clean up expired entries (every 5 minutes)
+// .unref() allows Node to exit cleanly without waiting for this timer
+setInterval(
+  () => {
+    const now = Date.now();
+    for (const [key, entry] of memCache) {
+      if (entry.expiresAt <= now) memCache.delete(key);
+    }
+  },
+  5 * 60 * 1000
+).unref();
+
+/**
+ * Increment a rate-limit counter using Redis, falling back to in-memory Map.
+ */
+async function incrCounter(key: string, ttlSeconds: number): Promise<number> {
+  // Redis unavailable — use in-memory fallback
+  if (!redis) return memIncr(key, ttlSeconds);
+
+  try {
+    const count = await redis.incr(key);
+    await redis.expire(key, ttlSeconds);
+    return count;
+  } catch {
+    // Redis error at runtime — fallback to memory
+    return memIncr(key, ttlSeconds);
+  }
+}
+
 /**
  * Middleware to check user plan request limits
  */
@@ -48,10 +94,7 @@ export const checkPlanLimits = async (_req: Request, res: Response, next: NextFu
     // Check requests per minute (sliding window)
     const currentMinute = dayjs().minute();
     const minuteWindow = `${minuteKey}:${currentMinute}`;
-    const requestsThisMinute = await redis.incr(minuteWindow);
-
-    // Set expiry for minute window (1 minute)
-    await redis.expire(minuteWindow, 60);
+    const requestsThisMinute = await incrCounter(minuteWindow, 60);
 
     if (requestsThisMinute > maxRequestsPerMinute) {
       return res
@@ -60,12 +103,9 @@ export const checkPlanLimits = async (_req: Request, res: Response, next: NextFu
     }
 
     // Check requests per month
-    const currentMonth = dayjs().format("YYYY-MM"); // YYYY-MM
+    const currentMonth = dayjs().format("YYYY-MM");
     const monthWindow = `${monthKey}:${currentMonth}`;
-    const requestsThisMonth = await redis.incr(monthWindow);
-
-    // Set expiry for month window (31 days to be safe)
-    await redis.expire(monthWindow, 31 * 24 * 60 * 60);
+    const requestsThisMonth = await incrCounter(monthWindow, 31 * 24 * 60 * 60);
 
     if (requestsThisMonth > maxRequestsPerMonth) {
       return res

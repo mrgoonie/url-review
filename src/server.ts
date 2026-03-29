@@ -22,6 +22,7 @@ import { pageRouter } from "@/routes/pages";
 
 import { swaggerOptions } from "./config";
 import { fetchListAIModels } from "./lib/ai/models";
+import { initRedis } from "./lib/redis";
 import { createInitialCategories } from "./modules/category";
 import { polarWebhookRouter } from "./routes/webhooks/polar-webhook";
 
@@ -145,6 +146,7 @@ app.use((error: any, _req: express.Request, res: express.Response, _next: expres
 
 // start server
 async function startServer() {
+  initRedis();
   await createInitialPlans();
   await initWorkspacePermissions();
   await browserPool.initialize();

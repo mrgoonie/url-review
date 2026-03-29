@@ -56,7 +56,10 @@ export async function extractZipToTempDir(
     // Zip-slip protection: validate all entry paths before extraction
     const targetPath = path.join(extractDir, entry.entryName);
     const resolvedPath = path.resolve(targetPath);
-    if (!resolvedPath.startsWith(resolvedExtractDir + path.sep) && resolvedPath !== resolvedExtractDir) {
+    if (
+      !resolvedPath.startsWith(resolvedExtractDir + path.sep) &&
+      resolvedPath !== resolvedExtractDir
+    ) {
       fs.rmSync(extractDir, { recursive: true, force: true });
       throw new Error(`Zip-slip detected: ${entry.entryName}`);
     }
