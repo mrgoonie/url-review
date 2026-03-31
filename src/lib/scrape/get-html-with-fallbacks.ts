@@ -7,6 +7,7 @@ import { wait } from "@/lib/utils/wait";
 import { extractContentWithDefuddle } from "./extract-content-with-defuddle";
 import { getFacebookHtml, isFacebookUrl } from "./get-facebook-content";
 import { getHtmlWithAxios } from "./get-html-with-axios";
+import { getLinkedInHtml, isLinkedInUrl } from "./get-linkedin-content";
 import { getHtmlWithFirecrawl } from "./get-html-with-firecrawl";
 import { getHtmlContent } from "./get-html-with-playwright";
 import { getHtmlWithScrapedo } from "./get-html-with-scrapedo";
@@ -271,6 +272,23 @@ export async function getHtmlWithFallbacks(url: string, options?: ScrapeOptions)
       if (debug)
         console.log(
           `get-html-with-fallbacks.ts > Facebook handler failed: ${errorMsg}, falling back to generic methods`
+        );
+    }
+  }
+
+  // Special handling for LinkedIn URLs - use specialized LinkedIn fetcher first
+  if (isLinkedInUrl(url)) {
+    if (debug)
+      console.log(`get-html-with-fallbacks.ts > Detected LinkedIn URL, using specialized handler`);
+    try {
+      const html = await getLinkedInHtml(url, { debug, timeout: opts.timeout });
+      if (debug) console.log(`get-html-with-fallbacks.ts > Successfully fetched LinkedIn content`);
+      return opts.simpleHtml ? await extractOrSimplifyHtml(html, url) : html;
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : String(error);
+      if (debug)
+        console.log(
+          `get-html-with-fallbacks.ts > LinkedIn handler failed: ${errorMsg}, falling back to generic methods`
         );
     }
   }
