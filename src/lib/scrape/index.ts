@@ -1,6 +1,7 @@
 export * from "./extract-content-with-defuddle";
 export * from "./get-facebook-content";
 export * from "./get-html-with-axios";
+export * from "./get-linkedin-content";
 export * from "./get-html-with-fallbacks";
 export * from "./get-html-with-firecrawl";
 export * from "./get-html-with-playwright";
